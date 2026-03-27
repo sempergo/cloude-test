@@ -1354,6 +1354,139 @@
     }
     @media (max-width: 420px) { .zahlen__grid { grid-template-columns: 1fr; } }
 
+    /* ── MOBILE & TOUCH REFINEMENTS ─────────────── */
+
+    /* Universal touch target floor */
+    .btn, .nav__links a, .mcta a, .mcta__book,
+    .footer__social a, .modal-close,
+    .events__chip { min-height: 44px; }
+    .nav__burger { min-height: 44px; min-width: 44px; justify-content: center; align-items: center; }
+    .fbar__item { min-height: 56px; }
+
+    /* Tap highlight remove (handled via hover states) */
+    a, button { -webkit-tap-highlight-color: transparent; }
+
+    @media (max-width: 768px) {
+      /* Body clearance for fixed mobile CTA bar */
+      body { padding-bottom: 80px; }
+
+      /* Section vertical rhythm reduction */
+      .sec { padding: 4rem 0; }
+
+      /* Hero — push content above mobile bar; hide decorative scroll hint */
+      .hero { padding-bottom: calc(4.5rem + 80px); }
+      .hero__scroll { display: none; }
+
+      /* Hero CTA buttons stack full-width */
+      .hero__actions { flex-direction: column; align-items: stretch; }
+      .hero__actions .btn { width: 100%; justify-content: center; }
+
+      /* Spätnacht — remove full-viewport lock on mobile, ensure clearance */
+      .spaetnacht { min-height: 0; padding: 5rem 0 calc(3.5rem + 80px); }
+
+      /* About — tighter photo heights */
+      .about__img--tall img { min-height: 260px; }
+      .about__img--short img { height: 145px; }
+
+      /* Menu top layout — heading and PDF buttons stack */
+      .menu__top { flex-direction: column; align-items: flex-start; }
+
+      /* Gallery section */
+      .gallery .wrap { padding: 0 1rem; }
+      .gallery__grid { gap: 8px; }
+
+      /* Events body padding */
+      .events__body { padding: 2rem 1.5rem; gap: 1rem; }
+
+      /* Zahlen section padding */
+      .zahlen { padding: 4.5rem 0; }
+      .zahlen__item { padding: 2.25rem 1.25rem; }
+
+      /* CTA actions stack full-width */
+      .cta { padding: 4.5rem 0; }
+      .cta__actions { flex-direction: column; align-items: center; }
+      .cta__actions .btn { width: 100%; max-width: 300px; justify-content: center; }
+      .cta p { max-width: 100%; }
+
+      /* Footer */
+      footer { padding: 3rem 0 1.5rem; }
+      .footer__bottom { flex-direction: column; align-items: flex-start; gap: .2rem; }
+
+      /* Booking modal — slides up from bottom, native-feel */
+      .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+      .modal-box {
+        border-radius: 20px 20px 0 0;
+        max-height: 92dvh;
+        overflow-y: auto;
+        width: 100%;
+        max-width: 100%;
+      }
+      .modal-body iframe { height: min(420px, 55dvh); }
+      .modal-fallback { padding: 2rem 1.25rem; }
+      .modal-fallback .contacts { gap: .625rem; }
+
+      /* Fbar — collapse to 2 tighter cols */
+      .fbar__item { padding: .75rem 1.25rem; }
+      .fbar__title { font-size: .82rem; }
+    }
+
+    @media (max-width: 580px) {
+      /* Fbar — single column */
+      .fbar__grid { grid-template-columns: 1fr; }
+      .fbar__item + .fbar__item::before {
+        top: 0; left: 1.25rem; right: 1.25rem; bottom: auto;
+        width: auto; height: 1px;
+        background: rgba(249,115,22,.12);
+      }
+
+      /* About photo grid — collapse to single column */
+      .about__imgs { grid-template-columns: 1fr; }
+      .about__img--tall img { min-height: 240px; }
+      .about__img--short { display: none; }
+
+      /* Bar spot body */
+      .bar-spot__body { padding: 2rem 1.25rem 2.5rem; gap: 1.1rem; }
+      .bar-spot__heading { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+
+      /* Events body */
+      .events__body { padding: 1.75rem 1.25rem; }
+
+      /* Gallery mobile — bump row height */
+      .gallery__grid { grid-template-rows: repeat(4, 180px); }
+
+      /* Zahlen 2-col */
+      .zahlen__num { font-size: clamp(2.4rem, 8vw, 3.5rem); }
+    }
+
+    @media (max-width: 400px) {
+      /* Wrap — extra tight on tiny screens */
+      .wrap { padding: 0 1rem; }
+      .sec { padding: 3rem 0; }
+
+      /* Hero headline size floor */
+      .h1 { font-size: 2.4rem; }
+      .h2 { font-size: 1.65rem; }
+
+      /* Pill text */
+      .pill { font-size: .65rem; padding: .3rem .75rem; }
+
+      /* Spätnacht — stroke width on tiny screen */
+      .spaetnacht__time { -webkit-text-stroke-width: 1px; }
+      .spaetnacht__badges { gap: .5rem; }
+      .spaetnacht__badge { font-size: .7rem; padding: .4rem .8rem; }
+
+      /* Zahlen single col dividers */
+      .zahlen__item + .zahlen__item::before { display: none; }
+      .zahlen__item:nth-child(even) { background: rgba(249,115,22,.025); }
+
+      /* Modal header */
+      .modal-header { padding: 1.125rem 1.25rem; }
+      .modal-header h3 { font-size: 1.1rem; }
+    }
+
     /* ── REDUCED MOTION ──────────────────────────── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -1420,12 +1553,12 @@
         Restaurant · Bar · Events · Frankfurt
       </div>
       <h1 class="h1 hero__title" id="heroTitle" data-a data-delay="60">
-        Modernes Frankfurt.<br>
-        <span>Echte Küche.</span><br>
-        Bis in die Nacht.
+        Macht euch bequem.<br>
+        Die Küche hat<br>
+        <span>noch geöffnet.</span>
       </h1>
       <p class="hero__sub" data-a data-delay="120">
-        Mitten im Herz der Stadt, Schillerstraße 10. Wir kochen täglich bis 02:00 Uhr — weil gute Abende keine feste Schließzeit kennen.
+        Wir sind euer Ort mitten in Frankfurt — für Feierabend-Hunger, späte Abende mit Freunden und alles dazwischen. Täglich ab 10 Uhr, Küche bis 02:00.
       </p>
       <div class="hero__actions" data-a data-delay="180">
         <button class="btn btn-orange" id="heroBookBtn">
@@ -1565,7 +1698,7 @@
         <em>fangen wir erst an.</em>
       </h2>
       <p class="spaetnacht__sub" data-a data-delay="60">
-        Küche täglich bis 02:00 Uhr. Freitag und Samstag bis 03:30. Für alle, die den Abend noch nicht aufgeben wollen — wir auch nicht.
+        Wir kennen das Gefühl — Mitternacht ist vorbei, ihr habt Hunger, und irgendwo sollte doch noch was offen sein. Für genau diese Nächte gibt's uns. Täglich bis 02:00, am Wochenende sogar bis 03:30.
       </p>
       <div class="spaetnacht__badges" data-a data-delay="120">
         <div class="spaetnacht__badge">
@@ -1609,10 +1742,10 @@
         </div>
         <div data-a>
           <div class="label">Über Kiwis</div>
-          <h2 class="h2" id="aboutTitle" style="margin-bottom:1.25rem;">Mehr als ein Restaurant.<br>Eine Erfahrung.</h2>
-          <p class="about__text">Im Herzen Frankfurts, unweit der alten Börse, verbinden wir moderne Küche mit echter Bar-Atmosphäre. Globale Einflüsse treffen auf handgemachte Qualität — von Tacos über Bowls bis zum perfekten Steak.</p>
+          <h2 class="h2" id="aboutTitle" style="margin-bottom:1.25rem;">Nicht einfach ein Restaurant.<br>Euer zweites Zuhause.</h2>
+          <p class="about__text">Wir sind kein gesichtsloses Großrestaurant. Wir sind das Lokal, in das ihr mit euren Liebsten geht, wenn der Abend noch nicht enden soll. Ehrliche Zutaten, globale Einflüsse und eine Atmosphäre, in der ihr euch sofort wohlfühlt.</p>
           <div class="about__highlight">
-            Ob nach Feierabend, spät in der Nacht oder für euer nächstes Event — Kiwis ist euer Ort, wenn Frankfurt nicht schläft.
+            Wir glauben, dass die schönsten Momente oft spontan entstehen — und dass gutes Essen dabei fast immer eine Rolle spielt.
           </div>
           <div class="about__stats" aria-label="Kiwis in Zahlen">
             <div>
@@ -1639,7 +1772,7 @@
       <div class="menu__top" data-a>
         <div>
           <div class="label">Unsere Küche</div>
-          <h2 class="h2" id="menuTitle">Highlights aus der Speisekarte</h2>
+          <h2 class="h2" id="menuTitle">Gerichte, die wir euch ans Herz legen</h2>
         </div>
         <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
           <a href="https://assets.zyrosite.com/A85VROz7qKI3QoBE/kiwis_speisekarte-AoP4zaVEgEioVkrx.pdf"
@@ -1775,7 +1908,7 @@
         </h2>
         <div class="bar-spot__divider" aria-hidden="true"></div>
         <p class="bar-spot__desc">
-          Von Klassikern bis zu unseren Eigenkreationen — unsere Bar ist mehr als ein Begleiter zum Essen. Sie ist der Grund, warum manche Abende einfach nie enden wollen.
+          Unser Barteam mixt nicht nur Drinks — es verleiht eurem Abend das gewisse Etwas. Von unseren Hauskreationen bis zu den Klassikern, die ihr liebt: Jeder Cocktail ist mit echtem Herzblut gemacht.
         </p>
         <div class="bar-spot__drinks" aria-label="Cocktail-Highlights">
           <div class="bar-spot__drink">Pink Pornstar — Passionsfrucht, Vanille, Prosecco</div>
@@ -1797,7 +1930,7 @@
     <div class="wrap">
       <div class="gallery__top" data-a>
         <div class="label" style="justify-content:center;">Atmosphäre</div>
-        <h2 class="h2" id="galleryTitle">Kiwis erleben</h2>
+        <h2 class="h2" id="galleryTitle">So fühlt sich Kiwis an</h2>
       </div>
       <div class="gallery__grid" data-scale>
         <div class="gallery__item gallery__item--tall">
@@ -1833,7 +1966,7 @@
     <div class="wrap zahlen__inner">
       <div class="zahlen__header" data-a>
         <div class="label" style="justify-content:center;">Kiwis in Zahlen</div>
-        <h2 class="h2" id="zahlenTitle">Was uns ausmacht</h2>
+        <h2 class="h2" id="zahlenTitle">Das macht uns besonders</h2>
       </div>
       <div class="zahlen__grid">
         <div class="zahlen__item" data-zahlen data-a>
@@ -1872,7 +2005,7 @@
         <div class="events__body">
           <div>
             <h2 class="h2" id="eventsTitle" style="margin-bottom:.75rem;">Euer Event.<br>Unser Zuhause.</h2>
-            <p class="sub" style="margin-bottom:1.5rem;">Von der Firmenfeier bis zur Hochzeit — Kiwis bietet euch den perfekten Rahmen für unvergessliche Momente. Für 30 bis 100 Personen, mit eigenem Catering und Cocktailbar.</p>
+            <p class="sub" style="margin-bottom:1.5rem;">Wir sind Gastgeber aus Leidenschaft. Ob 30 enge Freunde oder 100 Kollegen — wir sorgen dafür, dass sich vom ersten Moment an jeder willkommen fühlt. Mit persönlicher Betreuung, eigenem Catering und einem Team, das euren Abend unvergesslich macht.</p>
           </div>
           <div class="events__chips">
             <span class="events__chip">30–100 Personen</span>
@@ -1894,8 +2027,8 @@
   <!-- HOURS & CONTACT -->
   <section class="hours sec" id="hours" aria-labelledby="hoursTitle">
     <div class="wrap">
-      <div class="label" data-a>Besucht uns</div>
-      <h2 class="h2" id="hoursTitle" data-a style="margin-bottom:3rem;">Öffnungszeiten & Kontakt</h2>
+      <div class="label" data-a>Wir sind für euch da</div>
+      <h2 class="h2" id="hoursTitle" data-a style="margin-bottom:3rem;">So findet ihr uns</h2>
       <div class="hours__grid">
         <div data-a>
           <div class="citem">
@@ -1948,8 +2081,8 @@
   <section class="cta" aria-labelledby="ctaTitle">
     <div class="wrap cta__inner">
       <div class="label" style="justify-content:center;color:rgba(245,237,224,.45);" data-a>Reservierung</div>
-      <h2 class="h2" id="ctaTitle" data-a>Spontan Hunger bekommen?<br>Wir haben noch Plätze.</h2>
-      <p data-a>Reservierungen auch kurzfristig möglich — ruf einfach an oder buche direkt online.</p>
+      <h2 class="h2" id="ctaTitle" data-a>Kommt einfach vorbei.<br>Wir freuen uns auf euch.</h2>
+      <p data-a>Einen Platz für euch finden wir immer — auch kurzfristig. Einfach anrufen oder direkt online reservieren.</p>
       <div class="cta__actions" data-a>
         <button class="btn btn-amber" id="ctaBookBtn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
