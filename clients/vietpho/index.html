@@ -108,7 +108,6 @@
       position: absolute; inset: 0;
       background: linear-gradient(170deg, rgba(12,9,6,0.05) 0%, rgba(12,9,6,0.25) 30%, rgba(12,9,6,0.8) 75%, rgba(12,9,6,0.95) 100%);
     }
-    #noodleCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; z-index: 1; }
     .hero-content {
       position: relative; z-index: 2;
       padding: 0 64px 100px; max-width: 860px; width: 100%;
@@ -473,7 +472,6 @@
   <div class="hero-bg" id="heroBg"></div>
   <div class="hero-overlay"></div>
 
-  <canvas id="noodleCanvas"></canvas>
 
   <div class="hero-content">
     <div class="hero-eyebrow" id="heroEyebrow">Authentisches Vietnam · Frankfurt Bornheim</div>
@@ -865,143 +863,6 @@
   window.addEventListener('scroll', () => {
     heroBg.style.transform = `translateY(${window.scrollY * 0.28}px) scale(1.08)`;
   }, { passive: true });
-
-  // ── Cinematic Noodle & Chopstick Animation ──
-  (function initNoodles() {
-    const canvas = document.getElementById('noodleCanvas');
-    const ctx = canvas.getContext('2d');
-
-    function resize() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-
-    class Noodle {
-      constructor(initial) { this.spawn(initial); }
-      spawn(initial) {
-        this.length   = 120 + Math.random() * 220;
-        this.x        = Math.random() * canvas.width;
-        this.y        = initial ? -Math.random() * canvas.height : -this.length - 10;
-        this.speed    = 0.28 + Math.random() * 0.42;
-        this.amp      = 6 + Math.random() * 18;      // gentler wave — realistic rice noodle
-        this.phase    = Math.random() * Math.PI * 2;
-        this.phaseSpd = 0.004 + Math.random() * 0.005;
-        this.opacity  = 0.28 + Math.random() * 0.38; // clearly visible
-        this.width    = 2.8 + Math.random() * 3.2;   // thick like flat rice noodles
-        this.segments = 6 + Math.floor(Math.random() * 5);
-        this.drift    = (Math.random() - 0.5) * 0.10;
-        // warm off-white / creamy — realistic cooked rice noodle color
-        const l = 88 + Math.floor(Math.random() * 8);
-        this.color     = `hsl(44,38%,${l}%)`;
-        this.highlight = `rgba(255,252,245,0.55)`;
-      }
-      update() {
-        this.y     += this.speed;
-        this.x     += this.drift;
-        this.phase += this.phaseSpd;
-        if (this.y > canvas.height + 20) this.spawn(false);
-      }
-      _path() {
-        const seg = this.length / this.segments;
-        ctx.beginPath();
-        ctx.moveTo(this.x + Math.sin(this.phase) * this.amp, this.y);
-        for (let i = 0; i < this.segments; i++) {
-          const p0 = i / this.segments, p1 = (i + 1) / this.segments;
-          ctx.bezierCurveTo(
-            this.x + Math.sin(this.phase + p0 * Math.PI * 2 + 0.4) * this.amp * 1.5,
-            this.y + (i + 0.33) * seg,
-            this.x + Math.sin(this.phase + p1 * Math.PI * 2 - 0.4) * this.amp * 1.5,
-            this.y + (i + 0.67) * seg,
-            this.x + Math.sin(this.phase + p1 * Math.PI * 2) * this.amp,
-            this.y + (i + 1) * seg
-          );
-        }
-      }
-      draw() {
-        ctx.save();
-        ctx.lineCap  = 'round';
-        ctx.lineJoin = 'round';
-
-        // Base noodle strand
-        ctx.globalAlpha = this.opacity;
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth   = this.width;
-        this._path();
-        ctx.stroke();
-
-        // Glanz-Highlight (wet noodle sheen)
-        ctx.globalAlpha = this.opacity * 0.45;
-        ctx.strokeStyle = this.highlight;
-        ctx.lineWidth   = this.width * 0.28;
-        this._path();
-        ctx.stroke();
-
-        ctx.restore();
-      }
-    }
-
-    class ChopstickPair {
-      constructor(slot) {
-        const w = canvas.width, h = canvas.height;
-        this.cx    = w * (slot === 0 ? 0.17 : 0.79) + (Math.random() - 0.5) * w * 0.10;
-        this.cy    = h * (0.28 + Math.random() * 0.36);
-        this.angle = 0.36 + Math.random() * 0.30;
-        this.len   = 155 + Math.random() * 75;
-        this.gap   = 13 + Math.random() * 8;
-        this.alpha = 0.17 + Math.random() * 0.13;
-        this.rotV  = (Math.random() - 0.5) * 0.00022;
-        this.dvx   = (Math.random() - 0.5) * 0.050;
-        this.dvy   = (Math.random() - 0.5) * 0.032;
-      }
-      update() {
-        this.angle += this.rotV;
-        this.cx    += this.dvx;
-        this.cy    += this.dvy;
-        const pad = 80;
-        if (this.cx < pad || this.cx > canvas.width  - pad) this.dvx *= -1;
-        if (this.cy < pad || this.cy > canvas.height - pad) this.dvy *= -1;
-      }
-      draw() {
-        const cos = Math.cos(this.angle), sin = Math.sin(this.angle);
-        const px  =  sin * this.gap / 2;
-        const py  = -cos * this.gap / 2;
-        const hx  = cos * this.len / 2;
-        const hy  = sin * this.len / 2;
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.lineCap = 'round';
-        for (let s = 0; s < 2; s++) {
-          const ox = px * (s === 0 ? 1 : -1), oy = py * (s === 0 ? 1 : -1);
-          const x1 = this.cx - hx + ox, y1 = this.cy - hy + oy;
-          const x2 = this.cx + hx + ox, y2 = this.cy + hy + oy;
-          const g = ctx.createLinearGradient(x1, y1, x2, y2);
-          g.addColorStop(0,    'rgba(165,125,48,0.9)');
-          g.addColorStop(0.45, 'rgba(218,182,97,1.0)');
-          g.addColorStop(1,    'rgba(150,112,38,0.8)');
-          ctx.beginPath();
-          ctx.strokeStyle = g;
-          ctx.lineWidth   = s === 0 ? 3.2 : 2.6;
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-        }
-        ctx.restore();
-      }
-    }
-
-    const noodles = Array.from({ length: 22 }, () => new Noodle(true));
-    const sticks  = [new ChopstickPair(0), new ChopstickPair(1)];
-
-    function tick() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      sticks.forEach(s  => { s.update(); s.draw(); });
-      noodles.forEach(n => { n.update(); n.draw(); });
-      requestAnimationFrame(tick);
-    }
-    tick();
-  })();
 
   // ── Hero split-word entrance ──
   const words = ['w0','w1','w2','w3','w4'];
