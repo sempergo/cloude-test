@@ -403,18 +403,24 @@
 
         .sec-link:hover { opacity: 1; }
 
-        /* Mobile: horizontal swipe carousel */
+        /* ── PIZZA CAROUSEL (mobile) ── */
+        .pizza-carousel-wrap {
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            /* pull flush to section edges */
+            margin: 0 -24px;
+            padding: 4px 24px 20px;
+        }
+        .pizza-carousel-wrap::-webkit-scrollbar { display: none; }
+
         .pizza-grid {
             display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            gap: 16px;
-            padding: 4px 24px 20px;
-            margin: 0 -24px;
-            scrollbar-width: none;
+            flex-wrap: nowrap;
+            gap: 14px;
+            width: max-content;
         }
-        .pizza-grid::-webkit-scrollbar { display: none; }
 
         /* Carousel dots */
         .carousel-dots {
@@ -431,11 +437,15 @@
         }
 
         @media (min-width: 600px) {
+            .pizza-carousel-wrap {
+                overflow-x: visible; scroll-snap-type: none;
+                margin: 0; padding: 0;
+            }
             .pizza-grid {
                 display: grid; grid-template-columns: 1fr 1fr;
-                overflow-x: visible; scroll-snap-type: none;
-                padding: 0; margin: 0; gap: 16px;
+                width: auto; gap: 16px;
             }
+            .pcard { width: auto; max-width: none; }
             .carousel-dots { display: none; }
         }
         @media (min-width: 900px) { .pizza-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
@@ -443,7 +453,7 @@
         .pcard {
             background: var(--surface);
             border-radius: 20px; overflow: hidden;
-            min-width: min(78vw, 300px);
+            width: 75vw; max-width: 300px;
             flex-shrink: 0;
             scroll-snap-align: start;
             transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s;
@@ -945,6 +955,7 @@
         <a href="#order" class="sec-link">Alle bestellen →</a>
     </div>
 
+    <div class="pizza-carousel-wrap" id="pizza-carousel">
     <div class="pizza-grid">
         <div class="pcard reveal">
             <div class="pcard-img">
@@ -1018,6 +1029,7 @@
             </div>
         </div>
     </div>
+    </div><!-- /pizza-carousel-wrap -->
     <div class="carousel-dots" id="pizza-dots">
         <span class="carousel-dot active"></span>
         <span class="carousel-dot"></span>
@@ -1272,18 +1284,20 @@
     });
 
     // Carousel dots
-    const pizzaGrid = document.querySelector('.pizza-grid');
+    const carouselWrap = document.getElementById('pizza-carousel');
     const dots = document.querySelectorAll('#pizza-dots .carousel-dot');
-    if (pizzaGrid && dots.length) {
-        pizzaGrid.addEventListener('scroll', () => {
-            const cardWidth = pizzaGrid.querySelector('.pcard').offsetWidth + 16;
-            const idx = Math.round(pizzaGrid.scrollLeft / cardWidth);
+    if (carouselWrap && dots.length) {
+        carouselWrap.addEventListener('scroll', () => {
+            const card = carouselWrap.querySelector('.pcard');
+            const cardWidth = card.offsetWidth + 14;
+            const idx = Math.round(carouselWrap.scrollLeft / cardWidth);
             dots.forEach((d, i) => d.classList.toggle('active', i === idx));
         }, { passive: true });
         dots.forEach((dot, i) => {
             dot.addEventListener('click', () => {
-                const cardWidth = pizzaGrid.querySelector('.pcard').offsetWidth + 16;
-                pizzaGrid.scrollTo({ left: i * cardWidth, behavior: 'smooth' });
+                const card = carouselWrap.querySelector('.pcard');
+                const cardWidth = card.offsetWidth + 14;
+                carouselWrap.scrollTo({ left: i * cardWidth, behavior: 'smooth' });
             });
         });
     }
