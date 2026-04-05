@@ -416,6 +416,36 @@
     }
     .social:hover { border-color: var(--gold); color: var(--gold); }
 
+    /* ─── BOOKING MODAL ─── */
+    .booking-modal {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 1rem;
+    }
+    .booking-modal.open { display: flex; }
+    .booking-box {
+      background: #1A1008; border-radius: 20px;
+      border: 1px solid rgba(255,220,150,.12);
+      padding: 2rem 2rem 1.5rem;
+      width: 100%; max-width: 380px;
+      position: relative;
+    }
+    .booking-close {
+      position: absolute; top: 1rem; right: 1rem;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,.08); border: none;
+      color: var(--text); font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .booking-close:hover { background: rgba(255,255,255,.15); }
+    .booking-title {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 400;
+      margin-bottom: 1.2rem; color: var(--text);
+    }
+
     /* ─── REVEAL UTIL ─── */
     .r { opacity: 0; transform: translateY(28px); }
 
@@ -459,6 +489,15 @@
 </head>
 <body>
 
+<!-- BOOKING MODAL -->
+<div class="booking-modal" id="bookingModal">
+  <div class="booking-box">
+    <button class="booking-close" id="bookingClose">✕</button>
+    <p class="booking-title">Tisch reservieren</p>
+    <div id="resmio-multani-riar-gmbh"></div>
+  </div>
+</div>
+
 <!-- GLOWS -->
 <div class="bg-glows" aria-hidden="true"></div>
 
@@ -473,7 +512,7 @@
     <li><a href="#events">Events</a></li>
     <li><a href="#info">Kontakt</a></li>
   </ul>
-  <a href="tel:06921009879" class="nav-cta">Reservieren</a>
+  <a href="#" class="nav-cta" id="openBooking">Reservieren</a>
 </nav>
 
 <!-- HERO -->
@@ -825,6 +864,29 @@ const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 50);
 }, { passive: true });
+
+// Booking modal
+let resmioLoaded = false;
+function openBooking(e) {
+  e.preventDefault();
+  document.getElementById('bookingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (!resmioLoaded) {
+    resmioLoaded = true;
+    const js = document.createElement('script');
+    js.src = '//static.resmio.com/static/en/widget.js#id=multani-riar-gmbh&height=460&width=330&fontSize=14px';
+    document.body.appendChild(js);
+  }
+}
+function closeBooking() {
+  document.getElementById('bookingModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('openBooking').addEventListener('click', openBooking);
+document.getElementById('bookingClose').addEventListener('click', closeBooking);
+document.getElementById('bookingModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeBooking();
+});
 </script>
 
 </body>
