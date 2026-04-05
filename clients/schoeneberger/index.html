@@ -39,6 +39,136 @@
     img { display: block; max-width: 100%; }
     a { text-decoration: none; color: inherit; }
 
+    /* ── Grain texture ─────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px;
+    }
+
+    /* ── Ticker ────────────────────────────────── */
+    .ticker {
+      background: var(--dark);
+      padding: 16px 0;
+      overflow: hidden;
+    }
+    .ticker-track {
+      display: flex; white-space: nowrap;
+      animation: tickerRoll 9s linear infinite;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    .t-item {
+      font-family: var(--serif-it);
+      font-style: italic;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: rgba(245, 237, 216, 0.7);
+      padding: 0 1.75rem;
+      flex-shrink: 0;
+    }
+    .t-sep { color: var(--gold) !important; font-style: normal !important; font-size: 0.6rem !important; }
+    @keyframes tickerRoll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── Stats block ───────────────────────────── */
+    .stats-block {
+      background: var(--dark);
+      border-radius: 40px;
+      margin: 0 16px 0;
+      padding: 52px 28px;
+      position: relative; overflow: hidden;
+    }
+    .stats-block::before {
+      content: '';
+      position: absolute;
+      width: 440px; height: 440px;
+      background: radial-gradient(circle, rgba(196, 154, 26, 0.12), transparent 70%);
+      top: -160px; right: -100px;
+      border-radius: 50%; pointer-events: none;
+    }
+    @media (min-width: 900px) {
+      .stats-block { margin: 0 24px; border-radius: 44px; padding: 72px 64px; }
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px 24px;
+    }
+    @media (min-width: 700px) {
+      .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 0; }
+    }
+    .sblock {
+      border-top: 1px solid rgba(245, 237, 216, 0.12);
+      padding-top: 20px;
+    }
+    @media (min-width: 700px) {
+      .sblock { padding: 32px 32px 0 0; }
+      .sblock:last-child { padding-right: 0; }
+    }
+    .sblock-num {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 400; color: var(--cream);
+      line-height: 1; letter-spacing: -1px; margin-bottom: 8px;
+    }
+    .sblock-label {
+      font-size: 0.85rem; font-weight: 500;
+      color: rgba(245, 237, 216, 0.6); line-height: 1.5;
+    }
+    .sblock-sub {
+      font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(245, 237, 216, 0.3); margin-top: 4px;
+    }
+
+    /* ── CTA / Reserve block ───────────────────── */
+    .cta-block {
+      background: linear-gradient(150deg, #1D0E06 0%, #160B04 60%, #2A1608 100%);
+      border-radius: 40px;
+      margin: 0 16px;
+      padding: 60px 28px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    @media (min-width: 900px) {
+      .cta-block { margin: 0 24px; border-radius: 44px; padding: 96px 56px; }
+    }
+    .cta-block::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(196, 154, 26, 0.15), transparent 65%);
+      top: -180px; left: 50%; transform: translateX(-50%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .cta-h {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 400; color: var(--cream);
+      line-height: 0.95; letter-spacing: 0.02em;
+      margin-bottom: 1.25rem; position: relative; z-index: 1;
+    }
+    .cta-h em {
+      font-family: var(--serif-it);
+      font-style: italic; color: var(--gold-lt);
+    }
+    .cta-sub {
+      font-size: 1rem; color: rgba(245, 237, 216, 0.42);
+      margin-bottom: 3rem; max-width: 380px;
+      margin-left: auto; margin-right: auto;
+      line-height: 1.65; position: relative; z-index: 1;
+    }
+    .cta-actions {
+      display: flex; justify-content: center;
+      gap: 1rem; flex-wrap: wrap; position: relative; z-index: 1;
+    }
+
     /* ── Nav ────────────────────────────────────── */
     nav {
       position: fixed;
@@ -376,7 +506,14 @@
     }
 
     /* ── Menu ────────────────────────────────────── */
-    .menu { background: var(--dark); }
+    .menu {
+      background: var(--dark);
+      border-radius: 40px;
+      margin: 0 16px;
+    }
+    @media (min-width: 900px) {
+      .menu { margin: 0 24px; border-radius: 44px; }
+    }
     .menu-header { text-align: center; margin-bottom: 4rem; }
     .menu-header .sub {
       font-family: var(--serif-it);
@@ -872,6 +1009,29 @@
     </div>
   </section>
 
+  <!-- ── TICKER ──────────────────────────────────── -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span class="t-item">Gasthaus &amp; Bar</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Frankfurt-Bornheim</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Seit 1999</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Hausgemachte Burger</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Steak vom Lavastein</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Apfelwein aus der Kanne</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Zwei Biergärten</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">U4 Bornheim Mitte</span><span class="t-item t-sep">✦</span>
+      <!-- repeat -->
+      <span class="t-item">Gasthaus &amp; Bar</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Frankfurt-Bornheim</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Seit 1999</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Hausgemachte Burger</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Steak vom Lavastein</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Apfelwein aus der Kanne</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">Zwei Biergärten</span><span class="t-item t-sep">✦</span>
+      <span class="t-item">U4 Bornheim Mitte</span><span class="t-item t-sep">✦</span>
+    </div>
+  </div>
+
   <!-- ── ÜBER DEN SCHÖNI ───────────────────────── -->
   <section class="about" id="about">
     <div class="container">
@@ -892,24 +1052,6 @@
             Steaks vom Lavastein, Apfelwein aus der Kanne — und immer ein freier
             Stuhl für ein gutes Gespräch.
           </p>
-          <div class="about-stats reveal">
-            <div class="stat">
-              <div class="stat-num">25+</div>
-              <div class="stat-lbl">Jahre in Frankfurt</div>
-            </div>
-            <div class="stat">
-              <div class="stat-num">2</div>
-              <div class="stat-lbl">Biergärten</div>
-            </div>
-            <div class="stat">
-              <div class="stat-num">Jung</div>
-              <div class="stat-lbl">&amp; Alt willkommen</div>
-            </div>
-            <div class="stat">
-              <div class="stat-num">U4</div>
-              <div class="stat-lbl">direkt vor der Tür</div>
-            </div>
-          </div>
         </div>
         <div class="about-image-wrap reveal">
           <img
@@ -922,7 +1064,36 @@
     </div>
   </section>
 
+  <!-- ── STATS BLOCK ──────────────────────────── -->
+  <div style="padding: 3rem 0;">
+    <div class="stats-block reveal">
+      <div class="stats-grid">
+        <div class="sblock">
+          <div class="sblock-num">25+</div>
+          <div class="sblock-label">Jahre in Frankfurt</div>
+          <div class="sblock-sub">Seit 1999</div>
+        </div>
+        <div class="sblock">
+          <div class="sblock-num">2</div>
+          <div class="sblock-label">Biergärten im Sommer</div>
+          <div class="sblock-sub">Bornheimer Luft</div>
+        </div>
+        <div class="sblock">
+          <div class="sblock-num">4,5★</div>
+          <div class="sblock-label">Google-Bewertung</div>
+          <div class="sblock-sub">Von echten Gästen</div>
+        </div>
+        <div class="sblock">
+          <div class="sblock-num">U4</div>
+          <div class="sblock-label">Direkt vor der Tür</div>
+          <div class="sblock-sub">Bornheim Mitte</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── SPEISEKARTE ────────────────────────────── -->
+  <div style="padding: 3rem 0;">
   <section class="menu" id="menu">
     <div class="container">
       <div class="menu-header">
@@ -988,6 +1159,8 @@
       </div>
     </div>
   </section>
+
+  </div><!-- /menu wrapper -->
 
   <!-- ── GETRÄNKE ───────────────────────────────── -->
   <section class="drinks" id="drinks">
@@ -1069,45 +1242,26 @@
   </div>
 
   <!-- ── RESERVIERUNG ───────────────────────────── -->
-  <section class="reserve" id="reserve">
-    <div class="container">
-      <div class="reserve-inner">
-        <span class="section-eyebrow">Reservieren</span>
-        <div class="divider"></div>
-        <h2 class="section-title light reveal">Sicher dir deinen Tisch</h2>
-        <p class="reveal">
-          Telefonisch erreichbar Montag bis Freitag ab 16:30 Uhr,
-          samstags und sonntags ab 10:30 Uhr. Für größere Gruppen
-          gerne auch per E-Mail — bitte immer mit Rückrufnummer.
-        </p>
-        <div class="reserve-cards reveal">
-          <a href="tel:06994506611" class="reserve-card">
-            <div class="reserve-card-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2.5 6.5C2.5 14.5 9.5 21.5 17.5 21.5l2-4.5-3.5-1.5-1.5 2c-2.5-1-5-3.5-6-6l2-1.5L9.5 7 5 5 2.5 6.5z"/>
-              </svg>
-            </div>
-            <div>
-              <span class="reserve-label">Telefon</span>
-              <span class="reserve-value">069 – 945 066 11</span>
-            </div>
-          </a>
-          <a href="mailto:info@schoene-berger.de" class="reserve-card">
-            <div class="reserve-card-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <polyline points="2,4 12,13 22,4"/>
-              </svg>
-            </div>
-            <div>
-              <span class="reserve-label">E-Mail · Gruppen</span>
-              <span class="reserve-value">info@schoene-berger.de</span>
-            </div>
-          </a>
-        </div>
+  <div style="padding: 3rem 0;" id="reserve">
+    <div class="cta-block reveal">
+      <span class="section-eyebrow" style="position:relative;z-index:1;display:block;margin-bottom:1.5rem">Tisch reservieren</span>
+      <h2 class="cta-h">
+        Dein Abend<br>im <em>Schöni.</em>
+      </h2>
+      <p class="cta-sub">
+        Telefonisch Mo–Fr ab 16:30, Sa &amp; So ab 10:30 Uhr.
+        Größere Gruppen gerne per E-Mail.
+      </p>
+      <div class="cta-actions">
+        <a href="tel:06994506611" class="btn-primary" style="font-size:1rem;padding:1.1rem 2.8rem">
+          📞 &nbsp;069 – 945 066 11
+        </a>
+        <a href="mailto:info@schoene-berger.de" class="btn-outline">
+          ✉ &nbsp;Per E-Mail anfragen
+        </a>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- ── ÖFFNUNGSZEITEN ─────────────────────────── -->
   <section class="hours" id="hours">
@@ -1237,7 +1391,7 @@
   </footer>
 
   <script>
-    const { animate, inView } = Motion;
+    const { animate, scroll, inView } = Motion;
 
     // ── Nav scroll ─────────────────────────────────
     const navbar = document.getElementById('navbar');
@@ -1274,6 +1428,14 @@
       }, { passive: true });
     }
 
+    // ── Hero scroll parallax ─────────────────────
+    const heroEl = document.querySelector('.hero');
+    if (heroEl) {
+      scroll(animate('#heroEyebrow', { y: [0, -20] }), { target: heroEl, offset: ['start start', 'end start'] });
+      scroll(animate('#heroTitle',   { y: [0, -40] }), { target: heroEl, offset: ['start start', 'end start'] });
+      scroll(animate('#heroSubtitle',{ y: [0, -25] }), { target: heroEl, offset: ['start start', 'end start'] });
+    }
+
     // ── Reveal on scroll ───────────────────────────
     document.querySelectorAll('.reveal').forEach(el => {
       inView(el, () => {
@@ -1282,6 +1444,42 @@
           { duration: 0.75, easing: [0.25, 0.46, 0.45, 0.94] }
         );
       }, { margin: '-8% 0px' });
+    });
+
+    // ── Menu cards stagger ─────────────────────────
+    document.querySelectorAll('.menu-card').forEach((card, i) => {
+      inView(card, () => {
+        animate(card, { opacity: [0, 1], y: [32, 0], scale: [0.97, 1] }, {
+          duration: 0.55, delay: i * 0.1, easing: [0.22, 1, 0.36, 1]
+        });
+      }, { margin: '-5% 0px' });
+    });
+
+    // ── Stats blocks stagger ───────────────────────
+    document.querySelectorAll('.sblock').forEach((el, i) => {
+      inView(el, () => {
+        animate(el, { opacity: [0, 1], y: [20, 0] }, {
+          duration: 0.5, delay: i * 0.1, easing: [0.22, 1, 0.36, 1]
+        });
+      }, { margin: '-5% 0px' });
+    });
+
+    // ── Drink items stagger ────────────────────────
+    document.querySelectorAll('.drink-item').forEach((el, i) => {
+      inView(el, () => {
+        animate(el, { opacity: [0, 1], x: [-18, 0] }, {
+          duration: 0.45, delay: i * 0.07, easing: [0.22, 1, 0.36, 1]
+        });
+      }, { margin: '-5% 0px' });
+    });
+
+    // ── Hours cards stagger ────────────────────────
+    document.querySelectorAll('.hours-card').forEach((el, i) => {
+      inView(el, () => {
+        animate(el, { opacity: [0, 1], y: [24, 0] }, {
+          duration: 0.5, delay: i * 0.12, easing: [0.22, 1, 0.36, 1]
+        });
+      }, { margin: '-5% 0px' });
     });
   </script>
 </body>
