@@ -384,12 +384,12 @@
         .c-text { font-size: 14px; line-height: 1.75; color: rgba(240,232,213,0.42); }
 
         /* ── MENU ── */
-        .section { padding: 28px 24px; }
+        .section { padding: 20px 24px; }
 
-        @media (min-width: 900px) { .section { padding: 28px 56px; } }
+        @media (min-width: 900px) { .section { padding: 16px 56px; } }
 
         .section-head {
-            display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+            display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;
         }
 
         @media (min-width: 700px) {
@@ -451,8 +451,8 @@
             .pcard { width: auto; max-width: none; }
             .carousel-dots { display: none; }
         }
-        @media (min-width: 900px) { .pizza-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-        @media (min-width: 1280px) { .pizza-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+        @media (min-width: 900px) { .pizza-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+        @media (min-width: 1280px) { .pizza-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
 
         .pcard {
             background: var(--surface);
@@ -485,20 +485,20 @@
             filter: saturate(1.4) brightness(1.12) contrast(1.07);
         }
 
-        .pcard-body { padding: 0 16px 16px; }
+        .pcard-body { padding: 0 12px 12px; }
 
         .pcard-tag {
             font-size: 10px; font-weight: 700; letter-spacing: 2px;
-            text-transform: uppercase; color: var(--terra); margin-bottom: 6px;
+            text-transform: uppercase; color: var(--terra); margin-bottom: 4px;
         }
 
         .pcard-name {
             font-family: 'Cormorant Garamond', serif;
             font-size: 24px; font-weight: 500; color: var(--dark);
-            margin-bottom: 7px; line-height: 1.2;
+            margin-bottom: 4px; line-height: 1.2;
         }
 
-        .pcard-desc { font-size: 13px; line-height: 1.65; color: var(--muted); margin-bottom: 18px; }
+        .pcard-desc { font-size: 13px; line-height: 1.55; color: var(--muted); margin-bottom: 10px; }
 
         .pcard-foot { display: flex; justify-content: space-between; align-items: center; }
         .pcard-price { font-size: 19px; font-weight: 600; color: var(--dark); }
