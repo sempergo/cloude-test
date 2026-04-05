@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blanca Coffee — Specialty Coffee & Tee in Frankfurt Bornheim</title>
+  <meta name="description" content="Blanca Coffee in Frankfurt Bornheim: Specialty Coffee, hausgemachter Tee und süße Momente. Deine Auszeit im Herzen von Bornheim. Täglich ab 9 Uhr.">
+  <meta property="og:title" content="Blanca Coffee — Frankfurt Bornheim">
+  <meta property="og:description" content="Specialty Coffee, Tee & süße Momente mitten in Bornheim. Täglich ab 9 Uhr geöffnet.">
+  <meta property="og:image" content="https://blanca-coffee.de/wp-content/uploads/2024/09/Interior-09.png">
+  <meta property="og:url" content="https://sempergo.github.io/semp-studios/clients/blanca-coffee/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="https://blanca-coffee.de/wp-content/uploads/2024/05/Blanca-Coffee-alle-Logo-07-150x150.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
+  <script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
+
+  <style>
+    /* ── TOKENS ─────────────────────────────── */
+    :root {
+      --cream:      #FAF6EE;
+      --beige:      #F0E2C6;
+      --beige-mid:  #DEC9A4;
+      --tan:        #C4A882;
+      --terra:      #B8714E;
+      --terra-lt:   #D4956E;
+      --sage:       #8A9B7A;
+      --dark:       #26190F;
+      --dark-mid:   #4A3820;
+      --muted:      #8A7260;
+      --white:      #FDFCF8;
+
+      --f-display: 'Cormorant Garamond', Georgia, serif;
+      --f-body:    'DM Sans', system-ui, sans-serif;
+
+      --r-sm:   12px;
+      --r-md:   20px;
+      --r-lg:   32px;
+      --r-xl:   48px;
+      --r-full: 9999px;
+    }
+
+    /* ── RESET ───────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--f-body);
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── GRAIN ───────────────────────────────── */
+    .grain {
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.6;
+    }
+
+    /* ── TYPE ────────────────────────────────── */
+    .eyebrow {
+      font-family: var(--f-body);
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .display {
+      font-family: var(--f-display);
+      font-size: clamp(52px, 9vw, 92px);
+      font-weight: 300; line-height: 1.0;
+      letter-spacing: -.02em;
+    }
+    .display em { font-style: italic; color: var(--terra); }
+    .h-lg {
+      font-family: var(--f-display);
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 400; line-height: 1.12;
+    }
+    .h-lg em { font-style: italic; }
+    .body-lg { font-size: 17px; font-weight: 300; line-height: 1.8; color: var(--muted); }
+
+    /* ── BUTTONS ─────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; border-radius: var(--r-full);
+      font-family: var(--f-body); font-size: 14px; font-weight: 500;
+      letter-spacing: .03em; cursor: pointer; border: none;
+      transition: all .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .btn-dark { background: var(--dark); color: var(--cream); }
+    .btn-dark:hover { background: var(--terra); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(184,113,78,.3); }
+    .btn-outline { background: transparent; color: var(--dark); border: 1.5px solid var(--dark); }
+    .btn-outline:hover { background: var(--dark); color: var(--cream); transform: translateY(-2px); }
+    .btn-light { background: var(--cream); color: var(--dark); }
+    .btn-light:hover { background: var(--white); transform: translateY(-2px); }
+
+    /* ── NAV ─────────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 22px 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: all .4s ease;
+    }
+    .nav.scrolled {
+      background: rgba(250,246,238,.94);
+      backdrop-filter: blur(14px) saturate(1.5);
+      padding: 14px 52px;
+      border-bottom: 1px solid rgba(196,171,140,.15);
+      box-shadow: 0 1px 20px rgba(38,25,15,.04);
+    }
+    .nav-logo img { height: 34px; width: auto; }
+    .nav-links {
+      display: flex; align-items: center; gap: 36px; list-style: none;
+    }
+    .nav-links a { font-size: 14px; color: var(--dark); opacity: .65; transition: opacity .2s; }
+    .nav-links a:hover { opacity: 1; }
+    .nav-burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-burger span { display: block; width: 22px; height: 1.5px; background: var(--dark); transition: all .3s; }
+
+    @media (max-width: 800px) {
+      .nav { padding: 18px 22px; }
+      .nav.scrolled { padding: 12px 22px; }
+      .nav-links, .nav-cta-btn { display: none; }
+      .nav-burger { display: flex; }
+    }
+
+    /* ── HERO ────────────────────────────────── */
+    .hero {
+      min-height: 100dvh; padding-top: 96px;
+      display: grid; grid-template-columns: 55% 45%;
+      align-items: center; position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 90% 80% at 65% 30%, #EDD8B0 0%, var(--cream) 65%);
+    }
+    .hero-orb {
+      position: absolute; top: -15%; right: -8%; width: 60%; height: 90%;
+      background: var(--beige); opacity: .45;
+      border-radius: 58% 42% 70% 30% / 48% 62% 38% 52%;
+    }
+    .hero-orb-2 {
+      position: absolute; bottom: -10%; left: 5%; width: 28%; height: 50%;
+      background: var(--sage); opacity: .08;
+      border-radius: 50% 60% 40% 70% / 60% 40% 70% 40%;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 64px 56px 64px 80px;
+    }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(240,226,198,.7); backdrop-filter: blur(8px);
+      border: 1px solid rgba(196,168,130,.3);
+      border-radius: var(--r-full); padding: 7px 18px; margin-bottom: 36px;
+    }
+    .hero-pill .live { width: 7px; height: 7px; border-radius: 50%; background: var(--terra); animation: pulse 2s infinite; }
+    .hero-pill span { font-size: 12px; font-weight: 500; letter-spacing: .07em; color: var(--dark-mid); }
+    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(1.3); } }
+
+    .hero-title { margin-bottom: 24px; }
+    .hero-sub { max-width: 400px; margin-bottom: 44px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .hero-visual {
+      position: relative; z-index: 2;
+      padding: 80px 80px 80px 32px;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .hero-card {
+      position: relative; width: 100%; max-width: 420px;
+    }
+    .hero-img-main {
+      width: 100%; height: 520px; object-fit: cover;
+      border-radius: 40px;
+      box-shadow: 0 40px 80px rgba(38,25,15,.2), 0 12px 32px rgba(38,25,15,.1);
+    }
+    .hero-badge {
+      position: absolute; bottom: -22px; left: -22px;
+      background: var(--white); border-radius: var(--r-md);
+      padding: 16px 20px;
+      box-shadow: 0 8px 32px rgba(38,25,15,.12);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .hero-badge .stars { font-size: 15px; letter-spacing: 2px; color: #E8A020; }
+    .hero-badge-text { display: flex; flex-direction: column; }
+    .hero-badge-text strong { font-size: 15px; font-weight: 600; }
+    .hero-badge-text span { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .hero-float {
+      position: absolute; top: -28px; right: -28px;
+      width: 130px; height: 130px; border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--white);
+      box-shadow: 0 8px 28px rgba(38,25,15,.18);
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; text-align: center; padding-top: 80px; }
+      .hero-content { padding: 56px 22px 28px; }
+      .hero-sub { margin: 0 auto 36px; }
+      .hero-actions { justify-content: center; }
+      .hero-visual { padding: 0 22px 64px; }
+      .hero-img-main { height: 340px; }
+      .hero-float { display: none; }
+      .hero-orb { width: 90%; top: 45%; opacity: .25; }
+      .hero-pill { margin: 0 auto 28px; }
+    }
+
+    /* ── MARQUEE ─────────────────────────────── */
+    .marquee-wrap { background: var(--dark); padding: 15px 0; overflow: hidden; }
+    .marquee-track {
+      display: flex; white-space: nowrap;
+      animation: scroll-left 24s linear infinite;
+    }
+    .marquee-item {
+      display: inline-flex; align-items: center; gap: 18px;
+      padding: 0 32px; color: rgba(240,226,198,.8);
+      font-size: 12px; font-weight: 400; letter-spacing: .14em; text-transform: uppercase;
+    }
+    .m-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--terra); flex-shrink: 0; }
+    @keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── SECTIONS ────────────────────────────── */
+    .section-pad { padding: 100px 80px; }
+    @media (max-width: 768px) { .section-pad { padding: 72px 22px; } }
+
+    /* ── ABOUT ───────────────────────────────── */
+    .about { background: var(--cream); }
+    .about-grid {
+      max-width: 1240px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .about-text .eyebrow { margin-bottom: 20px; display: block; }
+    .about-text h2 { margin-bottom: 24px; }
+    .about-text p { margin-bottom: 16px; }
+    .about-text .btn { margin-top: 12px; }
+    .about-imgs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .about-img { border-radius: var(--r-lg); overflow: hidden; }
+    .about-img img { width: 100%; height: 260px; object-fit: cover; transition: transform .7s ease; }
+    .about-img:hover img { transform: scale(1.04); }
+    .about-img:nth-child(odd) { margin-top: 44px; }
+
+    @media (max-width: 860px) {
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-img:nth-child(odd) { margin-top: 0; }
+      .about-img img { height: 200px; }
+    }
+
+    /* ── DRINKS ──────────────────────────────── */
+    .drinks { background: var(--beige); }
+    .drinks-inner { max-width: 1240px; margin: 0 auto; }
+    .drinks-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 60px;
+    }
+    .drinks-head .left .eyebrow { display: block; margin-bottom: 12px; }
+    .drinks-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+
+    .drink-card {
+      background: var(--cream); border-radius: var(--r-lg);
+      padding: 36px 30px;
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s ease;
+    }
+    .drink-card:hover { transform: translateY(-7px); box-shadow: 0 20px 50px rgba(38,25,15,.1); }
+    .d-icon { font-size: 38px; margin-bottom: 22px; display: block; }
+    .drink-card h3 { font-family: var(--f-display); font-size: 30px; font-weight: 400; margin-bottom: 12px; }
+    .drink-card p { font-size: 15px; color: var(--muted); line-height: 1.65; margin-bottom: 22px; }
+    .d-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .d-tag {
+      background: var(--beige); border-radius: var(--r-full);
+      padding: 4px 13px; font-size: 12px; color: var(--dark-mid);
+    }
+
+    @media (max-width: 860px) {
+      .drinks-head { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .drinks-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── GALLERY ─────────────────────────────── */
+    .gallery { background: var(--cream); }
+    .gallery-inner { max-width: 1240px; margin: 0 auto; }
+    .gallery-head { text-align: center; margin-bottom: 56px; }
+    .gallery-head .eyebrow { display: block; margin-bottom: 12px; }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .g-item { border-radius: var(--r-lg); overflow: hidden; position: relative; }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s ease; }
+    .g-item:hover img { transform: scale(1.04); }
+    .g-item:nth-child(1) { grid-column: 1/6; height: 380px; }
+    .g-item:nth-child(2) { grid-column: 6/10; height: 380px; }
+    .g-item:nth-child(3) { grid-column: 10/13; height: 380px; }
+    .g-item:nth-child(4) { grid-column: 1/5; height: 290px; }
+    .g-item:nth-child(5) { grid-column: 5/13; height: 290px; }
+
+    @media (max-width: 860px) {
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .g-item { height: 210px !important; grid-column: auto !important; }
+      .g-item:nth-child(1) { grid-column: 1/-1 !important; height: 260px !important; }
+    }
+
+    /* ── QUOTE ───────────────────────────────── */
+    .quote-section {
+      background: var(--dark); padding: 100px 80px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .quote-bg {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      font-family: var(--f-display);
+      font-size: clamp(100px, 18vw, 180px); font-weight: 300;
+      color: rgba(255,255,255,.025); white-space: nowrap; pointer-events: none;
+      user-select: none;
+    }
+    .quote-inner { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+    .q-stars { font-size: 18px; letter-spacing: 5px; color: #E8A020; display: block; margin-bottom: 36px; }
+    .quote-inner blockquote {
+      font-family: var(--f-display);
+      font-size: clamp(22px, 3.8vw, 36px); font-weight: 300; font-style: italic;
+      color: var(--beige); line-height: 1.45; margin-bottom: 32px;
+    }
+    .q-source { font-size: 13px; color: var(--muted); letter-spacing: .08em; }
+
+    @media (max-width: 768px) { .quote-section { padding: 80px 22px; } }
+
+    /* ── MENU CTA ────────────────────────────── */
+    .menu-cta { background: var(--beige); }
+    .menu-cta-grid {
+      max-width: 1240px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .menu-text .eyebrow { display: block; margin-bottom: 18px; }
+    .menu-text h2 { margin-bottom: 20px; }
+    .menu-text p { color: var(--muted); margin-bottom: 36px; }
+    .menu-img { border-radius: var(--r-xl); overflow: hidden; }
+    .menu-img img { width: 100%; height: 420px; object-fit: cover; }
+
+    @media (max-width: 860px) {
+      .menu-cta-grid { grid-template-columns: 1fr; gap: 44px; }
+      .menu-img img { height: 270px; }
+    }
+
+    /* ── VISIT ───────────────────────────────── */
+    .visit { background: var(--cream); }
+    .visit-grid {
+      max-width: 1240px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start;
+    }
+    .visit-left .eyebrow { display: block; margin-bottom: 18px; }
+    .visit-left h2 { margin-bottom: 36px; }
+    .visit-items { display: flex; flex-direction: column; gap: 22px; }
+    .v-item { display: flex; gap: 16px; align-items: flex-start; }
+    .v-icon {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: var(--beige); border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .v-text { display: flex; flex-direction: column; gap: 3px; }
+    .v-text strong { font-size: 15px; font-weight: 500; }
+    .v-text span, .v-text a { font-size: 14px; color: var(--muted); }
+    .v-text a:hover { color: var(--terra); }
+
+    .hours-box { background: var(--beige); border-radius: var(--r-lg); padding: 28px 30px; margin-top: 28px; }
+    .h-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 11px 0; border-bottom: 1px solid rgba(196,168,130,.35);
+    }
+    .h-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .h-row .day { font-size: 14px; color: var(--muted); }
+    .h-row .time { font-size: 14px; font-weight: 500; }
+
+    .visit-map { border-radius: var(--r-xl); overflow: hidden; height: 460px; }
+    .visit-map iframe { width: 100%; height: 100%; border: 0; }
+
+    @media (max-width: 860px) {
+      .visit-grid { grid-template-columns: 1fr; gap: 44px; }
+      .visit-map { height: 300px; }
+    }
+
+    /* ── INSTAGRAM ───────────────────────────── */
+    .insta { background: var(--dark); padding: 80px; }
+    .insta-inner { max-width: 1240px; margin: 0 auto; }
+    .insta-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 36px;
+    }
+    .insta-head h2 { font-family: var(--f-display); font-size: 28px; font-weight: 400; color: var(--beige); }
+    .insta-link { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 8px; transition: color .2s; }
+    .insta-link:hover { color: var(--beige); }
+    .insta-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    .insta-item { border-radius: var(--r-md); overflow: hidden; aspect-ratio: 1; position: relative; }
+    .insta-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .insta-item::after {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(38,25,15,0); transition: background .3s;
+    }
+    .insta-item:hover img { transform: scale(1.06); }
+    .insta-item:hover::after { background: rgba(38,25,15,.2); }
+
+    @media (max-width: 768px) {
+      .insta { padding: 56px 22px; }
+      .insta-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── FOOTER ──────────────────────────────── */
+    .footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(255,255,255,.05);
+      padding: 64px 80px 40px;
+    }
+    .footer-inner { max-width: 1240px; margin: 0 auto; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 60px; padding-bottom: 44px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .footer-brand img { height: 30px; margin-bottom: 16px; filter: brightness(0) invert(1) opacity(.75); }
+    .footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.65; max-width: 250px; }
+    .f-col h4 {
+      font-size: 10px; font-weight: 500; letter-spacing: .18em;
+      text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 18px;
+    }
+    .f-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .f-col ul li a { font-size: 14px; color: var(--muted); transition: color .2s; }
+    .f-col ul li a:hover { color: var(--beige); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 24px;
+    }
+    .footer-bottom p { font-size: 12px; color: rgba(255,255,255,.18); }
+    .f-social { display: flex; gap: 10px; }
+    .s-btn {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,.06); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: background .2s;
+    }
+    .s-btn:hover { background: rgba(255,255,255,.12); }
+
+    @media (max-width: 768px) {
+      .footer { padding: 52px 22px 36px; }
+      .footer-top { grid-template-columns: 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+
+    /* ── PHONE FLOAT ─────────────────────────── */
+    .float-call {
+      position: fixed; bottom: 28px; right: 28px;
+      width: 54px; height: 54px; border-radius: 50%;
+      background: var(--terra); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; z-index: 50;
+      box-shadow: 0 4px 20px rgba(184,113,78,.45);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s;
+    }
+    .float-call:hover { transform: scale(1.12); box-shadow: 0 8px 32px rgba(184,113,78,.55); }
+
+    /* ── ANIM INIT STATES ────────────────────── */
+    .reveal        { opacity: 0; transform: translateY(28px); }
+    .reveal-left   { opacity: 0; transform: translateX(-28px); }
+    .reveal-right  { opacity: 0; transform: translateX(28px); }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">
+      <img src="https://blanca-coffee.de/wp-content/uploads/2024/05/Blanca-Coffee-alle-Logo-01.png" alt="Blanca Coffee">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">Über uns</a></li>
+      <li><a href="#drinks">Getränke</a></li>
+      <li><a href="#gallery">Das Café</a></li>
+      <li><a href="#visit">Besuchen</a></li>
+    </ul>
+    <div class="nav-cta-btn">
+      <a href="https://blanca-coffee.de/wp-content/uploads/Blanca-Karte_25.pdf" target="_blank" class="btn btn-dark">Menü ansehen</a>
+    </div>
+    <div class="nav-burger" aria-label="Menü">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-orb"></div>
+    <div class="hero-orb-2"></div>
+
+    <div class="hero-content">
+      <div class="hero-pill reveal">
+        <div class="live"></div>
+        <span>Frankfurt · Bornheim</span>
+      </div>
+      <h1 class="display hero-title reveal">
+        Dein Moment.<br>
+        <em>Deine Auszeit.</em>
+      </h1>
+      <p class="body-lg hero-sub reveal">
+        Specialty Coffee, hausgemachter Tee und süße Momente — in einem Café, das sich anfühlt wie nach Hause kommen.
+      </p>
+      <div class="hero-actions reveal">
+        <a href="https://blanca-coffee.de/wp-content/uploads/Blanca-Karte_25.pdf" target="_blank" class="btn btn-dark">Menü ansehen →</a>
+        <a href="#visit" class="btn btn-outline">So findest du uns</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-card reveal-right">
+        <img
+          src="https://blanca-coffee.de/wp-content/uploads/2024/09/Interior-09.png"
+          alt="Blanca Coffee — Einblick ins Café"
+          class="hero-img-main"
+          loading="eager">
+        <div class="hero-badge">
+          <span class="stars">★★★★★</span>
+          <div class="hero-badge-text">
+            <strong>4,5 von 5</strong>
+            <span>Google Bewertungen</span>
+          </div>
+        </div>
+        <img
+          src="https://blanca-coffee.de/wp-content/uploads/2024/09/Blanca-Kaffee-01.png"
+          alt="Blanca Coffee"
+          class="hero-float"
+          loading="eager">
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item">☕ Specialty Coffee <span class="m-dot"></span></span>
+      <span class="marquee-item">🍵 Hausgemachter Tee <span class="m-dot"></span></span>
+      <span class="marquee-item">🧁 Süße Kleinigkeiten <span class="m-dot"></span></span>
+      <span class="marquee-item">🌿 Oat · Soy · Laktosefrei <span class="m-dot"></span></span>
+      <span class="marquee-item">📍 Berger Str. 150 <span class="m-dot"></span></span>
+      <span class="marquee-item">⏰ Täglich ab 9 Uhr <span class="m-dot"></span></span>
+      <span class="marquee-item">⭐ 4,5 Google Stars <span class="m-dot"></span></span>
+      <span class="marquee-item">☕ Specialty Coffee <span class="m-dot"></span></span>
+      <span class="marquee-item">🍵 Hausgemachter Tee <span class="m-dot"></span></span>
+      <span class="marquee-item">🧁 Süße Kleinigkeiten <span class="m-dot"></span></span>
+      <span class="marquee-item">🌿 Oat · Soy · Laktosefrei <span class="m-dot"></span></span>
+      <span class="marquee-item">📍 Berger Str. 150 <span class="m-dot"></span></span>
+      <span class="marquee-item">⏰ Täglich ab 9 Uhr <span class="m-dot"></span></span>
+      <span class="marquee-item">⭐ 4,5 Google Stars <span class="m-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about section-pad" id="about">
+    <div class="about-grid">
+      <div class="about-text">
+        <span class="eyebrow reveal">Das sind wir</span>
+        <h2 class="h-lg reveal">Eine Oase der Ruhe<br><em>in Bornheim</em></h2>
+        <p class="body-lg reveal">
+          Blanca ist kein gewöhnliches Café. Es ist der Moment, in dem du die Tür öffnest und die Hektik der Stadt hinter dir lässt — der Duft von frisch gemahlenem Kaffee, weiches Licht, und ein Platz, der sich sofort wie deiner anfühlt.
+        </p>
+        <p class="body-lg reveal">
+          Im pulsierenden Herzen von Frankfurt Bornheim haben wir einen Raum geschaffen, der zum Verweilen einlädt. Für Leser, für Gespräche, für stille Momente.
+        </p>
+        <a href="#visit" class="btn btn-dark reveal">Komm vorbei</a>
+      </div>
+      <div class="about-imgs reveal-right">
+        <div class="about-img">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2024/06/b-03.png" alt="Blanca Coffee" loading="lazy">
+        </div>
+        <div class="about-img">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2024/09/Interior-07.png" alt="Blanca Coffee Interieur" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRINKS -->
+  <section class="drinks section-pad" id="drinks">
+    <div class="drinks-inner">
+      <div class="drinks-head">
+        <div class="left">
+          <span class="eyebrow reveal">Die Karte</span>
+          <h2 class="h-lg reveal">Für jeden<br>Geschmack.</h2>
+        </div>
+        <a href="https://blanca-coffee.de/wp-content/uploads/Blanca-Karte_25.pdf" target="_blank" class="btn btn-dark reveal">Vollständige Karte →</a>
+      </div>
+      <div class="drinks-grid">
+        <div class="drink-card reveal">
+          <span class="d-icon">☕</span>
+          <h3>Kaffee</h3>
+          <p>Sorgfältig ausgewählte Bohnen, frisch für dich zubereitet — auf Wunsch mit Soja-, Hafer- oder laktosefreier Milch.</p>
+          <div class="d-tags">
+            <span class="d-tag">Espresso</span>
+            <span class="d-tag">Cappuccino</span>
+            <span class="d-tag">Americano</span>
+            <span class="d-tag">Latte</span>
+          </div>
+        </div>
+        <div class="drink-card reveal" style="transition-delay:.1s">
+          <span class="d-icon">🍵</span>
+          <h3>Tee</h3>
+          <p>Nana Minztee mit Zimtstangen & Kardamom, Ingwer-Zitronen-Tee mit Honig, oder unsere hausgemachte Vitamin C Bombe.</p>
+          <div class="d-tags">
+            <span class="d-tag">Nana Minze</span>
+            <span class="d-tag">Ingwer-Zitrone</span>
+            <span class="d-tag">Vitamin C</span>
+          </div>
+        </div>
+        <div class="drink-card reveal" style="transition-delay:.2s">
+          <span class="d-icon">🧊</span>
+          <h3>Eisgenuss</h3>
+          <p>Ice-Americano, Ice-Cappuccino, Ice-Chai Latte Vanille und Ice-Matcha Latte — Erfrischung mit Hingabe zubereitet.</p>
+          <div class="d-tags">
+            <span class="d-tag">Ice Americano</span>
+            <span class="d-tag">Ice Matcha</span>
+            <span class="d-tag">Chai Latte</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery section-pad" id="gallery">
+    <div class="gallery-inner">
+      <div class="gallery-head">
+        <span class="eyebrow reveal">Das Café</span>
+        <h2 class="h-lg reveal">Komm rein,<br><em>fühl dich wohl.</em></h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="g-item reveal">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2024/05/Website_Blanca-Coffee-02-1024x587.png" alt="Blanca Coffee" loading="lazy">
+        </div>
+        <div class="g-item reveal">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2024/09/Interior-09.png" alt="Blanca Coffee Interior" loading="lazy">
+        </div>
+        <div class="g-item reveal">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2024/06/b-07.png" alt="Blanca Coffee" loading="lazy">
+        </div>
+        <div class="g-item reveal">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2021/04/about-01-free-img.png" alt="Blanca Coffee" loading="lazy">
+        </div>
+        <div class="g-item reveal">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2024/09/Blanca-Kaffee-01.png" alt="Blanca Kaffee" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="quote-section">
+    <div class="quote-bg" aria-hidden="true">Blanca</div>
+    <div class="quote-inner">
+      <span class="q-stars reveal">★★★★★</span>
+      <blockquote class="reveal">
+        "Mein absoluter Lieblingsort in Frankfurt. Der Kaffee ist sensationell, die Atmosphäre wie eine Umarmung — man möchte gar nicht wieder gehen."
+      </blockquote>
+      <p class="q-source reveal">— Google Rezension · 4,5 ★ Durchschnitt</p>
+    </div>
+  </section>
+
+  <!-- MENU CTA -->
+  <section class="menu-cta section-pad">
+    <div class="menu-cta-grid">
+      <div class="menu-text reveal-left">
+        <span class="eyebrow">Die Karte</span>
+        <h2 class="h-lg">Was dich<br><em>erwartet.</em></h2>
+        <p class="body-lg">Von morgens bis abends — Kaffee, Tee, Eisgetränke und süße Begleiter für jeden Moment des Tages.</p>
+        <a href="https://blanca-coffee.de/wp-content/uploads/Blanca-Karte_25.pdf" target="_blank" class="btn btn-dark">Menü öffnen →</a>
+      </div>
+      <div class="menu-img reveal-right">
+        <img src="https://blanca-coffee.de/wp-content/uploads/2024/06/b-03.png" alt="Blanca Coffee Angebot" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- VISIT -->
+  <section class="visit section-pad" id="visit">
+    <div class="visit-grid">
+      <div class="visit-left">
+        <span class="eyebrow reveal">Besuch uns</span>
+        <h2 class="h-lg reveal">Wir sind für<br><em>dich da.</em></h2>
+
+        <div class="visit-items">
+          <div class="v-item reveal">
+            <div class="v-icon">📍</div>
+            <div class="v-text">
+              <strong>Adresse</strong>
+              <span>Berger Str. 150</span>
+              <span>60385 Frankfurt am Main · Bornheim</span>
+            </div>
+          </div>
+          <div class="v-item reveal">
+            <div class="v-icon">📞</div>
+            <div class="v-text">
+              <strong>Telefon</strong>
+              <a href="tel:06971168666">069 71168666</a>
+            </div>
+          </div>
+          <div class="v-item reveal">
+            <div class="v-icon">✉️</div>
+            <div class="v-text">
+              <strong>E-Mail</strong>
+              <a href="mailto:info@blanca-coffee.de">info@blanca-coffee.de</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hours-box reveal">
+          <div class="h-row">
+            <span class="day">Sonntag – Donnerstag</span>
+            <span class="time">9:00 – 19:00 Uhr</span>
+          </div>
+          <div class="h-row">
+            <span class="day">Freitag – Samstag</span>
+            <span class="time">9:00 – 20:00 Uhr</span>
+          </div>
+          <div class="h-row" style="padding-bottom:0;border:none;">
+            <span class="day" style="font-size:12px;font-style:italic;">Reservierungen leider nicht möglich</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="visit-map reveal-right">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2558.3672899066!2d8.701752976977624!3d50.12405797946099!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bd0fc2e6f127eb%3A0xc06b9b98cc301b9e!2sBlanca%20Coffee!5e0!3m2!1sde!2sde!4v1709999999999!5m2!1sde!2sde"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          title="Blanca Coffee auf Google Maps">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM -->
+  <section class="insta">
+    <div class="insta-inner">
+      <div class="insta-head">
+        <h2 class="reveal">Follow the Vibe</h2>
+        <a href="https://www.instagram.com/blanca_coffee_frankfurt/" target="_blank" class="insta-link reveal">
+          📸 @blanca_coffee_frankfurt
+        </a>
+      </div>
+      <div class="insta-grid">
+        <a href="https://www.instagram.com/blanca_coffee_frankfurt/" target="_blank" class="insta-item reveal">
+          <img src="https://blanca-coffee.de/wp-content/uploads/inavii-social-feed/18056976629260213-m.jpg" alt="Blanca Coffee Instagram" loading="lazy">
+        </a>
+        <a href="https://www.instagram.com/blanca_coffee_frankfurt/" target="_blank" class="insta-item reveal" style="transition-delay:.08s">
+          <img src="https://blanca-coffee.de/wp-content/uploads/inavii-social-feed/18101251573570144-m.jpg" alt="Blanca Coffee Instagram" loading="lazy">
+        </a>
+        <a href="https://www.instagram.com/blanca_coffee_frankfurt/" target="_blank" class="insta-item reveal" style="transition-delay:.16s">
+          <img src="https://blanca-coffee.de/wp-content/uploads/inavii-social-feed/17994470633838174-m.jpg" alt="Blanca Coffee Instagram" loading="lazy">
+        </a>
+        <a href="https://www.instagram.com/blanca_coffee_frankfurt/" target="_blank" class="insta-item reveal" style="transition-delay:.24s">
+          <img src="https://blanca-coffee.de/wp-content/uploads/inavii-social-feed/18061895804612338-m.jpg" alt="Blanca Coffee Instagram" loading="lazy">
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="https://blanca-coffee.de/wp-content/uploads/2024/05/Blanca-Coffee-alle-Logo-01.png" alt="Blanca Coffee">
+          <p>Ein Café im Herzen von Frankfurt Bornheim — für alle, die kurz durchatmen wollen.</p>
+        </div>
+        <div class="f-col">
+          <h4>Besuchen</h4>
+          <ul>
+            <li><a href="#">Berger Str. 150</a></li>
+            <li><a href="#">60385 Frankfurt</a></li>
+            <li><a href="#">So–Do: 9–19 Uhr</a></li>
+            <li><a href="#">Fr–Sa: 9–20 Uhr</a></li>
+          </ul>
+        </div>
+        <div class="f-col">
+          <h4>Kontakt</h4>
+          <ul>
+            <li><a href="tel:06971168666">069 71168666</a></li>
+            <li><a href="mailto:info@blanca-coffee.de">info@blanca-coffee.de</a></li>
+            <li><a href="https://www.instagram.com/blanca_coffee_frankfurt/" target="_blank">Instagram</a></li>
+            <li><a href="https://blanca-coffee.de/wp-content/uploads/Blanca-Karte_25.pdf" target="_blank">Menü (PDF)</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Blanca Coffee Frankfurt · Berger Str. 150</p>
+        <div class="f-social">
+          <a href="https://www.instagram.com/blanca_coffee_frankfurt/" target="_blank" class="s-btn" title="Instagram">📸</a>
+          <a href="https://www.tiktok.com/discover/blanca-coffee-frankfurt" target="_blank" class="s-btn" title="TikTok">🎵</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING CALL -->
+  <a href="tel:06971168666" class="float-call" title="Jetzt anrufen">📞</a>
+
+  <script>
+    // ── Lenis Smooth Scroll
+    const lenis = new Lenis({ lerp: 0.075 });
+    function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    // ── Nav on scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    // ── Reveal animations (Motion.js)
+    const { animate, inView } = Motion;
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      inView(el, ({ target }) => {
+        const d = parseFloat(target.style.transitionDelay) || 0;
+        animate(target, { opacity: [0,1], y: [28,0] }, { duration: .75, delay: d, easing: [.22,1,.36,1] });
+      }, { amount: 0.15 });
+    });
+
+    document.querySelectorAll('.reveal-left').forEach(el => {
+      inView(el, ({ target }) => {
+        animate(target, { opacity: [0,1], x: [-28,0] }, { duration: .8, easing: [.22,1,.36,1] });
+      }, { amount: 0.15 });
+    });
+
+    document.querySelectorAll('.reveal-right').forEach(el => {
+      inView(el, ({ target }) => {
+        animate(target, { opacity: [0,1], x: [28,0] }, { duration: .8, easing: [.22,1,.36,1] });
+      }, { amount: 0.15 });
+    });
+
+    // ── Parallax: orbs on scroll
+    const orb = document.querySelector('.hero-orb');
+    lenis.on('scroll', ({ scroll }) => {
+      if (orb) orb.style.transform = `translateY(${scroll * 0.14}px)`;
+    });
+  </script>
+</body>
+</html>
