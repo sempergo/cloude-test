@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semp Studios – Advanced Websites. Affordable.</title>
+  <meta name="description" content="Professionelles Webdesign. 100% custom. Ab 990 €. In 2–3 Wochen live.">
+  <meta property="og:title" content="Semp Studios – Advanced Websites. Affordable.">
+  <meta property="og:description" content="Keine Templates. Keine Kompromisse. Websites die verkaufen.">
+  <meta property="og:image" content="https://sempergo.github.io/semp-studios/og.jpg">
+  <meta name="theme-color" content="#f4f2ed">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800;12..96,900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
+  <style>
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: auto; }
+    body {
+      background: #f4f2ed;
+      color: #0a0a0a;
+      font-family: 'Inter', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: none; }
+
+    /* ── Variables ── */
+    :root {
+      --bg: #f4f2ed;
+      --text: #0a0a0a;
+      --muted: #6b6560;
+      --surface: #e8e5df;
+      --border: rgba(10,10,10,0.1);
+      --green: #b8ff00;
+      --orange: #ff6b00;
+      --violet: #a855f7;
+      --cyan: #00e5ff;
+    }
+
+    /* ── Intro ── */
+    #intro {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #intro-logo {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(64px, 14vw, 160px);
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+
+    /* ── Custom Cursor ── */
+    #cursor-dot {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--text);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 38px; height: 38px;
+      border: 1.5px solid rgba(10,10,10,0.35);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+    }
+    @media (hover: none) {
+      #cursor-dot, #cursor-ring { display: none; }
+      body { cursor: auto; }
+      button, a { cursor: pointer; }
+    }
+
+    /* ── Guide Shape ── */
+    #guide-shape {
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 3;
+      border-radius: 50%;
+      background: var(--green);
+      opacity: 0;
+      will-change: transform, width, height, border-radius, background-color, opacity;
+    }
+
+    /* ── Navigation ── */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 48px;
+      transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+      border-bottom: 0.5px solid transparent;
+    }
+    #nav.scrolled {
+      background: rgba(244,242,237,0.9);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom-color: var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      position: relative;
+      z-index: 101;
+    }
+    .nav-links { display: flex; gap: 36px; align-items: center; }
+    .nav-links a {
+      font-size: 13px;
+      color: var(--muted);
+      transition: color 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      font-size: 13px;
+      font-weight: 500;
+      padding: 9px 22px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      transition: background 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .nav-cta:hover { background: #2a2a2a; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 8px;
+      z-index: 101;
+      position: relative;
+    }
+    .hamburger span {
+      width: 22px; height: 1.5px;
+      background: var(--text);
+      display: block;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* ── Mobile Menu ── */
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      clip-path: circle(0% at calc(100% - 40px) 40px);
+      transition: clip-path 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+      pointer-events: none;
+    }
+    #mobile-menu.open {
+      clip-path: circle(150% at calc(100% - 40px) 40px);
+      pointer-events: all;
+    }
+    #menu-close {
+      position: absolute;
+      top: 14px; right: 20px;
+      background: none; border: none;
+      font-size: 32px;
+      color: var(--text);
+      padding: 8px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .mobile-nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .mobile-link {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(44px, 11vw, 76px);
+      line-height: 1.15;
+      color: var(--text);
+      transition: opacity 0.2s;
+    }
+    .mobile-link:hover { opacity: 0.35; }
+    .mobile-wa {
+      margin-top: 40px;
+      font-size: 15px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+    }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 48px 88px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-inner { position: relative; z-index: 4; }
+    .hero-headline { margin-bottom: 52px; }
+    .hero-word-wrap {
+      overflow: hidden;
+      display: block;
+      perspective: 800px;
+    }
+    .hero-word {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(52px, 17vw, 248px);
+      letter-spacing: -0.03em;
+      line-height: 0.91;
+      display: block;
+    }
+    .hero-word.outlined {
+      -webkit-text-stroke: 2px var(--text);
+      color: transparent;
+    }
+    .hero-word.solid { color: var(--text); }
+    .accent-dot { color: var(--green); }
+    .hero-sub {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .hero-tagline {
+      font-size: clamp(15px, 1.8vw, 19px);
+      color: var(--muted);
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 14px 28px;
+      background: var(--text);
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+      border: none;
+    }
+    .btn-primary:hover { background: #2a2a2a; transform: translateY(-1px); }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 40px; right: 48px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      opacity: 0;
+    }
+
+    /* ── Ticker ── */
+    .ticker {
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
+      overflow: hidden;
+      padding: 14px 0;
+      position: relative;
+      z-index: 4;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      white-space: nowrap;
+      animation: ticker-scroll 30s linear infinite;
+    }
+    .ticker-track span {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .ticker-track .tdot { color: var(--green); font-size: 7px; }
+    @keyframes ticker-scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ── Statement ── */
+    #statement {
+      padding: 130px 48px 150px;
+      position: relative;
+      z-index: 4;
+    }
+    .statement-line {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(28px, 4.8vw, 68px);
+      letter-spacing: -0.02em;
+      line-height: 1.12;
+      opacity: 0;
+    }
+    .statement-sub {
+      font-size: clamp(16px, 1.8vw, 20px);
+      color: var(--muted);
+      max-width: 620px;
+      line-height: 1.65;
+      margin-top: 52px;
+      opacity: 0;
+    }
+
+    /* ── Process ── */
+    #prozess {
+      overflow: hidden;
+      position: relative;
+      height: 100svh;
+      z-index: 4;
+    }
+    #process-track {
+      display: flex;
+      height: 100%;
+      width: 300vw;
+    }
+    .process-slide {
+      width: 100vw;
+      height: 100%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 80px 48px;
+      gap: clamp(20px, 5vw, 90px);
+      border-right: 0.5px solid var(--border);
+    }
+    .process-number {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(110px, 21vw, 280px);
+      -webkit-text-stroke: 2px rgba(10,10,10,0.18);
+      color: transparent;
+      line-height: 1;
+      flex-shrink: 0;
+      user-select: none;
+      letter-spacing: -0.04em;
+    }
+    .process-content { padding-bottom: 10px; }
+    .process-content h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(30px, 4.8vw, 68px);
+      letter-spacing: -0.02em;
+      line-height: 1.0;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .process-content p {
+      font-size: clamp(15px, 1.4vw, 19px);
+      color: var(--muted);
+      max-width: 400px;
+      line-height: 1.65;
+    }
+    .process-counter {
+      position: absolute;
+      top: 32px; right: 48px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      z-index: 10;
+    }
+    #process-step { color: var(--text); font-weight: 700; }
+
+    /* ── Services ── */
+    #leistungen {
+      padding: 120px 48px;
+      position: relative;
+      z-index: 4;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .section-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(44px, 7vw, 102px);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 64px;
+    }
+    .services-table { border-top: 1px solid var(--border); max-width: 1240px; }
+    .service-row { border-bottom: 1px solid var(--border); }
+    .service-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      align-items: center;
+      padding: 26px 0;
+      gap: 20px;
+      cursor: pointer;
+    }
+    .service-name {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(17px, 2.1vw, 27px);
+      letter-spacing: -0.01em;
+    }
+    .service-brief {
+      font-size: clamp(13px, 1.3vw, 16px);
+      color: var(--muted);
+    }
+    .service-toggle {
+      width: 34px; height: 34px;
+      border: 1.5px solid var(--border);
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 300;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      line-height: 1;
+    }
+    .service-row:hover .service-toggle { border-color: var(--text); }
+    .service-row.open .service-toggle {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+    .service-detail { height: 0; overflow: hidden; }
+    .service-detail-inner { padding-bottom: 28px; }
+    .service-detail-inner p {
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 740px;
+      margin-bottom: 14px;
+      font-size: 15px;
+    }
+    .service-detail-inner ul { list-style: none; }
+    .service-detail-inner li {
+      padding: 5px 0 5px 20px;
+      font-size: 14px;
+      color: var(--muted);
+      position: relative;
+    }
+    .service-detail-inner li::before {
+      content: '↗';
+      position: absolute;
+      left: 0;
+      color: var(--violet);
+      font-size: 11px;
+      top: 7px;
+    }
+
+    /* ── Stats ── */
+    #stats {
+      padding: 120px 48px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      z-index: 4;
+    }
+    #stats::before {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--violet) 0%, transparent 70%);
+      opacity: 0.06;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    .stat-item { text-align: center; }
+    .stat-number {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(60px, 9.5vw, 128px);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── Pricing ── */
+    #preise {
+      padding: 120px 48px;
+      position: relative;
+      z-index: 4;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 900px;
+      margin-top: 64px;
+    }
+    .pricing-card {
+      border: 1px solid var(--border);
+      padding: 44px 40px;
+    }
+    .pricing-card.featured { border-top: 3px solid var(--cyan); }
+    .pricing-tier {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .pricing-price {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(34px, 5vw, 54px);
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+    }
+    .pricing-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+    .pricing-features { list-style: none; margin-bottom: 36px; }
+    .pricing-features li {
+      padding: 9px 0;
+      font-size: 14px;
+      color: var(--muted);
+      border-bottom: 0.5px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--text);
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .btn-outline {
+      display: block;
+      width: 100%;
+      padding: 12px 24px;
+      border: 1.5px solid var(--text);
+      background: none;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { background: var(--text); color: var(--bg); }
+    .pricing-card.featured .btn-primary {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* ── Contact ── */
+    #kontakt {
+      padding: 120px 48px;
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 4;
+    }
+    #kontakt::before {
+      content: '';
+      position: absolute;
+      width: 800px; height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--cyan) 0%, transparent 70%);
+      opacity: 0.055;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .cta-content {
+      max-width: 680px;
+      position: relative;
+      z-index: 2;
+    }
+    .cta-headline {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: clamp(52px, 9vw, 122px);
+      letter-spacing: -0.03em;
+      line-height: 0.93;
+      margin-bottom: 24px;
+      opacity: 0;
+    }
+    .cta-sub {
+      font-size: 17px;
+      color: var(--muted);
+      margin-bottom: 48px;
+      line-height: 1.55;
+      opacity: 0;
+    }
+    .form-wrapper {
+      position: relative;
+      padding: 44px;
+      margin-bottom: 28px;
+    }
+    .fb {
+      position: absolute;
+      background: var(--cyan);
+      pointer-events: none;
+    }
+    #fb-top    { top:0; left:0; width:100%; height:1.5px; transform-origin:left center; transform:scaleX(0); }
+    #fb-right  { top:0; right:0; width:1.5px; height:100%; transform-origin:center top; transform:scaleY(0); }
+    #fb-bottom { bottom:0; right:0; width:100%; height:1.5px; transform-origin:right center; transform:scaleX(0); }
+    #fb-left   { bottom:0; left:0; width:1.5px; height:100%; transform-origin:center bottom; transform:scaleY(0); }
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.25s;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--muted); }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--cyan); }
+    .form-group textarea { resize: none; }
+    .btn-submit {
+      align-self: flex-start;
+      padding: 14px 32px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, color 0.2s;
+      margin-top: 4px;
+    }
+    .btn-submit:hover { background: var(--cyan); color: var(--text); }
+    .wa-alt { font-size: 15px; color: var(--muted); }
+    .wa-alt a {
+      color: var(--text);
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 1px;
+      transition: color 0.2s;
+    }
+    .wa-alt a:hover { color: var(--green); }
+
+    /* ── Footer ── */
+    #footer {
+      border-top: 0.5px solid var(--border);
+      padding: 32px 48px;
+      position: relative;
+      z-index: 4;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-left { display: flex; flex-direction: column; gap: 3px; }
+    .footer-logo {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+    .footer-tagline { font-size: 12px; color: var(--muted); }
+    .footer-right { display: flex; gap: 24px; align-items: center; }
+    .footer-right a,
+    .footer-right span { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+    .footer-right a:hover { color: var(--text); }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .service-main { grid-template-columns: 1fr auto; }
+      .service-brief { display: none; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      #nav { padding: 16px 24px; }
+
+      #hero { padding: 0 24px 64px; }
+      .hero-word { font-size: 17vw; }
+      .hero-scroll-hint { right: 24px; bottom: 28px; }
+      .hero-sub { flex-direction: column; align-items: flex-start; gap: 20px; }
+
+      #statement { padding: 80px 24px 100px; }
+
+      /* Process: vertical on mobile */
+      #prozess { height: auto; overflow: visible; }
+      #process-track { flex-direction: column; width: 100%; }
+      .process-slide {
+        width: 100%; height: auto;
+        min-height: 55svh;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding: 56px 24px;
+        gap: 12px;
+      }
+      .process-number { font-size: 30vw; }
+      .process-counter { display: none; }
+
+      #leistungen { padding: 80px 24px; }
+
+      #stats { padding: 80px 24px; }
+      .stats-grid { grid-template-columns: 1fr; gap: 44px; }
+
+      #preise { padding: 80px 24px; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 100%; }
+      .pricing-card { padding: 36px 28px; }
+
+      #kontakt { padding: 80px 24px; align-items: flex-start; }
+      .form-wrapper { padding: 32px 24px; }
+
+      #footer { padding: 28px 24px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+
+      #guide-shape, #cursor-dot, #cursor-ring { display: none; }
+      body { cursor: auto; }
+      button, a { cursor: pointer; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Page Intro -->
+<div id="intro">
+  <div id="intro-logo">SEMP</div>
+</div>
+
+<!-- Custom Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Guide Shape -->
+<div id="guide-shape"></div>
+
+<!-- Navigation -->
+<nav id="nav">
+  <a href="#" class="nav-logo">SEMP STUDIOS</a>
+  <div class="nav-links">
+    <a href="#prozess">Prozess</a>
+    <a href="#leistungen">Leistungen</a>
+    <a href="#preise">Preise</a>
+    <a href="#kontakt">Kontakt</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'})">Projekt starten</button>
+  <button class="hamburger" id="hamburger" aria-label="Menü">
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu">
+  <button id="menu-close">×</button>
+  <nav class="mobile-nav">
+    <a href="#prozess" class="mobile-link">Prozess</a>
+    <a href="#leistungen" class="mobile-link">Leistungen</a>
+    <a href="#preise" class="mobile-link">Preise</a>
+    <a href="#kontakt" class="mobile-link">Kontakt</a>
+  </nav>
+  <a href="https://wa.me/4917XXXXXXXX" target="_blank" rel="noopener" class="mobile-wa">WhatsApp ↗</a>
+</div>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-headline">
+      <div class="hero-word-wrap">
+        <span id="word-advanced" class="hero-word outlined">ADVANCED</span>
+      </div>
+      <div class="hero-word-wrap">
+        <span id="word-websites" class="hero-word solid">WEBSITES<span class="accent-dot">●</span></span>
+      </div>
+    </div>
+    <div class="hero-sub">
+      <span class="hero-tagline">Frankfurt. Custom. Bezahlbar.</span>
+      <a href="#kontakt" class="btn-primary">Projekt starten →</a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">scroll ↓</div>
+</section>
+
+<!-- Ticker -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>WEBDESIGN</span><span class="tdot">·</span>
+    <span>CONVERSIONS</span><span class="tdot">·</span>
+    <span>FRANKFURT</span><span class="tdot">·</span>
+    <span>PERFORMANCE</span><span class="tdot">·</span>
+    <span>STRATEGIE</span><span class="tdot">·</span>
+    <span>INDIVIDUAL</span><span class="tdot">·</span>
+    <span>RESULTS</span><span class="tdot">·</span>
+    <span>WEBDESIGN</span><span class="tdot">·</span>
+    <span>CONVERSIONS</span><span class="tdot">·</span>
+    <span>FRANKFURT</span><span class="tdot">·</span>
+    <span>PERFORMANCE</span><span class="tdot">·</span>
+    <span>STRATEGIE</span><span class="tdot">·</span>
+    <span>INDIVIDUAL</span><span class="tdot">·</span>
+    <span>RESULTS</span><span class="tdot">·</span>
+  </div>
+</div>
+
+<!-- Statement -->
+<section id="statement">
+  <p class="statement-line">Deine Konkurrenz hat eine Website.</p>
+  <p class="statement-line">Du brauchst eine Waffe.</p>
+  <p class="statement-line">Semp Studios baut keine Visitenkarten.</p>
+  <p class="statement-line">Wir bauen Argumente.</p>
+  <p class="statement-sub">Jede Seite, die wir ausliefern, ist von Grund auf für dein Business entwickelt — kein Template, keine Kompromisse.</p>
+</section>
+
+<!-- Process -->
+<section id="prozess">
+  <div id="process-track">
+    <div class="process-slide">
+      <div class="process-number">01</div>
+      <div class="process-content">
+        <h2>BRIEFING &<br>STRATEGIE</h2>
+        <p>Wir verstehen dein Business, deine Kunden, dein Ziel. Kein Fragebogen — ein echtes Gespräch.</p>
+      </div>
+    </div>
+    <div class="process-slide">
+      <div class="process-number">02</div>
+      <div class="process-content">
+        <h2>DESIGN &<br>ENTWICKLUNG</h2>
+        <p>Deine Website entsteht von Grund auf neu. Kein Template, keine Kompromisse. Du siehst jeden Schritt.</p>
+      </div>
+    </div>
+    <div class="process-slide">
+      <div class="process-number">03</div>
+      <div class="process-content">
+        <h2>LIVE IN<br>2–3 WOCHEN</h2>
+        <p>Launch. Fertig. Kein monatelanger Prozess. Kein endloses Hin und Her. Deine Website geht live.</p>
+      </div>
+    </div>
+  </div>
+  <div class="process-counter"><span id="process-step">01</span> / 03</div>
+</section>
+
+<!-- Services -->
+<section id="leistungen">
+  <div class="section-label">Leistungen</div>
+  <h2 class="section-title scramble-text">WAS WIR TUN</h2>
+  <div class="services-table">
+
+    <div class="service-row">
+      <div class="service-main">
+        <span class="service-name">Webdesign & Entwicklung</span>
+        <span class="service-brief">Von 0 auf fertig — vollständig custom.</span>
+        <button class="service-toggle" aria-label="Details">+</button>
+      </div>
+      <div class="service-detail">
+        <div class="service-detail-inner">
+          <p>Jede Website, die wir bauen, ist einzigartig. Kein Template, kein Copy-Paste. Von Grund auf designt und entwickelt — für maximale Wirkung und maximale Performance.</p>
+          <ul>
+            <li>Responsive Design (Mobile, Tablet, Desktop)</li>
+            <li>Custom Animationen & Micro-Interactions</li>
+            <li>Optimiert für Google Core Web Vitals</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-row">
+      <div class="service-main">
+        <span class="service-name">Strategie & Copy</span>
+        <span class="service-brief">Texte die überzeugen, nicht nur klingen.</span>
+        <button class="service-toggle" aria-label="Details">+</button>
+      </div>
+      <div class="service-detail">
+        <div class="service-detail-inner">
+          <p>Eine schöne Website ohne Strategie ist ein teures Hobby. Wir schreiben Texte, die deine Besucher zu Kunden machen — basierend auf echtem Verständnis deines Business.</p>
+          <ul>
+            <li>Zielgruppenanalyse & Positionierung</li>
+            <li>Conversion-optimierte Texte</li>
+            <li>Klare Botschaft, die hängenbleibt</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-row">
+      <div class="service-main">
+        <span class="service-name">Performance & SEO</span>
+        <span class="service-brief">Schnell, auffindbar, auf Dauer.</span>
+        <button class="service-toggle" aria-label="Details">+</button>
+      </div>
+      <div class="service-detail">
+        <div class="service-detail-inner">
+          <p>Eine Website, die niemand findet, existiert nicht. Wir optimieren für Google, für Speed und für Conversions — damit deine Investition sich auszahlt.</p>
+          <ul>
+            <li>Technisches SEO & On-Page Optimierung</li>
+            <li>Page Speed & Core Web Vitals</li>
+            <li>Strukturierte Daten & Meta-Tags</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-row">
+      <div class="service-main">
+        <span class="service-name">Hosting & Pflege</span>
+        <span class="service-brief">Wir bleiben dabei — auch nach Launch.</span>
+        <button class="service-toggle" aria-label="Details">+</button>
+      </div>
+      <div class="service-detail">
+        <div class="service-detail-inner">
+          <p>Nach dem Launch ist vor dem Launch. Wir kümmern uns um Hosting, Updates und kleine Anpassungen — damit du dich auf dein Business konzentrieren kannst.</p>
+          <ul>
+            <li>Managed Hosting & SSL</li>
+            <li>Regelmäßige Updates & Backups</li>
+            <li>Kleine Anpassungen & Erweiterungen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Stats -->
+<section id="stats">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <span class="stat-number" data-count="4" data-suffix="+">4+</span>
+      <span class="stat-label">Projekte live</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">2–3 Wo.</span>
+      <span class="stat-label">Durchschnittliche Lieferzeit</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number" data-count="100" data-suffix="%">100%</span>
+      <span class="stat-label">Custom — kein Template</span>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="preise">
+  <div class="section-label">Preise</div>
+  <h2 class="section-title scramble-text">TRANSPARENT</h2>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-tier">STARTER</div>
+      <div class="pricing-price">ab 990 €</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>Bis 5 Seiten</li>
+        <li>Responsive Design</li>
+        <li>Kontaktformular</li>
+        <li>2 Wochen Lieferzeit</li>
+        <li>1 Revision</li>
+      </ul>
+      <button class="btn-outline" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'})">Anfrage stellen</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-tier">PRO</div>
+      <div class="pricing-price">ab 1.990 €</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>Unbegrenzte Seiten</li>
+        <li>Strategie & Copy</li>
+        <li>SEO & Performance</li>
+        <li>3 Wochen Lieferzeit</li>
+        <li>Unbegrenzte Revisionen</li>
+      </ul>
+      <button class="btn-primary" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'})">Anfrage stellen</button>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="kontakt">
+  <div class="cta-content">
+    <h2 class="cta-headline">Lass uns<br>loslegen.</h2>
+    <p class="cta-sub">5 Minuten. Kein Commitment.<br>Antwort innerhalb 24h.</p>
+    <div id="cta-form" class="form-wrapper">
+      <span class="fb" id="fb-top"></span>
+      <span class="fb" id="fb-right"></span>
+      <span class="fb" id="fb-bottom"></span>
+      <span class="fb" id="fb-left"></span>
+      <form class="contact-form" id="contact-form" novalidate>
+        <div class="form-group">
+          <input type="text" name="name" placeholder="Dein Name" autocomplete="name" required>
+        </div>
+        <div class="form-group">
+          <input type="email" name="email" placeholder="E-Mail Adresse" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <textarea name="message" placeholder="Was planst du? Kurz beschreiben..." rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Absenden →</button>
+      </form>
+    </div>
+    <p class="wa-alt">oder direkt: <a href="https://wa.me/4917XXXXXXXX" target="_blank" rel="noopener">WhatsApp ↗</a></p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <span class="footer-logo">SEMP STUDIOS</span>
+      <span class="footer-tagline">Advanced Websites. Affordable.</span>
+    </div>
+    <div class="footer-right">
+      <a href="#">Datenschutz</a>
+      <a href="#">Impressum</a>
+      <span>© 2025</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  gsap.registerPlugin(ScrollTrigger);
+
+  const isMobile = window.innerWidth <= 768;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  /* ── Lenis ── */
+  const lenis = new Lenis({ lerp: 0.08 });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  /* ── Custom Cursor ── */
+  if (!isMobile) {
+    const dot = document.querySelector('#cursor-dot');
+    const ring = document.querySelector('#cursor-ring');
+    document.addEventListener('mousemove', e => {
+      gsap.set(dot, { x: e.clientX, y: e.clientY });
+      gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.15, ease: 'power2.out' });
+    });
+    document.querySelectorAll('a, button, .service-row').forEach(el => {
+      el.addEventListener('mouseenter', () => gsap.to(ring, { scale: 2.4, duration: 0.3, ease: 'back.out' }));
+      el.addEventListener('mouseleave', () => gsap.to(ring, { scale: 1, duration: 0.3 }));
+    });
+  }
+
+  /* ── Nav scroll state ── */
+  ScrollTrigger.create({
+    start: 60,
+    onEnter: () => document.querySelector('#nav').classList.add('scrolled'),
+    onLeaveBack: () => document.querySelector('#nav').classList.remove('scrolled')
+  });
+
+  /* ── Guide Shape init ── */
+  const guide = document.querySelector('#guide-shape');
+  if (guide && !isMobile) {
+    gsap.set(guide, {
+      width: 560, height: 560,
+      borderRadius: '50%',
+      x: vw * 0.52, y: -170,
+      opacity: 0,
+      backgroundColor: '#b8ff00'
+    });
+  }
+
+  /* ── Set initial opacity for statement lines ── */
+  gsap.set('.statement-line', { opacity: 0 });
+  gsap.set('.statement-sub', { opacity: 0 });
+
+  /* ── Page Intro ── */
+  gsap.timeline({ onComplete: initAfterIntro })
+    .from('#intro-logo', { scale: 3.2, opacity: 0, duration: 0.65, ease: 'expo.out' })
+    .to('#intro-logo', { scale: 0.35, y: -vh * 0.44, opacity: 0, duration: 0.5, ease: 'expo.in' }, '+=0.22')
+    .to('#intro', { opacity: 0, duration: 0.2, onComplete: () => {
+      const el = document.querySelector('#intro');
+      if (el) el.remove();
+    }}, '-=0.1');
+
+  function initAfterIntro() {
+    initHero();
+    initScrollAnimations();
+    initMobileMenu();
+    initServices();
+  }
+
+  /* ── Hero ── */
+  function initHero() {
+    // Char split — preserve spans (accent dot)
+    function splitChars(el) {
+      const nodes = [];
+      el.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          [...node.textContent].forEach(c => {
+            const s = document.createElement('span');
+            s.className = 'ch';
+            s.style.display = 'inline-block';
+            s.textContent = c;
+            nodes.push(s);
+          });
+        } else {
+          nodes.push(node.cloneNode(true));
+        }
+      });
+      el.innerHTML = '';
+      nodes.forEach(n => el.appendChild(n));
+    }
+    splitChars(document.querySelector('#word-advanced'));
+    splitChars(document.querySelector('#word-websites'));
+
+    const tl = gsap.timeline();
+
+    if (guide && !isMobile) {
+      tl.to(guide, { opacity: 0.42, duration: 1, ease: 'power2.out' }, 0);
+    }
+
+    tl.from('#word-advanced .ch', {
+      y: 110, opacity: 0, rotateX: -38,
+      stagger: 0.022, duration: 0.88, ease: 'power4.out'
+    }, 0.05);
+
+    tl.from('#word-websites .ch', {
+      y: 110, opacity: 0, rotateX: -38,
+      stagger: 0.022, duration: 0.88, ease: 'power4.out'
+    }, 0.24);
+
+    tl.from('.hero-tagline', { y: 22, opacity: 0, duration: 0.65, ease: 'power3.out' }, 0.76);
+    tl.from('.hero-sub .btn-primary', { y: 22, opacity: 0, duration: 0.65, ease: 'power3.out' }, 0.88);
+    tl.to('.hero-scroll-hint', { opacity: 1, duration: 0.5 }, 1.1);
+
+    // Mouse parallax on hero
+    if (!isMobile) {
+      document.addEventListener('mousemove', e => {
+        const x = (e.clientX / vw - 0.5);
+        const y = (e.clientY / vh - 0.5);
+        gsap.to('#word-advanced', { x: x * -18, y: y * -10, duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
+        gsap.to('#word-websites', { x: x * 14, y: y * 8, duration: 1.4, ease: 'power2.out', overwrite: 'auto' });
+        if (guide) {
+          gsap.to(guide, {
+            x: vw * 0.52 + x * 28,
+            y: -170 + y * 18,
+            duration: 2.2, ease: 'power2.out', overwrite: 'auto'
+          });
+        }
+      });
+    }
+
+    // Hero scroll-out
+    gsap.to('.hero-inner', {
+      y: -90, opacity: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom 30%',
+        scrub: 1.2
+      }
+    });
+  }
+
+  /* ── Scroll Animations ── */
+  function initScrollAnimations() {
+
+    // Guide Shape morphing (desktop only)
+    if (guide && !isMobile) {
+
+      // Hero → Statement: wide green rect
+      gsap.to(guide, {
+        width: 470, height: 84, borderRadius: '6px',
+        x: -vw * 0.06, y: vh * 0.44,
+        opacity: 0.32,
+        immediateRender: false, ease: 'none',
+        scrollTrigger: { trigger: '#statement', start: 'top 78%', end: 'top 28%', scrub: 2 }
+      });
+
+      // Statement → Process: tall orange bar
+      gsap.to(guide, {
+        width: 72, height: 290, borderRadius: '4px',
+        backgroundColor: '#ff6b00',
+        x: vw * 0.36, y: vh * 0.1,
+        opacity: 0.36,
+        immediateRender: false, ease: 'none',
+        scrollTrigger: { trigger: '#prozess', start: 'top 78%', end: 'top 28%', scrub: 2 }
+      });
+
+      // Process → Services: small violet dot
+      gsap.to(guide, {
+        width: 42, height: 42, borderRadius: '50%',
+        backgroundColor: '#a855f7',
+        x: -18, y: vh * 0.48,
+        opacity: 0.7,
+        immediateRender: false, ease: 'none',
+        scrollTrigger: { trigger: '#leistungen', start: 'top 78%', end: 'top 28%', scrub: 2 }
+      });
+
+      // Services → Stats: large violet glow
+      gsap.to(guide, {
+        width: 440, height: 440, borderRadius: '50%',
+        backgroundColor: '#a855f7',
+        x: vw * 0.18, y: vh * 0.04,
+        opacity: 0.09,
+        immediateRender: false, ease: 'none',
+        scrollTrigger: { trigger: '#stats', start: 'top 80%', end: 'top 30%', scrub: 2 }
+      });
+
+      // Stats → Pricing: cyan transition
+      gsap.to(guide, {
+        backgroundColor: '#00e5ff', opacity: 0.08,
+        immediateRender: false, ease: 'none',
+        scrollTrigger: { trigger: '#preise', start: 'top 80%', end: 'top 30%', scrub: 2 }
+      });
+
+      // Pricing → Contact: large cyan circle
+      gsap.to(guide, {
+        width: 520, height: 520, borderRadius: '50%',
+        x: vw * 0.22, y: vh * -0.02,
+        opacity: 0.055,
+        immediateRender: false, ease: 'none',
+        scrollTrigger: { trigger: '#kontakt', start: 'top 80%', end: 'top 30%', scrub: 2 }
+      });
+
+      // Dissolve at footer
+      gsap.to(guide, {
+        opacity: 0,
+        immediateRender: false, ease: 'none',
+        scrollTrigger: { trigger: '#footer', start: 'top 80%', end: 'top 40%', scrub: 1 }
+      });
+    }
+
+    // Statement Lines — staggered directional reveals
+    const dirs = [{ x: -60 }, { x: 60 }, { y: 40 }, { x: -60 }];
+    document.querySelectorAll('.statement-line').forEach((line, i) => {
+      gsap.set(line, dirs[i]);
+      gsap.to(line, {
+        x: 0, y: 0, opacity: 1,
+        duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: line, start: 'top 88%', toggleActions: 'play none none reverse' }
+      });
+    });
+    gsap.set('.statement-sub', { y: 30 });
+    gsap.to('.statement-sub', {
+      y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
+      scrollTrigger: { trigger: '.statement-sub', start: 'top 90%' }
+    });
+
+    // Process Horizontal Scroll (desktop)
+    if (!isMobile) {
+      const track = document.querySelector('#process-track');
+      if (track) {
+        const dist = track.scrollWidth - vw;
+        gsap.to(track, {
+          x: -dist, ease: 'none',
+          scrollTrigger: {
+            trigger: '#prozess',
+            pin: true, scrub: 1.2,
+            start: 'top top',
+            end: '+=' + dist,
+            onUpdate: self => {
+              const p = self.progress;
+              const step = p < 0.33 ? 1 : p < 0.66 ? 2 : 3;
+              const el = document.querySelector('#process-step');
+              if (el) el.textContent = String(step).padStart(2, '0');
+            }
+          }
+        });
+      }
+    }
+
+    // Section labels & titles
+    gsap.utils.toArray('.section-label, .section-title').forEach(el => {
+      gsap.from(el, {
+        y: 28, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%' }
+      });
+    });
+
+    // Scramble text on section titles
+    document.querySelectorAll('.scramble-text').forEach(el => {
+      const original = el.textContent;
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      ScrollTrigger.create({
+        trigger: el, start: 'top 85%', once: true,
+        onEnter: () => {
+          let i = 0;
+          const iv = setInterval(() => {
+            el.textContent = [...original].map((c, j) =>
+              j < i ? original[j] : (c === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)])
+            ).join('');
+            if (i++ >= original.length) clearInterval(iv);
+          }, 35);
+        }
+      });
+    });
+
+    // Stats reveal + counters
+    gsap.from('.stat-item', {
+      y: 40, opacity: 0, stagger: 0.14, duration: 0.9, ease: 'power3.out',
+      scrollTrigger: { trigger: '.stats-grid', start: 'top 80%' }
+    });
+    document.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseFloat(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      let done = false;
+      ScrollTrigger.create({
+        trigger: el, start: 'top 80%', once: true,
+        onEnter: () => {
+          if (done) return; done = true;
+          const obj = { n: 0 };
+          gsap.to(obj, {
+            n: target, duration: 2, ease: 'power2.out',
+            onUpdate: () => { el.textContent = Math.round(obj.n) + suffix; }
+          });
+        }
+      });
+    });
+
+    // Pricing cards
+    gsap.from('.pricing-card', {
+      y: 48, opacity: 0, stagger: 0.12, duration: 0.9, ease: 'power3.out',
+      scrollTrigger: { trigger: '.pricing-grid', start: 'top 80%' }
+    });
+
+    // CTA headline + sub
+    gsap.to('.cta-headline', {
+      y: 0, opacity: 1, duration: 1, ease: 'power4.out',
+      scrollTrigger: { trigger: '.cta-headline', start: 'top 82%' }
+    });
+    gsap.set('.cta-headline', { y: 60 });
+    gsap.to('.cta-sub', {
+      y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
+      scrollTrigger: { trigger: '.cta-sub', start: 'top 85%' }
+    });
+    gsap.set('.cta-sub', { y: 30 });
+
+    // CTA Form border draw
+    ScrollTrigger.create({
+      trigger: '#cta-form', start: 'top 72%', once: true,
+      onEnter: () => {
+        gsap.to('#fb-top',    { scaleX: 1, duration: 0.55, ease: 'power3.out' });
+        gsap.to('#fb-right',  { scaleY: 1, duration: 0.45, ease: 'power3.out', delay: 0.5 });
+        gsap.to('#fb-bottom', { scaleX: 1, duration: 0.55, ease: 'power3.out', delay: 0.88 });
+        gsap.to('#fb-left',   { scaleY: 1, duration: 0.45, ease: 'power3.out', delay: 1.36 });
+        gsap.from('.contact-form .form-group, .btn-submit', {
+          y: 20, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'power3.out', delay: 0.3
+        });
+      }
+    });
+
+    // Form submit handler
+    document.querySelector('#contact-form')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const form = e.target;
+      gsap.to(form, {
+        opacity: 0, y: -16, duration: 0.3,
+        onComplete: () => {
+          form.innerHTML = `<div style="padding:16px 0">
+            <p style="font-family:'Bricolage Grotesque',sans-serif;font-weight:900;font-size:28px;letter-spacing:-0.02em;margin-bottom:8px">Gesendet ✓</p>
+            <p style="color:var(--muted);font-size:15px">Wir melden uns innerhalb von 24h.</p>
+          </div>`;
+          gsap.from(form, { opacity: 0, y: 16, duration: 0.4 });
+        }
+      });
+    });
+
+    // Footer
+    gsap.from('#footer', {
+      opacity: 0, duration: 0.8,
+      scrollTrigger: { trigger: '#footer', start: 'top 92%' }
+    });
+
+    ScrollTrigger.refresh();
+  }
+
+  /* ── Services Accordion ── */
+  function initServices() {
+    document.querySelectorAll('.service-row').forEach((row, i) => {
+      // Stagger reveal
+      gsap.from(row, {
+        x: -24, opacity: 0, duration: 0.7, ease: 'power3.out',
+        delay: i * 0.07,
+        scrollTrigger: { trigger: row, start: 'top 90%' }
+      });
+
+      const main = row.querySelector('.service-main');
+      const detail = row.querySelector('.service-detail');
+      const toggle = row.querySelector('.service-toggle');
+
+      main.addEventListener('click', () => {
+        const isOpen = row.classList.contains('open');
+
+        // Close all open rows
+        document.querySelectorAll('.service-row.open').forEach(r => {
+          r.classList.remove('open');
+          gsap.to(r.querySelector('.service-detail'), { height: 0, duration: 0.4, ease: 'power3.inOut' });
+          gsap.to(r.querySelector('.service-toggle'), { rotation: 0, duration: 0.3 });
+        });
+
+        if (!isOpen) {
+          row.classList.add('open');
+          const h = detail.scrollHeight;
+          gsap.fromTo(detail, { height: 0 }, { height: h, duration: 0.5, ease: 'power3.inOut' });
+          gsap.to(toggle, { rotation: 45, duration: 0.3 });
+        }
+
+        ScrollTrigger.refresh();
+      });
+    });
+  }
+
+  /* ── Mobile Menu ── */
+  function initMobileMenu() {
+    const hamburger = document.querySelector('#hamburger');
+    const menu = document.querySelector('#mobile-menu');
+    const close = document.querySelector('#menu-close');
+
+    hamburger?.addEventListener('click', () => {
+      menu.classList.add('open');
+      lenis.stop();
+    });
+    close?.addEventListener('click', () => {
+      menu.classList.remove('open');
+      lenis.start();
+    });
+    document.querySelectorAll('.mobile-link').forEach(a => {
+      a.addEventListener('click', () => {
+        menu.classList.remove('open');
+        lenis.start();
+      });
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
