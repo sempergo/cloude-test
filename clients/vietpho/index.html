@@ -422,7 +422,15 @@
       .hero-content { padding: 95px 24px 20px; }
       .hero-scroll { display: none; }
       .menu-top { flex-direction: column; align-items: flex-start; }
-      .menu-grid, .testimonials-grid, .features-grid { grid-template-columns: 1fr; }
+      .menu-grid {
+        display: flex; flex-direction: row;
+        overflow-x: scroll; scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch; scrollbar-width: none;
+        gap: 16px; padding-bottom: 20px; margin: 0 -24px; padding-left: 24px; padding-right: 24px;
+      }
+      .menu-grid::-webkit-scrollbar { display: none; }
+      .menu-grid .dish-card { flex: 0 0 82%; scroll-snap-align: start; }
+      .testimonials-grid, .features-grid { grid-template-columns: 1fr; }
       .gallery-grid { grid-template-columns: 1fr 1fr; }
       .g1 { grid-column: span 2; height: 240px; }
       .g2,.g3,.g4,.g5 { grid-column: span 1; height: 170px; }
