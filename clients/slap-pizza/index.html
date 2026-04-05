@@ -153,15 +153,22 @@
 
         /* Pizza plate */
         .hero-img-wrap {
-            width: min(300px, 85vw);
+            width: min(88vw, 420px);
             aspect-ratio: 1/1;
             border-radius: 50%;
             overflow: hidden;
-            margin: 20px auto;
+            margin: 0 auto;
             position: relative;
-            background: #D8CFC2;
-            border: 14px solid rgba(255,255,255,0.6);
-            box-shadow: 0 28px 72px rgba(22,13,4,0.22), inset 0 0 0 3px rgba(22,13,4,0.05);
+            z-index: 1;
+            background: #F7F4F0;
+            /* Realistischer Teller-Rand */
+            border: 18px solid #FAFAF8;
+            box-shadow:
+                0 40px 100px rgba(22,13,4,0.28),
+                0 8px 24px rgba(22,13,4,0.12),
+                inset 0 2px 0 rgba(255,255,255,1),
+                inset 0 -4px 12px rgba(0,0,0,0.08),
+                inset 0 0 40px rgba(0,0,0,0.06);
         }
 
         .slide {
@@ -254,46 +261,44 @@
         /* Desktop hero */
         @media (min-width: 900px) {
             .hero {
-                padding: 100px 56px 80px;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto auto auto auto;
-                column-gap: 56px;
-                align-items: center;
+                padding: 80px 56px 56px;
+                overflow: visible;
             }
 
-            .hero-award { grid-column: 1; grid-row: 1; margin-bottom: 12px; }
+            .hero-award { margin-bottom: 8px; }
 
             .hero-slap {
-                grid-column: 1; grid-row: 2;
-                font-size: clamp(100px, 11vw, 170px);
-                letter-spacing: -6px;
-            }
-
-            .hero-pizza {
-                grid-column: 1; grid-row: 3;
-                font-size: clamp(88px, 9.5vw, 148px);
-                letter-spacing: -6px;
-                text-align: left;
-            }
-
-            .hero-foot {
-                grid-column: 1; grid-row: 4;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-top: 24px;
-                gap: 16px;
+                font-size: clamp(140px, 15vw, 230px);
+                letter-spacing: -8px;
+                position: relative;
+                z-index: 2;
+                margin-bottom: -110px;
             }
 
             .hero-img-wrap {
-                grid-column: 2;
-                grid-row: 1 / 5;
-                width: 100%;
-                max-width: 520px;
-                justify-self: center;
-                margin: 0;
-                border-width: 18px;
-                box-shadow: 0 48px 120px rgba(22,13,4,0.28), inset 0 0 0 4px rgba(22,13,4,0.05);
+                width: min(72vw, 780px);
+                border-width: 26px;
+                box-shadow:
+                    0 56px 120px rgba(22,13,4,0.30),
+                    0 12px 36px rgba(22,13,4,0.14),
+                    inset 0 3px 0 rgba(255,255,255,1),
+                    inset 0 -6px 16px rgba(0,0,0,0.09),
+                    inset 0 0 60px rgba(0,0,0,0.06);
+            }
+
+            .hero-pizza {
+                font-size: clamp(120px, 13vw, 200px);
+                letter-spacing: -8px;
+                position: relative;
+                z-index: 2;
+                margin-top: -110px;
+            }
+
+            .hero-foot {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                margin-top: 40px;
             }
         }
 
