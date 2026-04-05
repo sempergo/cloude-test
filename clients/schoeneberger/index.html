@@ -1,62 +1,77 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Schöneberger — Frankfurts Klassiker seit 25 Jahren</title>
-  <meta name="description" content="Gasthaus & Bar in Frankfurt-Bornheim. Frankfurter Küche, Black Angus Steaks, der legendäre Schöneburger und 2 Biergärten direkt an der Berger Straße." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schöneberger – Gasthaus & Bar · Frankfurt-Bornheim</title>
+  <meta name="description" content="Seit über 25 Jahren das Herz von Frankfurt-Bornheim. Hausgemachte Burger, Steaks vom Lavastein, Apfelwein & mehr — im Schöni ist immer was los.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,500&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* ── Variables ─────────────────────────────── */
     :root {
-      --bg-dark:      #120d06;
-      --bg-mid:       #1e1509;
-      --bg-warm:      #f5ede0;
-      --bg-parchment: #faf4e8;
-      --gold:         #c8922a;
-      --gold-light:   #e4b060;
-      --gold-pale:    #f0d49a;
-      --cream:        #f2e8d0;
-      --cream-dim:    #c8b898;
-      --bark:         #5a3e28;
-      --bark-dark:    #2e1e0e;
-      --text-dark:    #1e1205;
-      --text-mid:     #4a3020;
+      --dark:    #160B04;
+      --brown:   #2A1608;
+      --gold:    #C49A1A;
+      --gold-lt: #E2C35A;
+      --cream:   #F5EDD8;
+      --cream-lt:#FBF7EE;
+      --muted:   #8B7355;
+      --text:    #1A0D05;
+      --serif:   'Playfair Display SC', 'Georgia', serif;
+      --serif-it:'Playfair Display', 'Georgia', serif;
+      --sans:    'Karla', system-ui, sans-serif;
     }
 
+    /* ── Reset ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-
     body {
-      font-family: 'Lora', Georgia, serif;
-      background: var(--bg-dark);
-      color: var(--cream);
+      font-family: var(--sans);
+      background: var(--cream-lt);
+      color: var(--text);
       overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
 
-    /* ── NAVIGATION ── */
+    /* ── Nav ────────────────────────────────────── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      padding: 0 2rem;
-      height: 70px;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: linear-gradient(180deg, rgba(18,13,6,0.95) 0%, rgba(18,13,6,0.0) 100%);
-      transition: background 0.4s;
+      transition: background 0.5s ease, box-shadow 0.5s ease;
     }
     nav.scrolled {
-      background: rgba(18,13,6,0.97);
-      border-bottom: 1px solid rgba(200,146,42,0.2);
+      background: rgba(22, 11, 4, 0.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 rgba(196, 154, 26, 0.18);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
     }
     .nav-logo img {
       height: 40px;
-      filter: brightness(1.1);
+      filter: brightness(0) invert(1);
+    }
+    .nav-logo-text {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--cream);
     }
     .nav-links {
       display: flex;
@@ -64,51 +79,90 @@
       list-style: none;
     }
     .nav-links a {
-      color: var(--cream-dim);
-      text-decoration: none;
-      font-family: 'Lora', serif;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(245, 237, 216, 0.75);
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .nav-links a:hover { color: var(--gold-lt); }
+    .nav-cta {
+      font-size: 0.75rem;
+      font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--gold-light); }
-
-    .nav-reserve {
+      color: var(--dark);
       background: var(--gold);
-      color: var(--bg-dark);
-      padding: 0.55rem 1.4rem;
-      border-radius: 2px;
-      font-family: 'Lora', serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      font-weight: 500;
-      transition: background 0.2s;
+      padding: 0.6rem 1.5rem;
+      border-radius: 1px;
+      transition: background 0.2s, transform 0.15s;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    .nav-reserve:hover { background: var(--gold-light); }
+    .nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
 
-    .nav-burger {
+    .nav-toggle {
       display: none;
       flex-direction: column;
       gap: 5px;
       cursor: pointer;
       padding: 4px;
+      background: none;
+      border: none;
     }
-    .nav-burger span {
+    .nav-toggle span {
       display: block;
-      width: 24px;
-      height: 2px;
+      width: 22px; height: 1.5px;
       background: var(--cream);
-      transition: all 0.3s;
+      transition: 0.3s;
     }
 
-    /* ── HERO ── */
-    #hero {
+    /* ── Mobile Nav Overlay ─────────────────────── */
+    #mobileNav {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(22, 11, 4, 0.98);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #mobileNav.open { opacity: 1; pointer-events: all; }
+    .mobile-nav-link {
+      font-family: var(--serif);
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--cream);
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .mobile-nav-link:hover { color: var(--gold-lt); }
+    .mobile-nav-phone {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dark);
+      background: var(--gold);
+      padding: 0.9rem 2.5rem;
+      border-radius: 1px;
+      margin-top: 0.5rem;
+      cursor: pointer;
+    }
+
+    /* ── Hero ────────────────────────────────────── */
+    .hero {
       position: relative;
-      height: 100vh;
-      min-height: 600px;
+      height: 100svh;
+      min-height: 620px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -117,61 +171,59 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background-image: url('https://www.schoene-berger.de/media/wp-content/uploads/2020/09/leibundseele_desktop_slide1.jpg');
+      will-change: transform;
+      background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=85&fit=crop');
       background-size: cover;
-      background-position: center 30%;
+      background-position: center 60%;
       transform: scale(1.08);
-      transition: transform 12s ease-out;
     }
-    .hero-bg.loaded { transform: scale(1); }
-    .hero-overlay {
+    .hero-bg::after {
+      content: '';
       position: absolute;
       inset: 0;
       background: linear-gradient(
-        180deg,
-        rgba(18,13,6,0.55) 0%,
-        rgba(18,13,6,0.3) 40%,
-        rgba(18,13,6,0.75) 100%
+        160deg,
+        rgba(22, 11, 4, 0.45) 0%,
+        rgba(22, 11, 4, 0.55) 45%,
+        rgba(22, 11, 4, 0.85) 100%
       );
     }
     .hero-content {
       position: relative;
+      z-index: 2;
       text-align: center;
       padding: 0 1.5rem;
-      max-width: 760px;
+      max-width: 820px;
     }
     .hero-eyebrow {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.95rem;
+      font-size: 0.72rem;
+      font-weight: 500;
       letter-spacing: 0.35em;
       text-transform: uppercase;
-      color: var(--gold-pale);
+      color: var(--gold);
       margin-bottom: 1.5rem;
       opacity: 0;
     }
     .hero-title {
-      font-family: 'Playfair Display', serif;
+      font-family: var(--serif);
       font-size: clamp(3.5rem, 9vw, 7rem);
-      font-weight: 700;
+      font-weight: 400;
       line-height: 0.95;
-      color: #fff;
-      text-shadow: 0 4px 40px rgba(0,0,0,0.6);
-      margin-bottom: 1.5rem;
+      color: var(--cream);
+      margin-bottom: 1.75rem;
       opacity: 0;
+      letter-spacing: 0.02em;
     }
-    .hero-title em {
+    .hero-subtitle {
+      font-family: var(--serif-it);
       font-style: italic;
-      color: var(--gold-light);
-    }
-    .hero-sub {
-      font-family: 'Lora', serif;
-      font-size: clamp(1rem, 2.5vw, 1.25rem);
-      color: var(--cream-dim);
-      line-height: 1.7;
-      margin-bottom: 2.5rem;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: rgba(245, 237, 216, 0.7);
+      margin-bottom: 3rem;
+      line-height: 1.65;
       opacity: 0;
     }
-    .hero-ctas {
+    .hero-actions {
       display: flex;
       gap: 1rem;
       justify-content: center;
@@ -179,1016 +231,1057 @@
       opacity: 0;
     }
     .btn-primary {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dark);
       background: var(--gold);
-      color: var(--bg-dark);
-      padding: 1rem 2.2rem;
-      border-radius: 2px;
-      font-family: 'Lora', serif;
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      font-weight: 500;
-      transition: background 0.2s, transform 0.2s;
-      display: inline-block;
+      padding: 1rem 2.4rem;
+      border-radius: 1px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
     }
-    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); }
     .btn-outline {
-      border: 1px solid rgba(200,146,42,0.6);
-      color: var(--gold-pale);
-      padding: 1rem 2.2rem;
-      border-radius: 2px;
-      font-family: 'Lora', serif;
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: border-color 0.2s, color 0.2s, transform 0.2s;
       display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cream);
+      border: 1px solid rgba(245, 237, 216, 0.3);
+      padding: 1rem 2.4rem;
+      border-radius: 1px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .btn-outline:hover { border-color: var(--gold-light); color: var(--gold-light); transform: translateY(-2px); }
-
+    .btn-outline:hover {
+      border-color: var(--gold);
+      background: rgba(196, 154, 26, 0.1);
+    }
     .hero-scroll {
       position: absolute;
       bottom: 2.5rem;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 2;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.5rem;
-      color: var(--cream-dim);
-      font-size: 0.75rem;
-      letter-spacing: 0.2em;
+      opacity: 0;
+    }
+    .hero-scroll span {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      opacity: 0.7;
+      color: rgba(245, 237, 216, 0.4);
     }
     .scroll-line {
       width: 1px;
-      height: 40px;
-      background: linear-gradient(180deg, var(--gold) 0%, transparent 100%);
-      animation: scrollPulse 2s ease-in-out infinite;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
     }
     @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; transform: scaleY(1); }
-      50% { opacity: 1; transform: scaleY(1.2); }
+      0%, 100% { opacity: 0.25; transform: scaleY(0.7) translateY(0); }
+      50% { opacity: 0.9; transform: scaleY(1) translateY(4px); }
     }
 
-    /* ── ÖFFNUNGSZEITEN BAND ── */
-    #zeiten-band {
-      background: var(--bark-dark);
-      border-top: 1px solid rgba(200,146,42,0.3);
-      border-bottom: 1px solid rgba(200,146,42,0.3);
-      padding: 1.2rem 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 3rem;
-      flex-wrap: wrap;
+    /* ── Shared ──────────────────────────────────── */
+    .divider {
+      width: 48px; height: 1px;
+      background: var(--gold);
+      margin: 0 auto 1.5rem;
     }
-    .zeit-item {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-    .zeit-day {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
+    .divider-left { margin-left: 0; }
+    section { padding: clamp(4.5rem, 9vw, 8rem) clamp(1.5rem, 5vw, 4rem); }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-eyebrow {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.32em;
       text-transform: uppercase;
       color: var(--gold);
+      margin-bottom: 0.85rem;
     }
-    .zeit-time {
-      font-family: 'Playfair Display', serif;
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+      font-weight: 400;
+      line-height: 1.12;
+      letter-spacing: 0.02em;
+    }
+    .section-title.light { color: var(--cream); }
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+    }
+
+    /* ── About ───────────────────────────────────── */
+    .about { background: var(--cream-lt); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3.5rem, 7vw, 7rem);
+      align-items: center;
+    }
+    .about-text > p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #4A3520;
+      margin-top: 1.5rem;
+    }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      margin-top: 3rem;
+    }
+    .stat { border-left: 2px solid var(--gold); padding-left: 1.1rem; }
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      color: var(--dark);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-lbl {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .about-image-wrap {
+      position: relative;
+    }
+    .about-image-wrap::before {
+      content: '';
+      position: absolute;
+      top: -14px; left: -14px;
+      right: 14px; bottom: 14px;
+      border: 1px solid rgba(196, 154, 26, 0.35);
+      border-radius: 1px;
+      pointer-events: none;
+    }
+    .about-image-wrap img {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+
+    /* ── Menu ────────────────────────────────────── */
+    .menu { background: var(--dark); }
+    .menu-header { text-align: center; margin-bottom: 4rem; }
+    .menu-header .sub {
+      font-family: var(--serif-it);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: rgba(245, 237, 216, 0.5);
+      margin-top: 0.75rem;
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+    }
+    .menu-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .menu-card img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .menu-card:hover img { transform: scale(1.06); }
+    .menu-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(22, 11, 4, 0.94) 0%,
+        rgba(22, 11, 4, 0.3) 55%,
+        transparent 100%
+      );
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2.2rem 2rem;
+    }
+    .menu-card-tag {
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .menu-card-title {
+      font-family: var(--serif);
+      font-size: 1.65rem;
+      color: var(--cream);
+      line-height: 1.15;
+      margin-bottom: 0.8rem;
+    }
+    .menu-card-desc {
+      font-size: 0.875rem;
+      color: rgba(245, 237, 216, 0.68);
+      line-height: 1.65;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .menu-card:hover .menu-card-desc { max-height: 120px; opacity: 1; }
+    .menu-footer {
+      text-align: center;
+      margin-top: 3.5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(196, 154, 26, 0.12);
+    }
+    .menu-footer a {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-bottom: 1px solid rgba(196, 154, 26, 0.35);
+      padding-bottom: 3px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .menu-footer a:hover { color: var(--gold-lt); border-color: var(--gold-lt); }
+
+    /* ── Drinks ──────────────────────────────────── */
+    .drinks { background: var(--brown); }
+    .drinks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 6rem);
+      align-items: center;
+    }
+    .drinks-img img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+    .drinks-text .sub {
+      font-family: var(--serif-it);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: rgba(245, 237, 216, 0.5);
+      margin-top: 0.75rem;
+    }
+    .drink-list {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .drink-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid rgba(196, 154, 26, 0.12);
+    }
+    .drink-name {
+      font-family: var(--serif-it);
+      font-style: italic;
       font-size: 1.05rem;
       color: var(--cream);
     }
-    .zeit-divider {
-      width: 1px;
-      height: 30px;
-      background: rgba(200,146,42,0.3);
+    .drink-note {
+      font-size: 0.78rem;
+      color: rgba(245, 237, 216, 0.42);
+      margin-top: 0.2rem;
     }
-
-    /* ── SECTIONS ALLGEMEIN ── */
-    section { position: relative; }
-
-    .section-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    .section-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
+    .drink-price {
+      font-family: var(--serif);
+      font-size: 0.9rem;
       color: var(--gold);
-      margin-bottom: 1rem;
+      white-space: nowrap;
+      margin-left: 1.5rem;
+      text-align: right;
+    }
+    .drink-price small {
       display: block;
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 2px;
     }
 
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 1.5rem;
+    /* ── Biergarten ──────────────────────────────── */
+    .biergarten {
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 4rem);
+      overflow: hidden;
+    }
+    .biergarten-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=1920&q=80&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+    .biergarten-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(22, 11, 4, 0.9) 0%,
+        rgba(22, 11, 4, 0.65) 55%,
+        rgba(22, 11, 4, 0.35) 100%
+      );
+    }
+    .biergarten-content {
+      position: relative;
+      z-index: 2;
+      max-width: 580px;
+    }
+    .biergarten-content > p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(245, 237, 216, 0.68);
+      margin: 1.5rem 0 2.5rem;
     }
 
-    .divider-ornament {
+    /* ── Reserve ─────────────────────────────────── */
+    .reserve {
+      background: var(--dark);
+      border-top: 1px solid rgba(196, 154, 26, 0.12);
+    }
+    .reserve-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+    .reserve-inner > p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(245, 237, 216, 0.55);
+      margin: 1.25rem 0 2.75rem;
+    }
+    .reserve-cards {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .reserve-card {
       display: flex;
       align-items: center;
       gap: 1rem;
-      margin: 1.5rem 0 2rem;
-    }
-    .divider-ornament::before,
-    .divider-ornament::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(200,146,42,0.5));
-    }
-    .divider-ornament::after {
-      background: linear-gradient(90deg, rgba(200,146,42,0.5), transparent);
-    }
-    .ornament-diamond {
-      color: var(--gold);
-      font-size: 0.6rem;
-      letter-spacing: 0.4em;
-    }
-
-    /* ── GESCHICHTE / ÜBER UNS ── */
-    #geschichte {
-      padding: 7rem 0;
-      background: var(--bg-mid);
-    }
-    .geschichte-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: center;
-    }
-    .geschichte-text .section-title {
-      color: var(--cream);
-    }
-    .geschichte-text p {
-      color: var(--cream-dim);
-      line-height: 1.85;
-      margin-bottom: 1.2rem;
-      font-size: 1.05rem;
-    }
-    .geschichte-text p strong {
-      color: var(--gold-light);
-      font-weight: 500;
-    }
-    .geschichte-img {
-      position: relative;
-    }
-    .geschichte-img img {
-      width: 100%;
-      height: 520px;
-      object-fit: cover;
-      border-radius: 2px;
-      display: block;
-    }
-    .geschichte-img-frame {
-      position: absolute;
-      top: -1.2rem;
-      left: -1.2rem;
-      right: 1.2rem;
-      bottom: 1.2rem;
-      border: 1px solid rgba(200,146,42,0.35);
-      border-radius: 2px;
-      pointer-events: none;
-    }
-    .jahre-badge {
-      position: absolute;
-      bottom: -2rem;
-      right: -2rem;
-      width: 110px;
-      height: 110px;
-      background: var(--gold);
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--bg-dark);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    }
-    .jahre-badge .big { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; line-height: 1; }
-    .jahre-badge .small { font-family: 'Cormorant Garamond', serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; }
-
-    /* ── SPEISEKARTE ── */
-    #speisekarte {
-      padding: 7rem 0;
-      background: var(--bg-parchment);
-    }
-    #speisekarte .section-label { color: var(--bark); }
-    #speisekarte .section-title { color: var(--text-dark); }
-    #speisekarte .divider-ornament::before { background: linear-gradient(90deg, transparent, rgba(90,62,40,0.4)); }
-    #speisekarte .divider-ornament::after { background: linear-gradient(90deg, rgba(90,62,40,0.4), transparent); }
-    #speisekarte .ornament-diamond { color: var(--bark); }
-
-    .speise-header {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-
-    .speise-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-    }
-
-    .speise-card {
-      background: var(--bg-dark);
-      overflow: hidden;
-      position: relative;
-    }
-    .speise-card-img {
-      width: 100%;
-      height: 280px;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.6s ease;
-    }
-    .speise-card:hover .speise-card-img { transform: scale(1.05); }
-    .speise-card-body {
-      padding: 2rem;
-      background: var(--bg-mid);
-    }
-    .speise-card-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.6rem;
-      display: block;
-    }
-    .speise-card-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--cream);
-      margin-bottom: 0.8rem;
-      line-height: 1.2;
-    }
-    .speise-card-desc {
-      font-family: 'Lora', serif;
-      font-size: 0.9rem;
-      color: var(--cream-dim);
-      line-height: 1.7;
-    }
-
-    /* ── GALLERY ── */
-    #galerie {
-      padding: 0;
-      background: var(--bg-dark);
-    }
-    .galerie-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      grid-template-rows: 340px 340px;
-      gap: 2px;
-    }
-    .galerie-item {
-      overflow: hidden;
-      position: relative;
-    }
-    .galerie-item:first-child {
-      grid-row: span 2;
-    }
-    .galerie-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.6s ease;
-    }
-    .galerie-item:hover img { transform: scale(1.05); }
-    .galerie-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(18,13,6,0.0);
-      transition: background 0.3s;
-    }
-    .galerie-item:hover .galerie-overlay { background: rgba(18,13,6,0.3); }
-
-    /* ── BIERGARTEN ── */
-    #biergarten {
-      padding: 7rem 0;
-      background: var(--bg-mid);
-      position: relative;
-      overflow: hidden;
-    }
-    #biergarten::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0.4;
-    }
-    .biergarten-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: center;
-    }
-    .biergarten-img {
-      position: relative;
-    }
-    .biergarten-img img {
-      width: 100%;
-      height: 480px;
-      object-fit: cover;
-      border-radius: 2px;
-    }
-    .biergarten-text .section-title { color: var(--cream); }
-    .biergarten-text p {
-      color: var(--cream-dim);
-      line-height: 1.85;
-      margin-bottom: 1.2rem;
-      font-size: 1.05rem;
-    }
-    .biergarten-text p strong { color: var(--gold-light); font-weight: 500; }
-
-    /* ── BIER HIGHLIGHT ── */
-    #bier {
-      padding: 6rem 0;
-      background: var(--bark-dark);
-      text-align: center;
-    }
-    .bier-inner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-    }
-    .bier-logo img {
-      height: 100px;
-      filter: brightness(1.1) contrast(0.9);
-    }
-    .bier-text {
-      max-width: 480px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(196, 154, 26, 0.2);
+      padding: 1.25rem 2rem;
+      border-radius: 1px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
       text-align: left;
     }
-    .bier-text .section-label { color: var(--gold); }
-    .bier-text h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      color: var(--cream);
-      margin-bottom: 0.8rem;
+    .reserve-card:hover {
+      border-color: var(--gold);
+      background: rgba(196, 154, 26, 0.07);
     }
-    .bier-text p {
-      color: var(--cream-dim);
-      line-height: 1.8;
-      margin-bottom: 0.5rem;
-    }
-    .bier-preis {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      color: var(--gold-light);
-      margin-top: 1rem;
+    .reserve-card-icon { width: 20px; height: 20px; flex-shrink: 0; }
+    .reserve-card-icon svg { stroke: var(--gold); fill: none; width: 100%; height: 100%; }
+    .reserve-label {
       display: block;
-    }
-    .bier-preis small {
-      font-size: 1rem;
-      color: var(--cream-dim);
-    }
-
-    /* ── BRUNCH ── */
-    #brunch {
-      padding: 7rem 0;
-      background: var(--bg-parchment);
-    }
-    #brunch .section-label { color: var(--bark); }
-    #brunch .section-title { color: var(--text-dark); }
-    .brunch-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: start;
-    }
-    .brunch-img img {
-      width: 100%;
-      height: 460px;
-      object-fit: cover;
-      border-radius: 2px;
-    }
-    .brunch-content p {
-      color: var(--text-mid);
-      line-height: 1.8;
-      margin-bottom: 1.5rem;
-      font-size: 1.05rem;
-    }
-    .brunch-items {
-      list-style: none;
-      margin-top: 1rem;
-    }
-    .brunch-items li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.8rem;
-      padding: 0.8rem 0;
-      border-bottom: 1px solid rgba(90,62,40,0.15);
-      color: var(--text-mid);
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-    .brunch-items li::before {
-      content: '◆';
-      color: var(--gold);
-      font-size: 0.5rem;
-      margin-top: 0.4rem;
-      flex-shrink: 0;
-    }
-    .brunch-tag {
-      display: inline-block;
-      background: var(--bark-dark);
-      color: var(--gold-pale);
-      padding: 0.4rem 1rem;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.8rem;
+      font-size: 0.65rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      border-radius: 2px;
-      margin-bottom: 1.5rem;
+      color: rgba(245, 237, 216, 0.38);
+      margin-bottom: 0.2rem;
+    }
+    .reserve-value {
+      font-family: var(--serif-it);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--cream);
     }
 
-    /* ── KONTAKT ── */
-    #kontakt {
-      padding: 7rem 0;
-      background: var(--bg-dark);
-    }
-    .kontakt-grid {
+    /* ── Hours ───────────────────────────────────── */
+    .hours { background: var(--cream-lt); }
+    .hours-header { text-align: center; margin-bottom: 3.5rem; }
+    .hours-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    .hours-card {
+      background: white;
+      padding: 2.5rem 2rem;
+      border-top: 2px solid var(--gold);
+    }
+    .hours-day {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    .hours-time {
+      font-family: var(--serif);
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--dark);
+      line-height: 1;
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .hours-note {
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .hours-brunch {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dark);
+      background: rgba(196, 154, 26, 0.15);
+      border: 1px solid rgba(196, 154, 26, 0.3);
+      padding: 0.25rem 0.65rem;
+      border-radius: 100px;
+      margin-top: 0.75rem;
+    }
+
+    /* ── Anfahrt ─────────────────────────────────── */
+    .anfahrt { background: var(--dark); }
+    .anfahrt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: clamp(3rem, 5vw, 5rem);
       align-items: start;
     }
-    .kontakt-text .section-title { color: var(--cream); }
-    .kontakt-info {
+    .anfahrt-details > p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: rgba(245, 237, 216, 0.55);
+      margin-top: 0.4rem;
+    }
+    .anfahrt-details strong { color: rgba(245, 237, 216, 0.9); font-weight: 500; }
+    .transport-grid {
       margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
     }
-    .kontakt-block {
-      margin-bottom: 2rem;
+    .transport-row { display: flex; align-items: center; gap: 0.75rem; }
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.22rem 0.7rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      font-family: var(--sans);
     }
-    .kontakt-block-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.3em;
+    .badge-u { background: #003B8E; color: white; }
+    .badge-t { background: #C4151C; color: white; }
+    .badge-b { background: #1A6B3C; color: white; }
+    .transport-name { font-size: 0.85rem; color: rgba(245, 237, 216, 0.55); }
+    .anfahrt-note {
+      font-size: 0.78rem;
+      font-style: italic;
+      color: rgba(245, 237, 216, 0.28);
+      margin-top: 1.75rem;
+      line-height: 1.65;
+    }
+    .map-wrap {
+      border-radius: 1px;
+      overflow: hidden;
+      border: 1px solid rgba(196, 154, 26, 0.14);
+    }
+    .map-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 380px;
+      border: none;
+      filter: sepia(15%) contrast(0.88) brightness(0.95);
+    }
+
+    /* ── Footer ──────────────────────────────────── */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(196, 154, 26, 0.1);
+      padding: 4rem clamp(1.5rem, 5vw, 4rem) 2.5rem;
+    }
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: 3.5rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .footer-brand img {
+      height: 38px;
+      filter: brightness(0) invert(1);
+      margin-bottom: 1.25rem;
+    }
+    .footer-brand-name {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      color: var(--cream);
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    .footer-brand > p {
+      font-size: 0.875rem;
+      line-height: 1.75;
+      color: rgba(245, 237, 216, 0.38);
+      max-width: 260px;
+    }
+    .footer-col h4 {
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 0.5rem;
-      display: block;
+      margin-bottom: 1.4rem;
     }
-    .kontakt-block p,
-    .kontakt-block a {
-      color: var(--cream-dim);
-      font-size: 1rem;
-      line-height: 1.7;
-      text-decoration: none;
-    }
-    .kontakt-block a:hover { color: var(--gold-light); }
-    .kontakt-block strong { color: var(--cream); display: block; font-size: 1.1rem; margin-bottom: 0.2rem; }
-
-    .zeiten-table { width: 100%; border-collapse: collapse; }
-    .zeiten-table tr { border-bottom: 1px solid rgba(200,146,42,0.1); }
-    .zeiten-table td { padding: 0.65rem 0; color: var(--cream-dim); font-size: 0.95rem; }
-    .zeiten-table td:last-child { text-align: right; color: var(--cream); }
-
-    .kontakt-map {
-      width: 100%;
-      height: 100%;
-      min-height: 400px;
-      background: var(--bg-mid);
-      border-radius: 2px;
-      overflow: hidden;
-      position: relative;
-    }
-    .kontakt-map iframe {
-      width: 100%;
-      height: 100%;
-      min-height: 450px;
-      border: none;
-      filter: grayscale(30%) sepia(20%) brightness(0.85);
-    }
-
-    .reservierung-box {
-      margin-top: 2.5rem;
-      padding: 2rem;
-      border: 1px solid rgba(200,146,42,0.3);
-      border-radius: 2px;
-      background: rgba(200,146,42,0.05);
-    }
-    .reservierung-box h4 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
-      color: var(--cream);
-      margin-bottom: 0.8rem;
-    }
-    .reservierung-box p {
-      color: var(--cream-dim);
-      font-size: 0.9rem;
-      line-height: 1.7;
-      margin-bottom: 1.2rem;
-    }
-    .reservierung-box .btn-primary {
-      display: inline-block;
-      font-size: 0.85rem;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--bark-dark);
-      border-top: 1px solid rgba(200,146,42,0.2);
-      padding: 3rem 2rem;
-      text-align: center;
-    }
-    .footer-logo img {
-      height: 50px;
-      margin-bottom: 1.5rem;
-      opacity: 0.85;
-    }
-    .footer-tagline {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 1.1rem;
-      color: var(--gold-pale);
-      margin-bottom: 1.5rem;
-    }
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-    }
-    .footer-links a {
-      color: var(--cream-dim);
-      text-decoration: none;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.65rem; }
+    .footer-col ul li a {
+      font-size: 0.875rem;
+      color: rgba(245, 237, 216, 0.45);
       transition: color 0.2s;
+      cursor: pointer;
     }
-    .footer-links a:hover { color: var(--gold-light); }
-    .footer-copy {
-      color: rgba(200,184,152,0.4);
-      font-size: 0.75rem;
+    .footer-col ul li a:hover { color: var(--cream); }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 2rem auto 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-
-    /* ── MOBILE ── */
-    @media (max-width: 768px) {
-      nav { padding: 0 1.2rem; }
-      .nav-links, .nav-reserve { display: none; }
-      .nav-burger { display: flex; }
-
-      .hero-title { font-size: clamp(3rem, 12vw, 5rem); }
-
-      #zeiten-band { gap: 1rem 2rem; padding: 1rem; }
-      .zeit-divider { display: none; }
-
-      .section-inner { padding: 0 1.2rem; }
-
-      .geschichte-grid,
-      .biergarten-grid,
-      .kontakt-grid,
-      .brunch-layout { grid-template-columns: 1fr; gap: 3rem; }
-
-      .geschichte-img,
-      .biergarten-img { order: -1; }
-      .geschichte-img img,
-      .biergarten-img img { height: 300px; }
-
-      .geschichte-img-frame { display: none; }
-      .jahre-badge { right: 1rem; bottom: -1.5rem; width: 90px; height: 90px; }
-      .jahre-badge .big { font-size: 1.6rem; }
-
-      .speise-cards { grid-template-columns: 1fr; }
-      .speise-card-img { height: 220px; }
-
-      .galerie-grid {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 200px 200px 200px;
-      }
-      .galerie-item:first-child { grid-row: span 1; grid-column: span 2; }
-
-      .bier-inner { gap: 2rem; }
-      .bier-text { text-align: center; }
-
-      .brunch-img img { height: 250px; }
-
-      .kontakt-map { min-height: 300px; }
-      .kontakt-map iframe { min-height: 300px; }
-
-      #geschichte, #speisekarte, #biergarten, #brunch, #kontakt { padding: 4rem 0; }
+    .footer-copyright { font-size: 0.75rem; color: rgba(245, 237, 216, 0.22); }
+    .footer-social { display: flex; gap: 0.75rem; }
+    .social-btn {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(196, 154, 26, 0.18);
+      border-radius: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
     }
+    .social-btn:hover {
+      border-color: var(--gold);
+      background: rgba(196, 154, 26, 0.08);
+    }
+    .social-btn svg { width: 15px; height: 15px; fill: rgba(245, 237, 216, 0.55); }
 
-    /* ── ANIMATIONS ── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(30px);
+    /* ── Responsive ──────────────────────────────── */
+    @media (max-width: 960px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-toggle { display: flex; }
+      .about-grid,
+      .drinks-grid,
+      .anfahrt-grid { grid-template-columns: 1fr; }
+      .about-image-wrap { order: -1; }
+      .about-image-wrap img { aspect-ratio: 16/9; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .menu-card img { aspect-ratio: 16/9; }
+      .hours-grid { grid-template-columns: 1fr; gap: 2px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+    @media (max-width: 600px) {
+      .hero-title { font-size: 3.2rem; }
+      .hero-subtitle br { display: none; }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .reserve-cards { flex-direction: column; }
+      .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-line { animation: none; opacity: 0.5; }
+      .hero-bg { transform: scale(1) !important; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAVIGATION -->
+  <!-- ── MOBILE NAV ─────────────────────────────── -->
+  <div id="mobileNav" role="dialog" aria-label="Navigation">
+    <a href="#about"   class="mobile-nav-link" onclick="closeNav()">Das Schöni</a>
+    <a href="#menu"    class="mobile-nav-link" onclick="closeNav()">Speisekarte</a>
+    <a href="#drinks"  class="mobile-nav-link" onclick="closeNav()">Getränke</a>
+    <a href="#hours"   class="mobile-nav-link" onclick="closeNav()">Öffnungszeiten</a>
+    <a href="#anfahrt" class="mobile-nav-link" onclick="closeNav()">Anfahrt</a>
+    <a href="tel:06994506611" class="mobile-nav-phone">069 – 945 066 11</a>
+  </div>
+
+  <!-- ── NAV ───────────────────────────────────── -->
   <nav id="navbar">
-    <a class="nav-logo" href="#hero">
-      <img src="https://www.schoene-berger.de/media/wp-content/uploads/2025/08/schoenilogo_desk_small.svg" alt="Schöneberger" />
+    <a href="#" class="nav-logo">
+      <img
+        src="https://www.schoene-berger.de/media/wp-content/uploads/2025/08/schoenilogo_desk_small.svg"
+        alt="Schöneberger"
+        onerror="this.style.display='none'; document.querySelector('.nav-logo-text').style.display='block'"
+      >
+      <span class="nav-logo-text" style="display:none">Schöneberger</span>
     </a>
     <ul class="nav-links">
-      <li><a href="#geschichte">Geschichte</a></li>
-      <li><a href="#speisekarte">Speisekarte</a></li>
-      <li><a href="#biergarten">Biergarten</a></li>
-      <li><a href="#brunch">Brunch</a></li>
-      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="#about">Das Schöni</a></li>
+      <li><a href="#menu">Speisekarte</a></li>
+      <li><a href="#drinks">Getränke</a></li>
+      <li><a href="#hours">Öffnungszeiten</a></li>
+      <li><a href="#anfahrt">Anfahrt</a></li>
     </ul>
-    <a class="nav-reserve" href="mailto:info@schoene-berger.de">Reservieren</a>
-    <div class="nav-burger" id="navBurger">
+    <a href="tel:06994506611" class="nav-cta">Reservieren</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menü öffnen" onclick="toggleNav()">
       <span></span><span></span><span></span>
-    </div>
+    </button>
   </nav>
 
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-bg" id="heroBg"></div>
-    <div class="hero-overlay"></div>
+  <!-- ── HERO ──────────────────────────────────── -->
+  <section class="hero" aria-label="Hero">
+    <div class="hero-bg" id="heroBg" role="img" aria-label="Warmer Gastraum des Schöneberger"></div>
     <div class="hero-content">
-      <span class="hero-eyebrow" id="heroEyebrow">Frankfurt-Bornheim · Seit über 25 Jahren</span>
-      <h1 class="hero-title" id="heroTitle">Das<br><em>Schöneberger</em></h1>
-      <p class="hero-sub" id="heroSub">Wo Bornheim zu Hause ist. Ehrliche Küche, kaltes Bier,<br>warme Abende — und zwei Biergärten direkt an der Berger Straße.</p>
-      <div class="hero-ctas" id="heroCtas">
-        <a href="#speisekarte" class="btn-primary">Zur Speisekarte</a>
-        <a href="#kontakt" class="btn-outline">Tisch reservieren</a>
+      <p class="hero-eyebrow" id="heroEyebrow">Frankfurt · Bornheim · Seit 1999</p>
+      <h1 class="hero-title" id="heroTitle">Der Schöni</h1>
+      <p class="hero-subtitle" id="heroSubtitle">
+        Frankfurts liebstes Gasthaus. Hausgemacht, herzlich —<br>
+        und nie weit von einem guten Bier entfernt.
+      </p>
+      <div class="hero-actions" id="heroActions">
+        <a href="tel:06994506611" class="btn-primary">Tisch reservieren</a>
+        <a href="https://www.schoene-berger.de/media/download/2/menus/1149/schoeni_speise_getraenkekarte.pdf"
+           target="_blank" rel="noopener" class="btn-outline">Speisekarte (PDF)</a>
       </div>
     </div>
-    <div class="hero-scroll">
+    <div class="hero-scroll" id="heroScroll" aria-hidden="true">
       <div class="scroll-line"></div>
+      <span>Entdecken</span>
     </div>
   </section>
 
-  <!-- ÖFFNUNGSZEITEN BAND -->
-  <div id="zeiten-band">
-    <div class="zeit-item">
-      <span class="zeit-day">Mo – Fr</span>
-      <span class="zeit-time">ab 17:00 Uhr</span>
+  <!-- ── ÜBER DEN SCHÖNI ───────────────────────── -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <span class="section-eyebrow">Das Schöni</span>
+          <div class="divider divider-left"></div>
+          <h2 class="section-title reveal">Bornheims Wohnzimmer seit über 25 Jahren</h2>
+          <p class="reveal">
+            Seit 1999 schlägt das Herz des Schöneberger mitten in der Frankfurter
+            Bergerstraße. Was als klassisches Wirtshaus begann, ist heute ein Stück
+            Frankfurter Seele — geliebt von Stammgästen, entdeckt von Neugierigen,
+            und fest verankert im Leben Bornheims.
+          </p>
+          <p class="reveal">
+            Hier treffen sich Menschen, die gutes Essen und ehrliche Gastfreundschaft
+            zu schätzen wissen. Hausgemachte Burger aus feinstem Black Angus Beef,
+            Steaks vom Lavastein, Apfelwein aus der Kanne — und immer ein freier
+            Stuhl für ein gutes Gespräch.
+          </p>
+          <div class="about-stats reveal">
+            <div class="stat">
+              <div class="stat-num">25+</div>
+              <div class="stat-lbl">Jahre in Frankfurt</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">2</div>
+              <div class="stat-lbl">Biergärten</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">Jung</div>
+              <div class="stat-lbl">&amp; Alt willkommen</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">U4</div>
+              <div class="stat-lbl">direkt vor der Tür</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-image-wrap reveal">
+          <img
+            src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&q=80&fit=crop&crop=center"
+            alt="Warmer Gastraum mit stimmungsvoller Beleuchtung"
+            loading="lazy"
+          >
+        </div>
+      </div>
     </div>
-    <div class="zeit-divider"></div>
-    <div class="zeit-item">
-      <span class="zeit-day">Sa & So</span>
-      <span class="zeit-time">ab 11:00 Uhr</span>
+  </section>
+
+  <!-- ── SPEISEKARTE ────────────────────────────── -->
+  <section class="menu" id="menu">
+    <div class="container">
+      <div class="menu-header">
+        <span class="section-eyebrow">Küche &amp; Gaumen</span>
+        <div class="divider"></div>
+        <h2 class="section-title light reveal">Was den Schöni ausmacht</h2>
+        <p class="sub reveal">Frische Zutaten, gute Handwerksarbeit — kein Fertigfutter, kein Kompromiss.</p>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-card reveal">
+          <img
+            src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80&fit=crop"
+            alt="Schöneburger — der Signature-Burger des Hauses"
+            loading="lazy"
+          >
+          <div class="menu-card-overlay">
+            <span class="menu-card-tag">Signature</span>
+            <h3 class="menu-card-title">Der Schöneburger</h3>
+            <p class="menu-card-desc">
+              200 g Black Angus US Prime Beef, Bacon &amp; Cheddar, Tomaten, Gurken,
+              Zwiebeln, Salat. Dazu Krautsalat &amp; Pommes oder Kartoffelecken.
+              Auf Wunsch mit Bio-Spiegelei.
+            </p>
+          </div>
+        </div>
+        <div class="menu-card reveal">
+          <img
+            src="https://images.unsplash.com/photo-1600891964092-4316c288032e?w=800&q=80&fit=crop"
+            alt="Black Angus Steak vom Lavastein"
+            loading="lazy"
+          >
+          <div class="menu-card-overlay">
+            <span class="menu-card-tag">Vom Lavastein</span>
+            <h3 class="menu-card-title">Black Angus</h3>
+            <p class="menu-card-desc">
+              Filet und Rib Eye vom argentinischen Black Angus Rind — perfekt auf dem
+              Lavastein gegart. Schöne Qualität. Schön lecker.
+            </p>
+          </div>
+        </div>
+        <div class="menu-card reveal">
+          <img
+            src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80&fit=crop"
+            alt="Frischer Salat — die schlanke Linie"
+            loading="lazy"
+          >
+          <div class="menu-card-overlay">
+            <span class="menu-card-tag">Leib &amp; Seele</span>
+            <h3 class="menu-card-title">Schlanke Linie</h3>
+            <p class="menu-card-desc">
+              Salate zum Sattwerden — mit thymian-honig gratiniertem Ziegenkäse,
+              Putenbruststreifen &amp; Champignons, oder Schafskäse mit Oliven &amp;
+              Peperoni.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="menu-footer reveal">
+        <a href="https://www.schoene-berger.de/media/download/2/menus/1149/schoeni_speise_getraenkekarte.pdf"
+           target="_blank" rel="noopener">
+          Vollständige Speise- &amp; Getränkekarte herunterladen &rarr;
+        </a>
+      </div>
     </div>
-    <div class="zeit-divider"></div>
-    <div class="zeit-item">
-      <span class="zeit-day">Brunch</span>
-      <span class="zeit-time">Sa & So · 11–16 Uhr</span>
+  </section>
+
+  <!-- ── GETRÄNKE ───────────────────────────────── -->
+  <section class="drinks" id="drinks">
+    <div class="container">
+      <div class="drinks-grid">
+        <div class="drinks-img reveal">
+          <img
+            src="https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=900&q=80&fit=crop&crop=center"
+            alt="Frisch gezapftes Bier im Schöneberger"
+            loading="lazy"
+          >
+        </div>
+        <div class="drinks-text">
+          <span class="section-eyebrow">Zum Durst löschen</span>
+          <div class="divider divider-left"></div>
+          <h2 class="section-title light reveal">Was ins Glas kommt</h2>
+          <p class="sub reveal">
+            Vom Apfelwein aus der Kanne bis zum eiskalten Humpen —
+            hier trinkt Frankfurt, wie es sein soll.
+          </p>
+          <div class="drink-list reveal">
+            <div class="drink-item">
+              <div>
+                <div class="drink-name">Allgäuer Büble Edelbräu · Helles</div>
+                <div class="drink-note">Vollmundig, malzig — eiskalt im Humpen serviert</div>
+              </div>
+              <div class="drink-price">5,90 &euro;<small>0,5 l</small></div>
+            </div>
+            <div class="drink-item">
+              <div>
+                <div class="drink-name">Allgäuer Büble Edelbräu · Weizen</div>
+                <div class="drink-note">Frisch und leicht, das perfekte Sommerweizen</div>
+              </div>
+              <div class="drink-price">5,90 &euro;<small>0,5 l</small></div>
+            </div>
+            <div class="drink-item">
+              <div>
+                <div class="drink-name">Apfelwein</div>
+                <div class="drink-note">Frankfurts Nationalgetränk — wie er sein soll</div>
+              </div>
+              <div class="drink-price">vom Fass</div>
+            </div>
+            <div class="drink-item">
+              <div>
+                <div class="drink-name">Cocktails &amp; Longdrinks</div>
+                <div class="drink-note">Klassiker und hauseigene Kreationen</div>
+              </div>
+              <div class="drink-price">auf Karte</div>
+            </div>
+            <div class="drink-item">
+              <div>
+                <div class="drink-name">Hausgemachte Limonade</div>
+                <div class="drink-note">Frisch — für die Kleinen und die Vernünftigen</div>
+              </div>
+              <div class="drink-price">täglich frisch</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="zeit-divider"></div>
-    <div class="zeit-item">
-      <span class="zeit-day">Reservierung</span>
-      <span class="zeit-time">+49 69 94506611</span>
+  </section>
+
+  <!-- ── BIERGARTEN BANNER ──────────────────────── -->
+  <div class="biergarten" id="biergarten" role="region" aria-label="Biergarten">
+    <div class="biergarten-bg" role="img" aria-label="Sommerstimmung im Biergarten"></div>
+    <div class="container">
+      <div class="biergarten-content">
+        <span class="section-eyebrow" style="color:var(--gold)">Sommer in Bornheim</span>
+        <div class="divider divider-left"></div>
+        <h2 class="section-title light reveal">Zwei Biergärten.<br>Ein Sommer.</h2>
+        <p class="reveal">
+          Wenn die Tage länger werden, öffnen unsere beiden Gärten. Bornheimer Luft,
+          gute Nachbarn, ein kaltes Bier in der Hand — das ist der Schöni, wie er
+          am schönsten ist. Wer früh kommt, kriegt den besten Tisch.
+        </p>
+        <a href="tel:06994506611" class="btn-primary reveal">Gartentisch reservieren</a>
+      </div>
     </div>
   </div>
 
-  <!-- GESCHICHTE -->
-  <section id="geschichte">
-    <div class="section-inner">
-      <div class="geschichte-grid">
-        <div class="geschichte-text fade-up">
-          <span class="section-label">Unsere Geschichte</span>
-          <h2 class="section-title">Bornheims<br>gutes Stück.</h2>
-          <div class="divider-ornament"><span class="ornament-diamond">◆ ◆ ◆</span></div>
-          <p>
-            Manche Orte werden nicht geplant — sie wachsen. Das Schöneberger ist einer davon.
-            Seit über <strong>25 Jahren</strong> ist diese Adresse in der Berger Straße fester Bestandteil
-            des Bornheimer Lebens: für die Stammgäste von damals, für die Neuzugezogenen von heute
-            und für alle, die einfach einen verlässlichen Platz brauchen, an dem man sich wohlfühlt.
-          </p>
-          <p>
-            Kein Restaurant-Konzept. Kein Hipster-Hype. Sondern echtes Gasthaus: <strong>warme Küche,
-            frisch gezapftes Bier, ein Biergarten mit echtem Charakter</strong> — und Gastgeber,
-            die ihren Beruf noch als Berufung verstehen.
-          </p>
-          <p>
-            Alt und Jung, Kreuzberg-Berge und Handwerk — hier treffen sich Bornheim und Nordend,
-            ohne Scheu und ohne Krawatte. Das Schöneberger gehört zum Viertel wie die U4 und
-            der Sonntags-Markt.
-          </p>
-        </div>
-        <div class="geschichte-img fade-up">
-          <div class="geschichte-img-frame"></div>
-          <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/03/innen_test-1.jpg" alt="Innenraum Schöneberger" loading="lazy" />
-          <div class="jahre-badge">
-            <span class="big">25+</span>
-            <span class="small">Jahre</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SPEISEKARTE -->
-  <section id="speisekarte">
-    <div class="section-inner">
-      <div class="speise-header fade-up">
-        <span class="section-label">Frankfurter Küche & mehr</span>
-        <h2 class="section-title">Was wir kochen,<br>kochen wir richtig.</h2>
-        <div class="divider-ornament"><span class="ornament-diamond">◆ ◆ ◆</span></div>
-        <p style="color: var(--text-mid); max-width: 560px; margin: 0 auto; line-height: 1.8;">
-          Keine Experimentierstube. Aber handwerklich sauber: von der Frankfurter Küche
-          über hausgemachte Salate bis zum Lavastein-Steak.
+  <!-- ── RESERVIERUNG ───────────────────────────── -->
+  <section class="reserve" id="reserve">
+    <div class="container">
+      <div class="reserve-inner">
+        <span class="section-eyebrow">Reservieren</span>
+        <div class="divider"></div>
+        <h2 class="section-title light reveal">Sicher dir deinen Tisch</h2>
+        <p class="reveal">
+          Telefonisch erreichbar Montag bis Freitag ab 16:30 Uhr,
+          samstags und sonntags ab 10:30 Uhr. Für größere Gruppen
+          gerne auch per E-Mail — bitte immer mit Rückrufnummer.
         </p>
-      </div>
-    </div>
-    <div class="speise-cards">
-      <div class="speise-card fade-up">
-        <img class="speise-card-img" src="https://www.schoene-berger.de/media/wp-content/uploads/2020/09/leibundseele_desktop_slide2.jpg" alt="Der Schöneburger" loading="lazy" />
-        <div class="speise-card-body">
-          <span class="speise-card-label">Das Original</span>
-          <div class="speise-card-name">Der Schöneburger</div>
-          <p class="speise-card-desc">
-            200g Black Angus US Prime Beef · Tomate · Gurke · Zwiebel · Bacon · Cheddar.
-            Mit Coleslaw und Pommes oder Bratkartoffeln. Bornheims Lieblingsburger — seit Jahren.
-          </p>
-        </div>
-      </div>
-      <div class="speise-card fade-up">
-        <img class="speise-card-img" src="https://www.schoene-berger.de/media/wp-content/uploads/2020/09/leibundseele_desktop_slide3.jpg" alt="Black Angus Steak" loading="lazy" />
-        <div class="speise-card-body">
-          <span class="speise-card-label">Vom Lavastein</span>
-          <div class="speise-card-name">Black Angus</div>
-          <p class="speise-card-desc">
-            Argentinisches Filet, Rib Eye und Rumpsteak — auf dem Lavastein gegart.
-            Qualität, die sonst doppelt so viel kostet. Kein Schnickschnack, nur Fleisch.
-          </p>
-        </div>
-      </div>
-      <div class="speise-card fade-up">
-        <img class="speise-card-img" src="https://www.schoene-berger.de/media/wp-content/uploads/2020/03/IMG_20200314_170440.jpg" alt="Frankfurter Küche" loading="lazy" />
-        <div class="speise-card-body">
-          <span class="speise-card-label">Frankfurter Klassiker</span>
-          <div class="speise-card-name">Schnitzel & Co.</div>
-          <p class="speise-card-desc">
-            Frankfurter Schnitzel, Pasta mit Lachs und Babyspinat, Wildkräutersalate —
-            die Küche, die man kennt und will. Ohne Überraschungen, dafür mit Charakter.
-          </p>
+        <div class="reserve-cards reveal">
+          <a href="tel:06994506611" class="reserve-card">
+            <div class="reserve-card-icon">
+              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.5 6.5C2.5 14.5 9.5 21.5 17.5 21.5l2-4.5-3.5-1.5-1.5 2c-2.5-1-5-3.5-6-6l2-1.5L9.5 7 5 5 2.5 6.5z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="reserve-label">Telefon</span>
+              <span class="reserve-value">069 – 945 066 11</span>
+            </div>
+          </a>
+          <a href="mailto:info@schoene-berger.de" class="reserve-card">
+            <div class="reserve-card-icon">
+              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <polyline points="2,4 12,13 22,4"/>
+              </svg>
+            </div>
+            <div>
+              <span class="reserve-label">E-Mail · Gruppen</span>
+              <span class="reserve-value">info@schoene-berger.de</span>
+            </div>
+          </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- GALERIE -->
-  <section id="galerie">
-    <div class="galerie-grid">
-      <div class="galerie-item">
-        <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/08/IMG_20200828_173814_edited-1.jpg" alt="Schöneberger Atmosphäre" loading="lazy" />
-        <div class="galerie-overlay"></div>
+  <!-- ── ÖFFNUNGSZEITEN ─────────────────────────── -->
+  <section class="hours" id="hours">
+    <div class="container">
+      <div class="hours-header">
+        <span class="section-eyebrow">Wann wir für euch da sind</span>
+        <div class="divider"></div>
+        <h2 class="section-title reveal">Öffnungszeiten</h2>
       </div>
-      <div class="galerie-item">
-        <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/03/elch.jpg" alt="Schöneberger Einrichtung" loading="lazy" />
-        <div class="galerie-overlay"></div>
-      </div>
-      <div class="galerie-item">
-        <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/03/wm.jpg" alt="Schöneberger Terrasse" loading="lazy" />
-        <div class="galerie-overlay"></div>
-      </div>
-      <div class="galerie-item">
-        <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/03/birne_edited2.jpg" alt="Schöneberger Detail" loading="lazy" />
-        <div class="galerie-overlay"></div>
-      </div>
-      <div class="galerie-item">
-        <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/03/IMG_20200314_171538.jpg" alt="Schöneberger Bar" loading="lazy" />
-        <div class="galerie-overlay"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BIERGARTEN -->
-  <section id="biergarten">
-    <div class="section-inner">
-      <div class="biergarten-grid">
-        <div class="biergarten-img fade-up">
-          <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/09/leibundseele_mobile_slide1.jpg" alt="Biergarten Schöneberger" loading="lazy" />
+      <div class="hours-grid">
+        <div class="hours-card reveal">
+          <div class="hours-day">Montag – Freitag</div>
+          <div class="hours-time">ab 17:00</div>
+          <div class="hours-note">Reservierungen telefonisch ab 16:30 Uhr möglich</div>
         </div>
-        <div class="biergarten-text fade-up">
-          <span class="section-label">Draußen ist schöner</span>
-          <h2 class="section-title">Zwei Gärten.<br>Ein Gefühl.</h2>
-          <div class="divider-ornament"><span class="ornament-diamond">◆ ◆ ◆</span></div>
-          <p>
-            Wenn Frankfurt schön ist, dann in Bornheim — und wenn Bornheim schön ist,
-            dann sitzt man draußen. Das Schöneberger hat gleich <strong>zwei Biergärten</strong>,
-            direkt an der Berger Straße.
-          </p>
-          <p>
-            Lange Abende, kaltes Bier, das Viertel zieht vorbei. Kein Rasen-Kunstprojekt,
-            sondern echter <strong>Bornheimer Sommer</strong>: laut, herzlich, entspannt.
-            Plätze für Gruppen vorhanden — am besten früh kommen oder reservieren.
-          </p>
-          <a href="mailto:info@schoene-berger.de" class="btn-outline" style="margin-top:0.5rem; display:inline-block;">Tisch reservieren</a>
+        <div class="hours-card reveal">
+          <div class="hours-day">Samstag</div>
+          <div class="hours-time">ab 11:00</div>
+          <div class="hours-note">Reservierungen telefonisch ab 10:30 Uhr</div>
+          <span class="hours-brunch">Brunchkarte</span>
+        </div>
+        <div class="hours-card reveal">
+          <div class="hours-day">Sonntag</div>
+          <div class="hours-time">ab 11:00</div>
+          <div class="hours-note">Reservierungen telefonisch ab 10:30 Uhr</div>
+          <span class="hours-brunch">Brunchkarte</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- BIER HIGHLIGHT -->
-  <section id="bier">
-    <div class="section-inner">
-      <div class="bier-inner">
-        <div class="bier-logo fade-up">
-          <img src="https://www.schoene-berger.de/media/wp-content/uploads/2024/04/logo-bueble.png" alt="Allgäuer Büble Bier" loading="lazy" />
-        </div>
-        <div class="bier-text fade-up">
-          <span class="section-label">Unser Bier-Tipp</span>
-          <h3>Allgäuer<br>Büble Edelbräu</h3>
-          <div class="divider-ornament"><span class="ornament-diamond">◆ ◆ ◆</span></div>
-          <p>
-            Wir hätten auch ein beliebiges Mainstream-Bier zapfen können. Haben wir nicht.
-            Das Büble aus dem Allgäu überzeugt durch echten Charakter — frisch, sauber,
-            ausgewogen. Als Helles und als Weizen.
-          </p>
-          <span class="bier-preis">€ 5,90 <small>/ 0,5 L</small></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BRUNCH -->
-  <section id="brunch">
-    <div class="section-inner">
-      <div class="brunch-layout">
-        <div class="brunch-content fade-up">
-          <span class="section-label">Wochenende</span>
-          <span class="brunch-tag">Sa & So · 11–16 Uhr</span>
-          <h2 class="section-title" style="color: var(--text-dark);">Der Bornheimer<br>Sonntagsmorgen.</h2>
-          <div class="divider-ornament" style="--gold: var(--bark)">
-            <span class="ornament-diamond" style="color:var(--bark)">◆ ◆ ◆</span>
+  <!-- ── ANFAHRT ────────────────────────────────── -->
+  <section class="anfahrt" id="anfahrt">
+    <div class="container">
+      <div class="anfahrt-grid">
+        <div class="anfahrt-details">
+          <span class="section-eyebrow">So findet ihr uns</span>
+          <div class="divider divider-left"></div>
+          <h2 class="section-title light reveal">Anfahrt</h2>
+          <div class="reveal">
+            <p><strong>Schöneberger Gasthaus &amp; Bar</strong></p>
+            <p>Berger Straße · 60316 Frankfurt am Main</p>
+            <p style="margin-top:0.75rem">
+              Am besten mit den Öffentlichen — Bornheim Mitte ist direkt um die Ecke.
+            </p>
           </div>
-          <p style="color: var(--text-mid);">
-            Kein Hipster-Buffet. Sondern vernünftiger Brunch in einer Umgebung,
-            in der man gerne länger sitzt. Ab 11 Uhr — für alle, die das Wochenende
-            mit gutem Essen beginnen wollen.
-          </p>
-          <ul class="brunch-items">
-            <li>Ofenfrisches Croissant mit Konfitüre und Butter</li>
-            <li>Serrano-Schinken · Salami · Käse-Auswahl</li>
-            <li>Räucherlachs · Meerrettich · Garnelen · Räucherforelle</li>
-            <li>Gemüseomelette mit Rösti und Kräuterquark</li>
-            <li>Ab <strong style="color:var(--bark)">€ 8,–</strong> pro Teller</li>
-          </ul>
-          <a href="mailto:info@schoene-berger.de?subject=Brunch-Reservierung" class="btn-primary" style="margin-top:2rem; background:var(--bark); display:inline-block;">Brunch-Platz sichern</a>
-        </div>
-        <div class="brunch-img fade-up">
-          <img src="https://www.schoene-berger.de/media/wp-content/uploads/2020/09/leibundseele_mobile_slide4.jpg" alt="Brunch Schöneberger" loading="lazy" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- KONTAKT -->
-  <section id="kontakt">
-    <div class="section-inner">
-      <div class="kontakt-grid">
-        <div class="kontakt-text fade-up">
-          <span class="section-label">Finden & Reservieren</span>
-          <h2 class="section-title">Mitten in<br>Bornheim.</h2>
-          <div class="divider-ornament"><span class="ornament-diamond">◆ ◆ ◆</span></div>
-          <div class="kontakt-info">
-            <div class="kontakt-block">
-              <span class="kontakt-block-label">Adresse</span>
-              <strong>Schöneberger Gasthaus & Bar</strong>
-              <p>Berger Straße 237<br>60385 Frankfurt am Main · Bornheim</p>
+          <div class="transport-grid reveal">
+            <div class="transport-row">
+              <span class="badge badge-u">U 4</span>
+              <span class="transport-name">Bornheim Mitte</span>
             </div>
-            <div class="kontakt-block">
-              <span class="kontakt-block-label">Öffnungszeiten</span>
-              <table class="zeiten-table">
-                <tr><td>Montag – Freitag</td><td>ab 17:00 Uhr</td></tr>
-                <tr><td>Samstag & Sonntag</td><td>ab 11:00 Uhr</td></tr>
-                <tr><td>Brunch (Sa & So)</td><td>11:00–16:00 Uhr</td></tr>
-              </table>
+            <div class="transport-row">
+              <span class="badge badge-t">Tram 12</span>
+              <span class="transport-name">Bornheim Mitte</span>
             </div>
-            <div class="kontakt-block">
-              <span class="kontakt-block-label">Kontakt</span>
-              <p><a href="tel:+496994506611">+49 69 94506611</a></p>
-              <p><a href="mailto:info@schoene-berger.de">info@schoene-berger.de</a></p>
+            <div class="transport-row">
+              <span class="badge badge-t">Tram 18</span>
+              <span class="transport-name">Bornheim Mitte</span>
             </div>
-            <div class="kontakt-block">
-              <span class="kontakt-block-label">Anfahrt</span>
-              <p>U4 · Tram 12/18 · Bus 103/34/38/43/n5<br>Haltestelle: Bornheim Mitte</p>
+            <div class="transport-row">
+              <span class="badge badge-b">Bus 34</span>
+              <span class="transport-name">· 38 · 43 · 103 · N5</span>
             </div>
           </div>
-          <div class="reservierung-box">
-            <h4>Tisch reservieren</h4>
-            <p>Für Gruppen reservieren wir gerne: Mo–Fr ab 16:30 Uhr, Sa & So ab 10:30 Uhr. Per Telefon oder E-Mail.</p>
-            <a href="mailto:info@schoene-berger.de?subject=Tischreservierung" class="btn-primary">Jetzt anfragen</a>
-          </div>
+          <p class="anfahrt-note reveal">
+            Parkplätze in Bornheim sind rar, besonders abends.
+            Nächstes Parkhaus: Bethanien-Krankenhaus (~5 Min. zu Fuß).
+          </p>
         </div>
-        <div class="kontakt-map fade-up">
+        <div class="map-wrap reveal">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2558.8!2d8.7144!3d50.1215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bd096c1b3d4b3b%3A0x0!2sBerger+Stra%C3%9Fe+237%2C+60385+Frankfurt+am+Main!5e0!3m2!1sde!2sde!4v1234567890"
-            allowfullscreen=""
+            src="https://www.openstreetmap.org/export/embed.html?bbox=8.6887%2C50.1196%2C8.6967%2C50.1246&layer=mapnik&marker=50.1221%2C8.6927"
+            title="Schöneberger auf der Karte — Frankfurt-Bornheim"
             loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Schöneberger auf der Karte">
-          </iframe>
+            allowfullscreen
+          ></iframe>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ── FOOTER ─────────────────────────────────── -->
   <footer>
-    <div class="footer-logo">
-      <img src="https://www.schoene-berger.de/media/wp-content/uploads/2025/08/schoenilogo_desk_small.svg" alt="Schöneberger" />
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img
+          src="https://www.schoene-berger.de/media/wp-content/uploads/2025/08/schoenilogo_desk_small.svg"
+          alt="Schöneberger"
+          onerror="this.style.display='none'; document.querySelector('.footer-brand-name').style.display='block'"
+        >
+        <div class="footer-brand-name">Schöneberger</div>
+        <p>Gasthaus &amp; Bar in Frankfurt-Bornheim. Hausgemacht, herzlich und seit über 25 Jahren nicht mehr aus Frankfurt wegzudenken.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#about">Das Schöni</a></li>
+          <li><a href="#menu">Speisekarte</a></li>
+          <li><a href="#drinks">Getränke</a></li>
+          <li><a href="#hours">Öffnungszeiten</a></li>
+          <li><a href="#anfahrt">Anfahrt</a></li>
+          <li><a href="https://www.schoene-berger.de/media/download/2/menus/2824/schoeni_brunch_karte.pdf" target="_blank" rel="noopener">Brunchkarte (PDF)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="tel:06994506611">069 – 945 066 11</a></li>
+          <li><a href="mailto:info@schoene-berger.de">info@schoene-berger.de</a></li>
+          <li><a href="https://www.instagram.com/schoeneberger_frankfurt" target="_blank" rel="noopener">@schoeneberger_frankfurt</a></li>
+          <li><a href="https://www.facebook.com/Schoeneberger.Bornheim" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://www.schoene-berger.de" target="_blank" rel="noopener">Website</a></li>
+        </ul>
+      </div>
     </div>
-    <p class="footer-tagline">„Frankfurts Klassiker mit Tradition & Gartenflair"</p>
-    <div class="footer-links">
-      <a href="#geschichte">Geschichte</a>
-      <a href="#speisekarte">Speisekarte</a>
-      <a href="#biergarten">Biergarten</a>
-      <a href="#brunch">Brunch</a>
-      <a href="https://www.instagram.com/schoeneberger_frankfurt" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.facebook.com/Schoeneberger.Bornheim" target="_blank" rel="noopener">Facebook</a>
+    <div class="footer-bottom">
+      <p class="footer-copyright">&copy; 2025 Schöneberger Gasthaus &amp; Bar · Frankfurt-Bornheim</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/schoeneberger_frankfurt" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/Schoeneberger.Bornheim" target="_blank" rel="noopener" class="social-btn" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+      </div>
     </div>
-    <p class="footer-copy">
-      Berger Straße 237 · 60385 Frankfurt am Main · +49 69 94506611 · info@schoene-berger.de
-    </p>
   </footer>
 
   <script>
-    const { animate, scroll, inView } = Motion;
+    const { animate, inView } = Motion;
 
-    // Nav scroll behavior
+    // ── Nav scroll ─────────────────────────────────
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 60);
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    // ── Mobile nav ─────────────────────────────────
+    function toggleNav() {
+      document.getElementById('mobileNav').classList.toggle('open');
+    }
+    function closeNav() {
+      document.getElementById('mobileNav').classList.remove('open');
+    }
+    document.getElementById('mobileNav').addEventListener('click', function(e) {
+      if (e.target === this) closeNav();
     });
 
-    // Hero animations
+    // ── Hero entrance ──────────────────────────────
+    animate('#heroEyebrow',  { opacity: [0, 1], y: [18, 0] }, { delay: 0.3,  duration: 0.8, easing: 'ease-out' });
+    animate('#heroTitle',    { opacity: [0, 1], y: [32, 0] }, { delay: 0.55, duration: 1.0, easing: 'ease-out' });
+    animate('#heroSubtitle', { opacity: [0, 1], y: [20, 0] }, { delay: 0.85, duration: 0.8, easing: 'ease-out' });
+    animate('#heroActions',  { opacity: [0, 1], y: [16, 0] }, { delay: 1.05, duration: 0.7, easing: 'ease-out' });
+    animate('#heroScroll',   { opacity: [0, 0.8]           }, { delay: 2.0,  duration: 1.2 });
+
+    // ── Hero parallax ──────────────────────────────
     const heroBg = document.getElementById('heroBg');
-    setTimeout(() => heroBg.classList.add('loaded'), 100);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        if (y < window.innerHeight * 1.5) {
+          heroBg.style.transform = `scale(1.08) translateY(${y * 0.25}px)`;
+        }
+      }, { passive: true });
+    }
 
-    animate('#heroEyebrow', { opacity: [0,1], y: [20,0] }, { duration: 0.9, delay: 0.3 });
-    animate('#heroTitle',   { opacity: [0,1], y: [30,0] }, { duration: 1.0, delay: 0.55 });
-    animate('#heroSub',     { opacity: [0,1], y: [20,0] }, { duration: 0.9, delay: 0.8 });
-    animate('#heroCtas',    { opacity: [0,1], y: [20,0] }, { duration: 0.9, delay: 1.0 });
-
-    // Parallax hero bg
-    scroll(
-      ({ y }) => {
-        heroBg.style.transform = `translateY(${y.current * 0.35}px)`;
-      },
-      { source: document.documentElement }
-    );
-
-    // Scroll-triggered fade-ups
-    document.querySelectorAll('.fade-up').forEach((el, i) => {
+    // ── Reveal on scroll ───────────────────────────
+    document.querySelectorAll('.reveal').forEach(el => {
       inView(el, () => {
-        animate(el, { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: (i % 3) * 0.12, easing: [0.22, 1, 0.36, 1] });
-      }, { margin: '-80px' });
-    });
-
-    // Mobile nav burger
-    const burger = document.getElementById('navBurger');
-    burger.addEventListener('click', () => {
-      const links = document.querySelector('.nav-links');
-      const reserve = document.querySelector('.nav-reserve');
-      if (links.style.display === 'flex') {
-        links.style.display = '';
-        reserve.style.display = '';
-      } else {
-        links.style.display = 'flex';
-        links.style.flexDirection = 'column';
-        links.style.position = 'absolute';
-        links.style.top = '70px';
-        links.style.left = '0';
-        links.style.right = '0';
-        links.style.background = 'rgba(18,13,6,0.98)';
-        links.style.padding = '1.5rem 2rem';
-        links.style.gap = '1.5rem';
-        links.style.borderBottom = '1px solid rgba(200,146,42,0.2)';
-        reserve.style.display = 'inline-block';
-        reserve.style.position = 'absolute';
-        reserve.style.top = '230px';
-        reserve.style.left = '2rem';
-      }
-    });
-
-    // Smooth hover glow for speise cards
-    document.querySelectorAll('.speise-card').forEach(card => {
-      card.addEventListener('mouseenter', () => {
-        animate(card, { scale: 1.01 }, { duration: 0.3 });
-      });
-      card.addEventListener('mouseleave', () => {
-        animate(card, { scale: 1 }, { duration: 0.3 });
-      });
+        animate(el,
+          { opacity: [0, 1], y: [26, 0] },
+          { duration: 0.75, easing: [0.25, 0.46, 0.45, 0.94] }
+        );
+      }, { margin: '-8% 0px' });
     });
   </script>
 </body>
