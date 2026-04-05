@@ -171,12 +171,11 @@
 
         .slide img {
             width: 100%; height: 100%;
-            object-fit: cover; display: block;
+            object-fit: contain; display: block;
             filter: saturate(1.3) brightness(1.08) contrast(1.06);
-            transform: scale(1.04); transition: transform 8s ease;
         }
 
-        .slide.active img { transform: scale(1); }
+        .slide.active img { }
 
         /* Floating "Ø 33cm" tag on the image */
         .hero-img-tag {
