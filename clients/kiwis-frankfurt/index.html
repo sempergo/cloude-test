@@ -15,14 +15,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #060606;
-      --surface: #0D0D0D;
-      --card: #141414;
-      --border: rgba(255,255,255,0.07);
+      --bg: #1A1008;
+      --surface: #211508;
+      --card: #2A1C0E;
+      --border: rgba(255,220,150,0.08);
       --gold: #C9A96E;
       --gold-light: #E8D5A8;
       --text: #F0EAE0;
-      --muted: #7A746E;
+      --muted: #8A7A6A;
       --serif: 'Cormorant Garamond', Georgia, serif;
       --sans: 'Inter', system-ui, sans-serif;
     }
@@ -30,7 +30,11 @@
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 15% 20%, rgba(160,90,30,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 60%, rgba(140,75,20,.15) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 35% at 50% 90%, rgba(180,110,40,.12) 0%, transparent 50%);
       color: var(--text);
       font-family: var(--sans);
       font-weight: 300;
@@ -54,7 +58,7 @@
       border-bottom: 1px solid transparent;
     }
     nav.scrolled {
-      background: rgba(6,6,6,.93);
+      background: rgba(22,12,4,.95);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       padding: 1rem 3rem;
