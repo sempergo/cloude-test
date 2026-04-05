@@ -70,8 +70,12 @@
     .nav-cta {
       font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
       padding: .65rem 1.7rem;
-      border: 1px solid var(--gold); color: var(--gold);
+      border: 1.5px solid var(--gold); color: var(--gold);
       border-radius: 100px; transition: all .3s;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-weight: 600;
     }
     .nav-cta:hover { background: var(--gold); color: #000; }
 
@@ -91,11 +95,13 @@
     .hero-bg::after {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(to bottom,
-        rgba(6,6,6,.25) 0%,
-        rgba(6,6,6,.05) 35%,
-        rgba(6,6,6,.6) 70%,
-        rgba(6,6,6,1) 100%);
+      background:
+        radial-gradient(ellipse at center, transparent 40%, rgba(6,6,6,.72) 100%),
+        linear-gradient(to bottom,
+          rgba(6,6,6,.35) 0%,
+          rgba(6,6,6,.08) 35%,
+          rgba(6,6,6,.65) 70%,
+          rgba(6,6,6,1) 100%);
     }
     .hero-content {
       position: relative; z-index: 1;
@@ -110,14 +116,16 @@
     .hero-title {
       font-family: var(--serif);
       font-size: clamp(3.8rem, 9vw, 7.5rem);
-      font-weight: 300; line-height: .95; letter-spacing: -.02em;
+      font-weight: 600; line-height: .95; letter-spacing: -.02em;
       margin-bottom: 2rem; opacity: 0;
+      text-shadow: 0 2px 24px rgba(0,0,0,.55), 0 1px 4px rgba(0,0,0,.4);
     }
     .hero-title em { font-style: italic; color: var(--gold); }
     .hero-sub {
-      font-size: .92rem; color: rgba(240,234,224,.6);
+      font-size: .98rem; color: rgba(240,234,224,.9);
       letter-spacing: .03em; line-height: 1.7;
       max-width: 420px; opacity: 0;
+      text-shadow: 0 1px 8px rgba(0,0,0,.6);
     }
     .hero-actions {
       margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;
