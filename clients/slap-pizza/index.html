@@ -448,30 +448,31 @@
         .pcard-price { font-size: 18px; font-weight: 600; color: var(--dark); }
         .pcard-size { font-size: 11px; color: var(--muted); background: var(--cream-dark); padding: 3px 10px; border-radius: 50px; }
 
-        /* Desktop: kein Karten-Background, Bilder schweben frei */
+        /* Desktop: Cards auf passendem Hintergrund */
         @media (min-width: 900px) {
             .pizza-carousel-wrap { overflow: visible; margin: 0; padding: 0; }
             .carousel-dots { display: none; }
             .pizza-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 20px 16px;
+                gap: 8px;
                 width: auto;
+                background: var(--surface);
+                border-radius: 24px;
+                padding: 8px;
             }
             .pcard {
-                background: transparent;
-                border-radius: 0;
-                overflow: visible;
-                width: auto; max-width: none;
-            }
-            .pcard-img {
+                background: var(--surface);
                 border-radius: 16px;
                 overflow: hidden;
-                transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+                width: auto; max-width: none;
             }
-            .pcard:hover .pcard-img { transform: translateY(-6px); }
-            .pcard:hover .pcard-img img { transform: scale(1.06); }
-            .pcard-body { padding: 10px 0 0; }
+            .pcard:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            .pcard-img { border-radius: 0; }
+            .pcard-body { padding: 12px 14px 14px; }
         }
 
         /* ── STATS ── */
