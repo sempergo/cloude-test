@@ -384,14 +384,12 @@
         .c-text { font-size: 14px; line-height: 1.75; color: rgba(240,232,213,0.42); }
 
         /* ── MENU ── */
-        .section { padding: 20px 24px; }
-
-        @media (min-width: 900px) { .section { padding: 16px 56px; } }
+        .section { padding: 24px 24px 48px; }
+        @media (min-width: 900px) { .section { padding: 24px 48px 56px; } }
 
         .section-head {
-            display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;
+            display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;
         }
-
         @media (min-width: 700px) {
             .section-head { flex-direction: row; justify-content: space-between; align-items: flex-end; }
         }
@@ -406,102 +404,75 @@
             font-size: 14px; font-weight: 500; color: var(--dark);
             text-decoration: none; opacity: 0.35;
             border-bottom: 1px solid rgba(22,13,4,0.2); padding-bottom: 2px;
-            transition: opacity 0.2s; white-space: nowrap;
-            align-self: flex-end;
+            transition: opacity 0.2s; white-space: nowrap; align-self: flex-end;
         }
-
         .sec-link:hover { opacity: 1; }
 
-        /* ── PIZZA CAROUSEL (mobile) ── */
+        /* ── PIZZA GRID ── */
         .pizza-carousel-wrap {
-            overflow-x: scroll;
-            -webkit-overflow-scrolling: touch;
-            scroll-snap-type: x mandatory;
-            scroll-padding-left: 20px;
-            scrollbar-width: none;
-            margin: 0 -24px;
-            padding: 4px 24px 20px 20px;
+            overflow-x: scroll; -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory; scrollbar-width: none;
+            margin: 0 -24px; padding: 4px 24px 20px 20px;
         }
         .pizza-carousel-wrap::-webkit-scrollbar { display: none; }
 
         .pizza-grid {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 14px;
-            width: max-content;
+            display: flex; flex-wrap: nowrap; gap: 14px; width: max-content;
         }
 
-        /* Carousel dots */
         .carousel-dots {
-            display: flex; justify-content: center; align-items: center;
-            gap: 7px; margin-top: 8px;
+            display: flex; justify-content: center; gap: 7px; margin-top: 8px;
         }
         .carousel-dot {
             width: 6px; height: 6px; border-radius: 50%;
-            background: var(--cream-dark); transition: all 0.35s ease;
-            cursor: pointer; flex-shrink: 0;
+            background: var(--cream-dark); transition: all 0.35s ease; cursor: pointer;
         }
-        .carousel-dot.active {
-            background: var(--terra); width: 22px; border-radius: 3px;
-        }
+        .carousel-dot.active { background: var(--terra); width: 22px; border-radius: 3px; }
 
-        @media (min-width: 600px) {
-            .pizza-carousel-wrap { overflow-x: visible; scroll-snap-type: none; margin: 0; padding: 0; }
-            .pizza-grid { display: grid; grid-template-columns: 1fr 1fr; width: auto; gap: 12px; }
-            .pcard { width: auto; max-width: none; }
-            .carousel-dots { display: none; }
-        }
-        @media (min-width: 900px) { .pizza-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
-        @media (min-width: 1280px) { .pizza-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
-
+        /* Mobile card */
         .pcard {
-            background: var(--surface);
-            border-radius: 20px; overflow: hidden;
-            width: 75vw; max-width: 300px;
-            flex-shrink: 0;
-            scroll-snap-align: start;
-            transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s;
+            background: var(--surface); border-radius: 20px; overflow: hidden;
+            width: 75vw; max-width: 300px; flex-shrink: 0; scroll-snap-align: start;
         }
-
-        .pcard:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 24px 64px rgba(22,13,4,0.12);
-        }
-
-        .pcard-img {
-            width: 100%; aspect-ratio: 4/3;
-            overflow: hidden; background: var(--cream-mid);
-        }
-
+        .pcard-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; background: var(--cream-mid); }
         .pcard-img img {
             width: 100%; height: 100%; object-fit: cover; display: block;
             filter: saturate(1.28) brightness(1.08) contrast(1.05);
-            transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.4s;
+            transition: transform 0.6s ease;
         }
-
-        .pcard:hover .pcard-img img {
-            transform: scale(1.08);
-            filter: saturate(1.4) brightness(1.12) contrast(1.07);
-        }
-
         .pcard-body { padding: 14px 16px 16px; }
-
-        .pcard-tag {
-            font-size: 10px; font-weight: 700; letter-spacing: 2px;
-            text-transform: uppercase; color: var(--terra); margin-bottom: 6px;
-        }
-
-        .pcard-name {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 24px; font-weight: 500; color: var(--dark);
-            margin-bottom: 7px; line-height: 1.2;
-        }
-
-        .pcard-desc { font-size: 13px; line-height: 1.65; color: var(--muted); margin-bottom: 18px; }
-
+        .pcard-tag { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--terra); margin-bottom: 6px; }
+        .pcard-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; color: var(--dark); margin-bottom: 5px; line-height: 1.2; }
+        .pcard-desc { font-size: 13px; line-height: 1.6; color: var(--muted); margin-bottom: 14px; }
         .pcard-foot { display: flex; justify-content: space-between; align-items: center; }
-        .pcard-price { font-size: 19px; font-weight: 600; color: var(--dark); }
+        .pcard-price { font-size: 18px; font-weight: 600; color: var(--dark); }
         .pcard-size { font-size: 11px; color: var(--muted); background: var(--cream-dark); padding: 3px 10px; border-radius: 50px; }
+
+        /* Desktop: kein Karten-Background, Bilder schweben frei */
+        @media (min-width: 900px) {
+            .pizza-carousel-wrap { overflow: visible; margin: 0; padding: 0; }
+            .carousel-dots { display: none; }
+            .pizza-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px 16px;
+                width: auto;
+            }
+            .pcard {
+                background: transparent;
+                border-radius: 0;
+                overflow: visible;
+                width: auto; max-width: none;
+            }
+            .pcard-img {
+                border-radius: 16px;
+                overflow: hidden;
+                transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+            }
+            .pcard:hover .pcard-img { transform: translateY(-6px); }
+            .pcard:hover .pcard-img img { transform: scale(1.06); }
+            .pcard-body { padding: 10px 0 0; }
+        }
 
         /* ── STATS ── */
         .stats {
