@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Angebot – Kiwis Frankfurt – Webprojekt 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0F0F0F;
+      --mid: #555;
+      --light: #888;
+      --line: #E8E8E8;
+      --accent: #0F0F0F;
+      --gold: #C9A96E;
+      --bg: #FAFAF8;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 72px 80px;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 48px;
+      border-bottom: 2px solid var(--ink);
+      margin-bottom: 48px;
+    }
+    .sender-name {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+    .sender-meta {
+      font-size: 12px;
+      color: var(--light);
+      margin-top: 4px;
+      line-height: 1.8;
+    }
+    .doc-meta {
+      text-align: right;
+      font-size: 12px;
+      color: var(--light);
+      line-height: 2;
+    }
+    .doc-meta strong {
+      display: block;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -.03em;
+      margin-bottom: 4px;
+    }
+
+    /* RECIPIENT */
+    .recipient {
+      margin-bottom: 48px;
+    }
+    .recipient-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 10px;
+    }
+    .recipient-name {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .recipient-detail {
+      font-size: 13px;
+      color: var(--mid);
+      line-height: 1.8;
+    }
+
+    /* INTRO */
+    .intro {
+      background: #F5F4F0;
+      border-left: 3px solid var(--ink);
+      padding: 20px 24px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 48px;
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--mid);
+    }
+    .intro strong { color: var(--ink); }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* DELIVERABLES */
+    .deliverables {
+      margin-bottom: 48px;
+    }
+    .deliverable-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .deliverable {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      font-size: 13.5px;
+    }
+    .del-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .del-text { line-height: 1.5; }
+    .del-text strong { font-weight: 500; }
+    .del-text span { color: var(--light); font-size: 12.5px; }
+
+    /* PRICING */
+    .pricing {
+      margin-bottom: 48px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .plan {
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      padding: 24px 20px;
+      position: relative;
+    }
+    .plan.featured {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: #fff;
+    }
+    .plan-badge {
+      position: absolute;
+      top: -11px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold);
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .plan-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .plan.featured .plan-name { color: rgba(255,255,255,.6); }
+    .plan-price {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -.04em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .plan.featured .plan-price { color: #fff; }
+    .plan-sub {
+      font-size: 11.5px;
+      color: var(--light);
+      margin-bottom: 20px;
+    }
+    .plan.featured .plan-sub { color: rgba(255,255,255,.45); }
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .plan-features li {
+      font-size: 12.5px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      line-height: 1.4;
+    }
+    .plan.featured .plan-features li { color: rgba(255,255,255,.8); }
+    .f-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .plan-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 18px 0;
+    }
+    .plan.featured .plan-divider { background: rgba(255,255,255,.12); }
+    .plan-monthly {
+      font-size: 12px;
+      color: var(--light);
+    }
+    .plan.featured .plan-monthly { color: rgba(255,255,255,.45); }
+    .plan-monthly strong {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .plan.featured .plan-monthly strong { color: #fff; }
+
+    /* TIMELINE */
+    .timeline {
+      margin-bottom: 48px;
+    }
+    .timeline-row {
+      display: flex;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .tl-step {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .tl-label { font-weight: 500; }
+    .tl-desc { color: var(--light); font-size: 12px; margin-top: 2px; }
+
+    /* TERMS */
+    .terms {
+      margin-bottom: 48px;
+    }
+    .terms-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .term {
+      font-size: 13px;
+      color: var(--mid);
+      display: flex;
+      gap: 10px;
+    }
+    .term::before {
+      content: '—';
+      color: var(--light);
+      flex-shrink: 0;
+    }
+
+    /* FOOTER */
+    .doc-footer {
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .footer-sign { font-size: 13px; color: var(--mid); }
+    .footer-sign strong { display: block; font-size: 15px; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+    .footer-validity {
+      font-size: 12px;
+      color: var(--light);
+      text-align: right;
+    }
+    .footer-validity strong { color: var(--ink); }
+
+    .url-preview {
+      display: inline-block;
+      background: #F0EFE9;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--mid);
+      margin-top: 6px;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page { padding: 48px 56px; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div>
+      <div class="sender-name">Markus Tozman</div>
+      <div class="sender-meta">
+        Webdesign &amp; Digitale Präsenz<br>
+        Frankfurt am Main<br>
+        markus@sempergo.de
+      </div>
+    </div>
+    <div class="doc-meta">
+      <strong>Angebot</strong>
+      Nr. 2026-007<br>
+      Datum: 03. April 2026<br>
+      Gültig bis: 03. Mai 2026
+    </div>
+  </div>
+
+  <!-- RECIPIENT -->
+  <div class="recipient">
+    <div class="recipient-label">Angebot für</div>
+    <div class="recipient-name">Kiwis Frankfurt — Café, Bar &amp; Restaurant</div>
+    <div class="recipient-detail">
+      Schillerstraße 10, 60313 Frankfurt am Main<br>
+      info@kiwis-frankfurt.de
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    Vielen Dank für Ihr Interesse. Wir haben für Kiwis Frankfurt einen vollständigen Webauftritt neu konzipiert und umgesetzt — von der Recherche über das Design bis zur Live-Schaltung. Das Ergebnis können Sie hier einsehen:<br>
+    <div class="url-preview">https://sempergo.github.io/cloude-test/clients/kiwis-frankfurt/</div><br>
+    Im Folgenden finden Sie unsere Leistungsübersicht sowie drei Angebotsmodelle zur Auswahl.
+  </div>
+
+  <!-- DELIVERABLES -->
+  <div class="deliverables">
+    <div class="section-title">Erbrachte &amp; enthaltene Leistungen</div>
+    <div class="deliverable-list">
+      <div class="deliverable">
+        <div class="del-check">✓</div>
+        <div class="del-text"><strong>Research &amp; Inhaltserstellung</strong> <span>— Vollständige Analyse Ihres Unternehmens: Speisekarte, Öffnungszeiten, Standort, Atmosphäre, Zielgruppe. Alle Texte neu verfasst — emotional, überzeugend, auf Ihre Gäste zugeschnitten.</span></div>
+      </div>
+      <div class="deliverable">
+        <div class="del-check">✓</div>
+        <div class="del-text"><strong>Individuelles Design-System</strong> <span>— Komplett neue Gestaltung: Farbpalette, Typografie, Layout. Kein Baukasten, kein Template — maßgeschneidert für Kiwis Frankfurt.</span></div>
+      </div>
+      <div class="deliverable">
+        <div class="del-check">✓</div>
+        <div class="del-text"><strong>Professionelle Fotografie-Integration</strong> <span>— Echte Fotos Ihrer Gerichte, Ihrer Räume und Ihrer Bar — wirkungsvoll in Szene gesetzt.</span></div>
+      </div>
+      <div class="deliverable">
+        <div class="del-check">✓</div>
+        <div class="del-text"><strong>Animationen &amp; Interaktion</strong> <span>— Scroll-Animationen, Hover-Effekte, flüssige Übergänge. Die Seite lebt.</span></div>
+      </div>
+      <div class="deliverable">
+        <div class="del-check">✓</div>
+        <div class="del-text"><strong>Mobile-Optimierung</strong> <span>— Perfekte Darstellung auf jedem Gerät: Smartphone, Tablet, Desktop. Kein horizontales Scrollen, keine Darstellungsfehler.</span></div>
+      </div>
+      <div class="deliverable">
+        <div class="del-check">✓</div>
+        <div class="del-text"><strong>Live-Schaltung &amp; Hosting-Einrichtung</strong> <span>— Die Website ist sofort erreichbar. Kein Technikaufwand auf Ihrer Seite.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing">
+    <div class="section-title">Angebotsmodelle</div>
+    <div class="pricing-grid">
+
+      <!-- STARTER -->
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">1.200 €</div>
+        <div class="plan-sub">Einmalig, netto</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="f-dot"></span>Fertige Website wie vorgestellt</li>
+          <li><span class="f-dot"></span>Alle oben genannten Leistungen</li>
+          <li><span class="f-dot"></span>1x Korrekturschleife inklusive</li>
+          <li><span class="f-dot"></span>Übergabe der Dateien</li>
+          <li><span class="f-dot"></span>1 Monat E-Mail-Support</li>
+        </ul>
+        <div class="plan-divider"></div>
+        <div class="plan-monthly">Laufende Kosten: <strong>0 €</strong>/Monat</div>
+      </div>
+
+      <!-- PROFESSIONAL (FEATURED) -->
+      <div class="plan featured">
+        <div class="plan-badge">Empfohlen</div>
+        <div class="plan-name">Professional</div>
+        <div class="plan-price">1.500 €</div>
+        <div class="plan-sub">Einmalig + monatlich, netto</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="f-dot"></span>Alles aus Starter</li>
+          <li><span class="f-dot"></span>Unbegrenzte Korrekturrunden</li>
+          <li><span class="f-dot"></span>Hosting &amp; Domain-Management</li>
+          <li><span class="f-dot"></span>Menü- &amp; Inhalts-Updates</li>
+          <li><span class="f-dot"></span>Prioritäts-Support (24h Reaktion)</li>
+          <li><span class="f-dot"></span>Jährliches Design-Refresh</li>
+        </ul>
+        <div class="plan-divider"></div>
+        <div class="plan-monthly">Laufend: <strong>89 €</strong>/Monat</div>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="plan">
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">2.200 €</div>
+        <div class="plan-sub">Einmalig + monatlich, netto</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="f-dot"></span>Alles aus Professional</li>
+          <li><span class="f-dot"></span>Mehrsprachigkeit (DE/EN)</li>
+          <li><span class="f-dot"></span>Online-Reservierungssystem</li>
+          <li><span class="f-dot"></span>Google-Optimierung (SEO)</li>
+          <li><span class="f-dot"></span>Monatlicher Performance-Report</li>
+          <li><span class="f-dot"></span>Social-Media-Verlinkung &amp; Setup</li>
+        </ul>
+        <div class="plan-divider"></div>
+        <div class="plan-monthly">Laufend: <strong>149 €</strong>/Monat</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="timeline">
+    <div class="section-title">Ablauf nach Auftragserteilung</div>
+    <div class="timeline-row">
+      <div class="tl-step">1</div>
+      <div>
+        <div class="tl-label">Auftragsbestätigung &amp; Anzahlung</div>
+        <div class="tl-desc">50 % Anzahlung bei Auftragserteilung. Wir starten sofort.</div>
+      </div>
+    </div>
+    <div class="timeline-row">
+      <div class="tl-step">2</div>
+      <div>
+        <div class="tl-label">Abstimmung &amp; Freigabe</div>
+        <div class="tl-desc">Sie erhalten die fertige Website zur Ansicht. Feedback und Korrekturen werden eingearbeitet.</div>
+      </div>
+    </div>
+    <div class="timeline-row">
+      <div class="tl-step">3</div>
+      <div>
+        <div class="tl-label">Live-Schaltung</div>
+        <div class="tl-desc">Ihre neue Website geht live. Restzahlung nach Abnahme.</div>
+      </div>
+    </div>
+    <div class="timeline-row" style="border-bottom: none">
+      <div class="tl-step">4</div>
+      <div>
+        <div class="tl-label">Laufende Betreuung (Professional &amp; Premium)</div>
+        <div class="tl-desc">Updates, Änderungen und Support — auf Wunsch dauerhaft an Ihrer Seite.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERMS -->
+  <div class="terms">
+    <div class="section-title">Konditionen</div>
+    <div class="terms-list">
+      <div class="term">Alle Preise verstehen sich zuzüglich gesetzlicher Mehrwertsteuer (19 %).</div>
+      <div class="term">Anzahlung 50 % bei Auftragserteilung, Restzahlung nach Live-Schaltung.</div>
+      <div class="term">Zahlungsziel: 14 Tage nach Rechnungsstellung.</div>
+      <div class="term">Das monatliche Betreuungspaket ist monatlich kündbar (Mindestlaufzeit 3 Monate).</div>
+      <div class="term">Dieses Angebot ist gültig bis zum 03. Mai 2026.</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div class="footer-sign">
+      <strong>Markus Tozman</strong>
+      Webdesign &amp; Digitale Präsenz<br>
+      markus@sempergo.de
+    </div>
+    <div class="footer-validity">
+      Angebot Nr. 2026-007<br>
+      Gültig bis <strong>03. Mai 2026</strong>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

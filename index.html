@@ -50,13 +50,60 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
     #intro-logo {
       font-family: 'Bricolage Grotesque', sans-serif;
       font-weight: 900;
-      font-size: clamp(64px, 14vw, 160px);
+      font-size: clamp(72px, 11.5vw, 168px);
       letter-spacing: -0.04em;
+      position: relative;
+      white-space: nowrap;
+      animation: introScale 2.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .il-solid {
+      display: block;
       color: var(--text);
+      animation: ilSolidFade 2.8s ease both;
+    }
+    .il-gradient {
+      position: absolute;
+      inset: 0;
+      display: block;
+      white-space: nowrap;
+      background: linear-gradient(110deg,
+        #00e5ff 0%,
+        #3b82f6 22%,
+        #a855f7 44%,
+        #b8ff00 66%,
+        #ff6b00 88%,
+        #00e5ff 100%
+      );
+      background-size: 240% 100%;
+      background-position: 0% 50%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: ilGradientFade 2.8s ease both,
+                 ilGradientShift 3.4s linear forwards;
+    }
+    @keyframes introScale {
+      from { transform: scale(0.055); }
+      to   { transform: scale(1); }
+    }
+    @keyframes ilSolidFade {
+      0%   { opacity: 1; }
+      52%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes ilGradientFade {
+      0%   { opacity: 0; }
+      48%  { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes ilGradientShift {
+      from { background-position: 0% 50%; }
+      to   { background-position: 100% 50%; }
     }
 
     /* ── Custom Cursor ── */
@@ -238,7 +285,7 @@
       display: block;
     }
     .hero-word.outlined {
-      -webkit-text-stroke: 2px var(--text);
+      -webkit-text-stroke: 4px var(--text);
       color: transparent;
     }
     .hero-word.solid { color: var(--text); }
@@ -275,6 +322,93 @@
       text-transform: uppercase;
       writing-mode: vertical-rl;
       opacity: 0;
+    }
+
+    /* ── Mesh Gradient Blob Layer ── */
+    #blob-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(72px);
+      pointer-events: none;
+      will-change: transform, border-radius;
+      mix-blend-mode: multiply;
+    }
+    .hero-blob-1 {
+      width: 740px; height: 740px;
+      background: #a855f7;
+      opacity: 0.62;
+      top: -14%; right: 3%;
+      animation: hblob1 14s ease-in-out infinite alternate;
+    }
+    .hero-blob-2 {
+      width: 600px; height: 600px;
+      background: #3b82f6;
+      opacity: 0.54;
+      top: 18%; left: 22%;
+      animation: hblob2 17s ease-in-out infinite alternate;
+    }
+    .hero-blob-3 {
+      width: 560px; height: 560px;
+      background: #ff6b00;
+      opacity: 0.50;
+      bottom: 5%; left: -4%;
+      animation: hblob3 11s ease-in-out infinite alternate;
+    }
+    .hero-blob-4 {
+      width: 500px; height: 500px;
+      background: #b8ff00;
+      opacity: 0.46;
+      bottom: 18%; right: 12%;
+      animation: hblob4 9s ease-in-out infinite alternate;
+    }
+    .hero-blob-5 {
+      width: 640px; height: 640px;
+      background: #00e5ff;
+      opacity: 0.44;
+      top: -8%; left: -12%;
+      animation: hblob5 15s ease-in-out infinite alternate;
+    }
+    @keyframes hblob1 {
+      0%   { transform: translate(0,0);       border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      33%  { transform: translate(28px,22px);  border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      66%  { transform: translate(-18px,38px); border-radius: 50% 60% 30% 60% / 40% 50% 60% 50%; }
+      100% { transform: translate(16px,-28px); border-radius: 40% 60% 50% 70% / 60% 40% 60% 40%; }
+    }
+    @keyframes hblob2 {
+      0%   { transform: translate(0,0);        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+      50%  { transform: translate(-38px,28px); border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; }
+      100% { transform: translate(22px,-32px); border-radius: 50% 50% 40% 60% / 60% 40% 50% 50%; }
+    }
+    @keyframes hblob3 {
+      0%   { transform: translate(0,0);        border-radius: 70% 30% 50% 50% / 50% 60% 40% 50%; }
+      40%  { transform: translate(44px,-22px); border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%; }
+      100% { transform: translate(-16px,34px); border-radius: 60% 40% 60% 40% / 40% 60% 40% 60%; }
+    }
+    @keyframes hblob4 {
+      0%   { transform: translate(0,0);        border-radius: 50% 50% 60% 40% / 40% 60% 50% 50%; }
+      50%  { transform: translate(-26px,-22px);border-radius: 30% 70% 40% 60% / 70% 30% 60% 40%; }
+      100% { transform: translate(32px,16px);  border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%; }
+    }
+    @keyframes hblob5 {
+      0%   { transform: translate(0,0);        border-radius: 50% 50% 40% 60% / 60% 40% 60% 40%; }
+      33%  { transform: translate(26px,42px);  border-radius: 40% 60% 60% 40% / 40% 70% 30% 60%; }
+      66%  { transform: translate(-32px,12px); border-radius: 70% 30% 50% 50% / 50% 40% 60% 50%; }
+      100% { transform: translate(12px,-38px); border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%; }
+    }
+    @media (max-width: 768px) {
+      .hero-blob { filter: blur(60px); }
+      .hero-blob-1 { width: 340px; height: 340px; opacity: 0.32; }
+      .hero-blob-2 { width: 300px; height: 300px; opacity: 0.28; }
+      .hero-blob-3 { width: 280px; height: 280px; opacity: 0.26; }
+      .hero-blob-4 { display: none; }
+      .hero-blob-5 { width: 320px; height: 320px; opacity: 0.24; }
     }
 
     /* ── Ticker ── */
@@ -768,7 +902,19 @@
 
 <!-- Page Intro -->
 <div id="intro">
-  <div id="intro-logo">SEMP</div>
+  <div id="intro-logo">
+    <span class="il-solid">SEMP STUDIOS</span>
+    <span class="il-gradient">SEMP STUDIOS</span>
+  </div>
+</div>
+
+<!-- Mesh Gradient Layer -->
+<div id="blob-layer" aria-hidden="true">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+  <div class="hero-blob hero-blob-4"></div>
+  <div class="hero-blob hero-blob-5"></div>
 </div>
 
 <!-- Custom Cursor -->
@@ -1113,13 +1259,15 @@
   gsap.set('.statement-sub', { opacity: 0 });
 
   /* ── Page Intro ── */
-  gsap.timeline({ onComplete: initAfterIntro })
-    .from('#intro-logo', { scale: 3.2, opacity: 0, duration: 0.65, ease: 'expo.out' })
-    .to('#intro-logo', { scale: 0.35, y: -vh * 0.44, opacity: 0, duration: 0.5, ease: 'expo.in' }, '+=0.22')
-    .to('#intro', { opacity: 0, duration: 0.2, onComplete: () => {
-      const el = document.querySelector('#intro');
-      if (el) el.remove();
-    }}, '-=0.1');
+  gsap.delayedCall(2.8, () => {
+    gsap.to('#intro', {
+      opacity: 0, duration: 0.55, ease: 'power2.inOut',
+      onComplete: () => {
+        document.querySelector('#intro')?.remove();
+        initAfterIntro();
+      }
+    });
+  });
 
   function initAfterIntro() {
     initHero();
@@ -1270,6 +1418,18 @@
         scrollTrigger: { trigger: '#footer', start: 'top 80%', end: 'top 40%', scrub: 1 }
       });
     }
+
+    // Blob layer: voll im Hero, subtil danach
+    gsap.to('#blob-layer', {
+      opacity: 0.30,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'bottom 75%',
+        end: 'bottom top',
+        scrub: 2.5
+      }
+    });
 
     // Statement Lines — staggered directional reveals
     const dirs = [{ x: -60 }, { x: 60 }, { y: 40 }, { x: -60 }];
