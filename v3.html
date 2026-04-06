@@ -873,31 +873,66 @@
       io.observe(el);
     });
   </script>
-  <!-- ── HERO MESH GRADIENT (paper-design/shaders ESM) ── -->
-  <script type="module">
-    import { MeshGradient } from 'https://esm.sh/@paper-design/shaders@latest';
+  <!-- ── HERO MESH GRADIENT (2D Canvas) ── -->
+  <script>
+    (function () {
+      const hero   = document.getElementById('hero');
+      const canvas = document.createElement('canvas');
+      canvas.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:0;';
+      hero.insertAdjacentElement('afterbegin', canvas);
+      const ctx = canvas.getContext('2d');
 
-    const hero   = document.getElementById('hero');
-    const canvas = document.createElement('canvas');
-    canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
-    hero.insertAdjacentElement('afterbegin', canvas);
+      let W = 0, H = 0;
+      function resize() {
+        W = hero.offsetWidth;
+        H = hero.offsetHeight;
+        canvas.width  = W;
+        canvas.height = H;
+      }
+      resize();
+      window.addEventListener('resize', resize);
 
-    const gradient = new MeshGradient({
-      canvas,
-      colors: ['#000000', '#050510', '#0a0520', '#12063a', '#1a0a4a', '#ffffff'],
-      speed: 0.8,
-      backgroundColor: '#000000',
-    });
-    gradient.play();
+      // 6 color orbs — deep navy / indigo / violet palette
+      const ORBS = [
+        { phase: 0.0, sx: 0.38, sy: 0.31, r: [10,  8,  64], a: 0.92, rad: 0.75 },
+        { phase: 1.3, sx: 0.42, sy: 0.44, r: [26, 10,  90], a: 0.80, rad: 0.85 },
+        { phase: 2.5, sx: 0.30, sy: 0.38, r: [5,   5,  28], a: 0.95, rad: 0.70 },
+        { phase: 3.8, sx: 0.36, sy: 0.42, r: [55, 15, 130], a: 0.65, rad: 0.60 },
+        { phase: 5.0, sx: 0.28, sy: 0.35, r: [15,  5,  50], a: 0.88, rad: 0.80 },
+        { phase: 0.7, sx: 0.20, sy: 0.28, r: [240,240,255], a: 0.06, rad: 0.45 },
+      ];
 
-    // Resize handler — MeshGradient reads canvas CSS size
-    const ro = new ResizeObserver(() => gradient.resize?.());
-    ro.observe(hero);
+      let t = 0;
+      function draw() {
+        requestAnimationFrame(draw);
+        t += 0.004;
 
-    // Parallax: canvas drifts upward as user scrolls out of hero
-    window.addEventListener('scroll', () => {
-      canvas.style.transform = `translateY(-${window.scrollY * 0.4}px)`;
-    }, { passive: true });
+        // Black base
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, W, H);
+
+        // Layer each orb
+        ORBS.forEach(orb => {
+          const x = (Math.sin(t * orb.sx + orb.phase) * 0.38 + 0.5) * W;
+          const y = (Math.cos(t * orb.sy + orb.phase * 0.73) * 0.38 + 0.5) * H;
+          const radius = Math.max(W, H) * orb.rad;
+          const [r, g, b] = orb.r;
+
+          const g2 = ctx.createRadialGradient(x, y, 0, x, y, radius);
+          g2.addColorStop(0, `rgba(${r},${g},${b},${orb.a})`);
+          g2.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
+          ctx.fillStyle = g2;
+          ctx.fillRect(0, 0, W, H);
+        });
+      }
+      draw();
+
+      // Parallax on scroll
+      window.addEventListener('scroll', () => {
+        canvas.style.transform = `translateY(-${window.scrollY * 0.4}px)`;
+      }, { passive: true });
+    })();
   </script>
 </body>
 </html>
