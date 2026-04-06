@@ -873,64 +873,116 @@
       io.observe(el);
     });
   </script>
-  <!-- ── HERO MESH GRADIENT (2D Canvas) ── -->
+  <!-- ── HERO: DARK SILVER LIQUID (WebGL noise shader) ── -->
   <script>
     (function () {
       const hero   = document.getElementById('hero');
       const canvas = document.createElement('canvas');
-      canvas.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:0;';
+      canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
       hero.insertAdjacentElement('afterbegin', canvas);
-      const ctx = canvas.getContext('2d');
 
-      let W = 0, H = 0;
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return; // silent fail
+
       function resize() {
-        W = hero.offsetWidth;
-        H = hero.offsetHeight;
-        canvas.width  = W;
-        canvas.height = H;
+        canvas.width  = hero.offsetWidth;
+        canvas.height = hero.offsetHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
       }
       resize();
       window.addEventListener('resize', resize);
 
-      // 6 color orbs — deep navy / indigo / violet palette
-      const ORBS = [
-        { phase: 0.0, sx: 0.38, sy: 0.31, r: [10,  8,  64], a: 0.92, rad: 0.75 },
-        { phase: 1.3, sx: 0.42, sy: 0.44, r: [26, 10,  90], a: 0.80, rad: 0.85 },
-        { phase: 2.5, sx: 0.30, sy: 0.38, r: [5,   5,  28], a: 0.95, rad: 0.70 },
-        { phase: 3.8, sx: 0.36, sy: 0.42, r: [55, 15, 130], a: 0.65, rad: 0.60 },
-        { phase: 5.0, sx: 0.28, sy: 0.35, r: [15,  5,  50], a: 0.88, rad: 0.80 },
-        { phase: 0.7, sx: 0.20, sy: 0.28, r: [240,240,255], a: 0.06, rad: 0.45 },
-      ];
+      // ── Shaders ──────────────────────────────────────────
+      const VS = `
+        attribute vec2 a_pos;
+        void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+      `;
+
+      const FS = `
+        precision mediump float;
+        uniform float u_time;
+        uniform vec2  u_res;
+
+        float hash(vec2 p) {
+          p = fract(p * vec2(127.1, 311.7));
+          p += dot(p, p + 45.32);
+          return fract(p.x * p.y);
+        }
+        float noise(vec2 p) {
+          vec2 i = floor(p);
+          vec2 f = fract(p);
+          vec2 u = f * f * (3.0 - 2.0 * f);
+          return mix(
+            mix(hash(i), hash(i + vec2(1,0)), u.x),
+            mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), u.x),
+            u.y
+          );
+        }
+        float fbm(vec2 p) {
+          float v = 0.0; float a = 0.5;
+          v += a * noise(p); p = p * 2.1 + vec2(1.7, 9.2); a *= 0.5;
+          v += a * noise(p); p = p * 2.1 + vec2(8.3, 2.8); a *= 0.5;
+          v += a * noise(p); p = p * 2.1 + vec2(3.1, 7.4); a *= 0.5;
+          v += a * noise(p); p = p * 2.1 + vec2(5.9, 1.1); a *= 0.5;
+          v += a * noise(p);
+          return v;
+        }
+
+        void main() {
+          vec2 uv = gl_FragCoord.xy / u_res;
+          uv.y = 1.0 - uv.y; // flip Y
+          float t = u_time * 0.10;
+
+          vec2 q = vec2(fbm(uv + t), fbm(uv + vec2(5.2, 1.3) + t * 0.8));
+          float n = fbm(uv * 2.5 + 0.9 * q + vec2(t * 0.25, 0.0));
+
+          // Dark silver liquid: near-black base, silver streaks
+          float b = pow(clamp(n, 0.0, 1.0), 1.2);
+          vec3 dark   = vec3(0.04, 0.04, 0.05);
+          vec3 silver = vec3(0.72, 0.76, 0.80);
+          vec3 col = mix(dark, silver, b);
+
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `;
+
+      function compile(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+
+      const prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+      gl.linkProgram(prog);
+      gl.useProgram(prog);
+
+      // Full-screen quad
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+      const uTime = gl.getUniformLocation(prog, 'u_time');
+      const uRes  = gl.getUniformLocation(prog, 'u_res');
 
       let t = 0;
       function draw() {
         requestAnimationFrame(draw);
-        t += 0.004;
-
-        // Black base
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, W, H);
-
-        // Layer each orb
-        ORBS.forEach(orb => {
-          const x = (Math.sin(t * orb.sx + orb.phase) * 0.38 + 0.5) * W;
-          const y = (Math.cos(t * orb.sy + orb.phase * 0.73) * 0.38 + 0.5) * H;
-          const radius = Math.max(W, H) * orb.rad;
-          const [r, g, b] = orb.r;
-
-          const g2 = ctx.createRadialGradient(x, y, 0, x, y, radius);
-          g2.addColorStop(0, `rgba(${r},${g},${b},${orb.a})`);
-          g2.addColorStop(1, `rgba(${r},${g},${b},0)`);
-
-          ctx.fillStyle = g2;
-          ctx.fillRect(0, 0, W, H);
-        });
+        t += 0.016;
+        gl.uniform1f(uTime, t);
+        gl.uniform2f(uRes, canvas.width, canvas.height);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
       draw();
 
       // Parallax on scroll
       window.addEventListener('scroll', () => {
-        canvas.style.transform = `translateY(-${window.scrollY * 0.4}px)`;
+        canvas.style.transform = `translateY(-${window.scrollY * 0.35}px)`;
       }, { passive: true });
     })();
   </script>
