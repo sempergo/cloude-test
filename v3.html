@@ -220,10 +220,11 @@
     #mf-text {
       font-size: clamp(28px, 5.2vw, 78px);
       font-weight: 900; line-height: 1.15;
-      letter-spacing: -.02em; word-spacing: 0;
+      letter-spacing: -.02em; word-spacing: normal;
       text-align: left;
       white-space: normal;
     }
+    .mf-w { display: inline-block; }
     .mf-sub {
       max-width: 480px; font-size: 1rem; color: var(--dim);
       line-height: 1.85; margin-top: 4rem;
@@ -1024,7 +1025,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     const div = document.createElement('div');
     div.style.cssText = 'overflow:hidden; display:block; line-height:1.15;';
     lw.forEach((w, i) => {
-      if (i > 0) div.appendChild(document.createTextNode('\u00a0'));
       div.appendChild(w);
       if (i < lw.length - 1) div.appendChild(document.createTextNode(' '));
     });
