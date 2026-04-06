@@ -1,97 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SEMP STUDIOS — Advanced Websites. Affordable.</title>
-  <meta name="description" content="SEMP STUDIOS — Custom-built websites für Businesses die es ernst meinen. Keine Templates, kein Overhead. Ab 990€, live in 2–3 Wochen.">
+  <meta name="description" content="Custom-built websites für Businesses die es ernst meinen. Keine Templates. Ab 990€, live in 2–3 Wochen.">
   <meta property="og:title" content="SEMP STUDIOS — Advanced Websites. Affordable.">
-  <meta property="og:description" content="Custom-built websites. No templates. No bloat. Frankfurt.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
 
   <style>
+    @property --glow-x { syntax:'<percentage>'; inherits:false; initial-value:50%; }
+    @property --glow-y { syntax:'<percentage>'; inherits:false; initial-value:50%; }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:     #080809;
+      --bg:     #07070a;
       --fg:     #f0ede6;
-      --dim:    rgba(240,237,230,0.22);
-      --border: rgba(240,237,230,0.07);
+      --dim:    rgba(240,237,230,.2);
+      --dimmer: rgba(240,237,230,.08);
+      --border: rgba(240,237,230,.07);
       --red:    #ff2200;
-      --font:   'Geist', 'SF Pro Display', system-ui, sans-serif;
+      --blue:   #1a3bff;
+      --font:   'Geist', system-ui, sans-serif;
     }
 
     html { font-family: var(--font); -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--fg); }
     body { overflow-x: hidden; cursor: none; }
 
-    /* ── GRAIN ──────────────────────────────────────────────── */
-    #grain {
-      position: fixed; inset: 0; z-index: 90;
-      pointer-events: none; opacity: 0.04;
+    /* ── SCROLL PROGRESS ─────────────────────────────────── */
+    #sp {
+      position: fixed; top: 0; left: 0; height: 1px;
+      background: rgba(240,237,230,.35); width: 0%;
+      z-index: 300; pointer-events: none;
+      transform-origin: left;
+      transition: opacity .3s;
     }
 
-    /* ── CURSOR ─────────────────────────────────────────────── */
+    /* ── GRAIN ───────────────────────────────────────────── */
+    #grain {
+      position: fixed; inset: 0; z-index: 90;
+      pointer-events: none; opacity: .038;
+    }
+
+    /* ── CURSOR ──────────────────────────────────────────── */
     .c-el {
       position: fixed; border-radius: 50%;
-      pointer-events: none; transform: translate(-50%, -50%);
+      pointer-events: none;
+      transform: translate(-50%,-50%);
       mix-blend-mode: difference;
     }
     #c-dot {
-      width: 7px; height: 7px; background: var(--fg); z-index: 9999;
-      transition: width .2s, height .2s;
+      width: 7px; height: 7px; background: var(--fg);
+      z-index: 9999; top: -100px; left: -100px;
     }
-    #c-r1 { width: 36px;  height: 36px;  border: 1px solid rgba(240,237,230,.5); z-index: 9998; }
-    #c-r2 { width: 56px;  height: 56px;  border: 1px solid rgba(240,237,230,.2); z-index: 9997; }
-    #c-r3 { width: 80px;  height: 80px;  border: 1px solid rgba(240,237,230,.07);z-index: 9996; }
-    body.hov #c-dot { width: 12px; height: 12px; }
+    #c-r1 {
+      width: 40px; height: 40px;
+      border: 1px solid rgba(240,237,230,.55);
+      z-index: 9998; top: -100px; left: -100px;
+    }
+    #c-r2 {
+      width: 68px; height: 68px;
+      border: 1px solid rgba(240,237,230,.18);
+      z-index: 9997; top: -100px; left: -100px;
+    }
+    #c-r3 {
+      width: 100px; height: 100px;
+      border: 1px solid rgba(240,237,230,.05);
+      z-index: 9996; top: -100px; left: -100px;
+    }
 
-    /* ── INTRO ──────────────────────────────────────────────── */
+    /* ── FLOAT CTA ───────────────────────────────────────── */
+    #float-cta {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 60;
+      background: var(--fg); color: var(--bg);
+      padding: .85rem 1.6rem;
+      font-size: 10px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
+      text-decoration: none;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity .4s ease, transform .5s cubic-bezier(.16,1,.3,1);
+      pointer-events: none;
+    }
+    #float-cta.on { opacity: 1; transform: translateY(0); pointer-events: all; }
+    @media (max-width: 768px) { #float-cta { display: none; } }
+
+    /* ── INTRO ───────────────────────────────────────────── */
     #intro {
       position: fixed; inset: 0; z-index: 200;
       background: #000;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      transition: opacity 1.4s cubic-bezier(0.76, 0, 0.24, 1);
+      transition: opacity 1.4s cubic-bezier(.76,0,.24,1);
     }
     #intro.fading { opacity: 0; pointer-events: none; }
     #intro.done   { display: none; }
-
     #s-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-
     #intro-copy {
       position: relative; z-index: 2; text-align: center;
       opacity: 0; transform: translateY(18px);
-      transition: opacity .9s ease, transform 1s cubic-bezier(0.16,1,0.3,1);
+      transition: opacity .9s ease, transform 1s cubic-bezier(.16,1,.3,1);
     }
     #intro-copy.vis { opacity: 1; transform: none; }
-    #intro-tag {
-      font-size: 9px; letter-spacing: .5em; text-transform: uppercase;
-      color: rgba(255,255,255,.25); margin-bottom: 1.5rem;
-    }
-    #intro-name {
-      font-size: clamp(64px, 14vw, 220px);
-      font-weight: 900; line-height: .88; letter-spacing: -.04em; color: #fff;
-    }
-
+    #intro-tag { font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 1.5rem; }
+    #intro-name { font-size: clamp(64px, 14vw, 220px); font-weight: 900; line-height: .88; letter-spacing: -.04em; color: #fff; }
     #intro-bar {
       position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: .7rem; z-index: 2;
     }
-    #bar-track {
-      width: 140px; height: 1px; background: rgba(255,255,255,.08); overflow: hidden;
-    }
+    #bar-track { width: 140px; height: 1px; background: rgba(255,255,255,.08); overflow: hidden; }
     #bar-fill { height: 100%; width: 0; background: rgba(255,255,255,.55); }
     #bar-label { font-size: 8px; letter-spacing: .3em; color: rgba(255,255,255,.15); }
 
-    /* ── MAIN ───────────────────────────────────────────────── */
+    /* ── MAIN ────────────────────────────────────────────── */
     #main { opacity: 0; transition: opacity 1s ease .2s; }
     #main.vis { opacity: 1; }
 
-    /* ── NAV ────────────────────────────────────────────────── */
+    /* ── NAV ─────────────────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
       display: flex; align-items: center; justify-content: space-between;
@@ -102,296 +134,268 @@
       text-transform: uppercase; color: var(--fg); text-decoration: none;
       mix-blend-mode: difference;
     }
-    .nav-right {
-      display: flex; align-items: center; gap: 2.5rem;
-      mix-blend-mode: difference;
-    }
+    .nav-r { display: flex; align-items: center; gap: 2.5rem; mix-blend-mode: difference; }
     .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      font-size: 10px; color: var(--dim);
-      text-decoration: none; letter-spacing: .08em; text-transform: uppercase;
-      transition: color .2s;
-    }
+    .nav-links a { font-size: 10px; color: var(--dim); text-decoration: none; letter-spacing: .08em; text-transform: uppercase; transition: color .2s; }
     .nav-links a:hover { color: var(--fg); }
-    #nav-clock {
-      font-size: 10px; letter-spacing: .06em;
-      color: rgba(240,237,230,.2); font-variant-numeric: tabular-nums;
-    }
+    #nav-clock { font-size: 10px; letter-spacing: .06em; color: rgba(240,237,230,.18); font-variant-numeric: tabular-nums; }
     @media (max-width: 768px) { .nav-links, #nav-clock { display: none; } nav { padding: 1.5rem 1.25rem; } }
 
-    /* ── HERO ───────────────────────────────────────────────── */
+    /* ── HERO ────────────────────────────────────────────── */
     #hero {
-      min-height: 100vh;
+      min-height: 100svh;
       display: flex; flex-direction: column; justify-content: flex-end;
       padding: 7rem 2.5rem 5.5rem;
       background: #000; position: relative; overflow: hidden;
       isolation: isolate;
     }
-
     .hbl {
       position: relative; z-index: 2;
       mix-blend-mode: difference; background: transparent;
       display: flex; flex-direction: column;
     }
-
     .h-tag {
-      font-size: 9px; letter-spacing: .5em; text-transform: uppercase;
-      color: #fff; margin-bottom: 2rem; background: transparent;
+      font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: #fff;
+      margin-bottom: 2rem; background: transparent;
       display: flex; align-items: center; gap: .75rem;
       opacity: 0; transform: translateY(14px);
     }
     .h-avail {
-      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-      background: #00e676;
-      animation: pulse-green 2s ease-in-out infinite;
+      width: 6px; height: 6px; border-radius: 50%; background: #00e676;
+      animation: pulse-g 2s ease-in-out infinite;
     }
-    @keyframes pulse-green {
-      0%,100% { box-shadow: 0 0 0 0 rgba(0,230,118,.4); }
-      50%      { box-shadow: 0 0 0 6px rgba(0,230,118,0); }
-    }
-
+    @keyframes pulse-g { 0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 6px rgba(0,230,118,0)} }
     .h-name {
-      font-size: clamp(72px, 15vw, 230px);
-      font-weight: 900; line-height: .84; letter-spacing: -.04em;
-      color: #fff; background: transparent;
+      font-size: clamp(58px, 13vw, 210px);
+      font-weight: 900; line-height: .85; letter-spacing: -.04em; color: #fff; background: transparent;
       opacity: 0; transform: translateY(32px);
     }
     .h-role {
-      font-size: clamp(14px, 1.8vw, 22px); font-weight: 300;
-      color: rgba(255,255,255,.6); letter-spacing: .04em;
+      font-size: clamp(11px, 1.2vw, 16px); font-weight: 400;
+      color: rgba(255,255,255,.5); letter-spacing: .18em; text-transform: uppercase;
       margin-top: 2rem; background: transparent;
       opacity: 0; transform: translateY(20px);
     }
     .h-ctas {
-      margin-top: 3rem;
-      display: flex; gap: 1.5rem; align-items: center;
-      background: transparent;
-      opacity: 0; transform: translateY(20px);
+      margin-top: 3rem; display: flex; gap: 1.5rem; align-items: center;
+      background: transparent; opacity: 0; transform: translateY(20px);
     }
     .btn-p {
       padding: .9rem 1.8rem; background: #fff; color: #000;
-      font-size: 10px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; text-decoration: none;
-      display: inline-block; transition: opacity .2s;
+      font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
     }
-    .btn-p:hover { opacity: .85; }
     .btn-s {
-      font-size: 10px; color: #fff; letter-spacing: .1em;
-      text-transform: uppercase; text-decoration: none;
-      border-bottom: 1px solid rgba(255,255,255,.3); padding-bottom: 2px;
-      transition: border-color .25s;
+      font-size: 10px; color: #fff; letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.3); padding-bottom: 2px;
     }
-    .btn-s:hover { border-color: rgba(255,255,255,.8); }
-
     .h-scroll {
       position: absolute; bottom: 3rem; right: 2.5rem; z-index: 2;
       display: flex; flex-direction: column; align-items: center; gap: .75rem;
       mix-blend-mode: difference;
     }
-    .h-scroll span {
-      font-size: 8px; letter-spacing: .4em; text-transform: uppercase;
-      color: rgba(255,255,255,.3); writing-mode: vertical-rl;
-    }
-    .h-scroll-line {
-      width: 1px; height: 60px;
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.3));
-    }
-    @media (max-width: 768px) {
-      #hero { padding: 7rem 1.25rem 4.5rem; }
-      .h-scroll { display: none; }
-    }
+    .h-scroll span { font-size: 8px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.3); writing-mode: vertical-rl; }
+    .h-scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom,transparent,rgba(255,255,255,.3)); }
+    @media (max-width: 768px) { #hero{padding:7rem 1.25rem 4.5rem;} .h-scroll{display:none;} }
 
-    /* ── MARQUEE ─────────────────────────────────────────────── */
-    .mq-wrap {
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      padding: 1.1rem 0; overflow: hidden; white-space: nowrap;
-    }
-    .mq-track {
-      display: inline-flex;
-      animation: mq 28s linear infinite;
-    }
-    .mq-track:hover { animation-play-state: paused; }
-    .mq-t {
-      font-size: 10px; letter-spacing: .35em; text-transform: uppercase;
-      color: var(--dim); padding-right: 4rem;
-    }
-    @keyframes mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    /* ── MARQUEE ─────────────────────────────────────────── */
+    .mq-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.1rem 0; overflow: hidden; white-space: nowrap; }
+    .mq-track { display: inline-flex; animation: mq 32s linear infinite; }
+    .mq-track:hover { animation-play-state: paused; cursor: default; }
+    .mq-t { font-size: 10px; letter-spacing: .35em; text-transform: uppercase; color: var(--dim); padding-right: 4rem; }
+    @keyframes mq { from{transform:translateX(0)}to{transform:translateX(-50%)} }
 
-    /* ── ABOUT ───────────────────────────────────────────────── */
-    #about {
-      padding: 14rem 2.5rem;
-      max-width: 1400px; margin: 0 auto;
+    /* ── MANIFESTO ───────────────────────────────────────── */
+    #manifesto {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 10rem 2.5rem;
     }
-    .about-stmt {
-      font-size: clamp(40px, 6.5vw, 96px);
-      font-weight: 900; line-height: 1.0; letter-spacing: -.025em;
+    .mf-inner { max-width: 1200px; }
+    .mf-text {
+      font-size: clamp(36px, 5.5vw, 82px);
+      font-weight: 900; line-height: 1.08; letter-spacing: -.025em;
     }
-    .about-stmt .dr { color: var(--dim); }
-    .about-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4rem; margin-top: 6rem;
-      align-items: start;
+    .wo { display: inline-block; overflow: hidden; vertical-align: bottom; }
+    .wi { display: inline-block; transform: translateY(110%); }
+    .mf-sub {
+      max-width: 480px; font-size: 1rem; color: var(--dim);
+      line-height: 1.85; margin-top: 4rem;
+      opacity: 0; transform: translateY(20px);
     }
-    .about-sub {
-      font-size: 1rem; color: var(--dim);
-      line-height: 1.85; max-width: 380px;
-    }
-    .about-stats {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
-    }
-    .stat-item {}
-    .stat-val {
-      font-size: clamp(36px, 5vw, 64px);
-      font-weight: 900; letter-spacing: -.03em; color: var(--fg);
-    }
-    .stat-lbl {
-      font-size: 9px; letter-spacing: .25em; text-transform: uppercase;
-      color: var(--dim); margin-top: .4rem;
-    }
-    @media (max-width: 768px) {
-      #about { padding: 7rem 1.25rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
-    }
+    @media (max-width: 768px) { #manifesto{padding:7rem 1.25rem;} }
 
-    /* ── WORK ────────────────────────────────────────────────── */
-    #work { padding: 0 2.5rem 14rem; }
-    .work-head {
-      display: flex; justify-content: space-between; align-items: baseline;
-      max-width: 1400px; margin: 0 auto 3rem;
-      padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
-    }
-    .wh-lbl {
-      font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
-      color: var(--dim);
-    }
-    .wh-count { font-size: 10px; color: rgba(240,237,230,.12); }
-
-    .p-list { max-width: 1400px; margin: 0 auto; }
-
-    .p-item {
-      display: grid;
-      grid-template-columns: 56px 1fr auto;
-      align-items: center; gap: 2rem;
-      padding: 2.2rem 0;
+    /* ── PROCESS ─────────────────────────────────────────── */
+    #process { padding: 10rem 2.5rem; }
+    .proc-inner { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+    .proc-left { position: sticky; top: 8rem; }
+    .proc-eyebrow { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.5rem; }
+    .proc-title { font-size: clamp(40px, 6vw, 88px); font-weight: 900; line-height: .9; letter-spacing: -.03em; }
+    .proc-steps { display: flex; flex-direction: column; gap: 0; }
+    .proc-step {
+      padding: 2.5rem 0;
       border-bottom: 1px solid var(--border);
-      cursor: none; position: relative; overflow: hidden;
-      transition: border-color .3s;
+      display: grid; grid-template-columns: 56px 1fr; gap: 1.5rem;
+      opacity: 0; transform: translateY(24px);
     }
-    .p-item:hover { border-bottom-color: rgba(240,237,230,.25); }
-
-    .p-sweep {
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(240,237,230,.025) 0%, transparent 60%);
-      transform: translateX(-101%);
-      transition: transform .6s cubic-bezier(0.16,1,0.3,1);
-      pointer-events: none;
-    }
-    .p-item:hover .p-sweep { transform: translateX(0); }
-
-    .p-num {
-      font-size: 10px; color: rgba(240,237,230,.2);
-      font-family: monospace; transition: color .2s;
-    }
-    .p-item:hover .p-num { color: var(--red); }
-
-    .p-title {
-      font-size: clamp(32px, 4.5vw, 64px);
-      font-weight: 900; letter-spacing: -.025em; color: var(--fg);
-      transition: transform .45s cubic-bezier(0.16,1,0.3,1);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .p-item:hover .p-title { transform: translateX(14px); }
-
-    .p-meta { text-align: right; }
-    .p-tags {
-      font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
-      color: rgba(240,237,230,.2); display: flex; flex-direction: column;
-      gap: .3rem; align-items: flex-end;
-    }
-    .p-yr { font-size: 9px; color: rgba(240,237,230,.1); margin-top: .5rem; }
-
+    .ps-num { font-size: 10px; color: var(--red); font-family: monospace; padding-top: 4px; }
+    .ps-title { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
+    .ps-desc { font-size: 13px; color: var(--dim); line-height: 1.75; }
     @media (max-width: 768px) {
-      #work { padding: 0 1.25rem 7rem; }
-      .p-item { grid-template-columns: 40px 1fr; }
-      .p-meta { display: none; }
-      .p-title { font-size: clamp(28px, 8vw, 48px); white-space: normal; }
+      #process{padding:6rem 1.25rem;}
+      .proc-inner{grid-template-columns:1fr;gap:3rem;}
+      .proc-left{position:static;}
     }
 
-    /* ── CONTACT ─────────────────────────────────────────────── */
-    #contact {
-      padding: 14rem 2.5rem;
+    /* ── WORK (HORIZONTAL) ───────────────────────────────── */
+    #work { position: relative; }
+    #w-pin { overflow: hidden; height: 100svh; }
+    #w-track { display: flex; height: 100%; will-change: transform; }
+    .w-card {
+      flex-shrink: 0; width: 85vw; height: 100svh;
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 4rem;
       position: relative; overflow: hidden;
-      text-align: center;
     }
-    #contact-glow {
+    .w-card:last-child { width: 100vw; border-right: none; }
+    .w-card-bg {
+      position: absolute; inset: 0;
+      transition: transform .6s cubic-bezier(.16,1,.3,1);
+    }
+    .w-card:hover .w-card-bg { transform: scale(1.03); }
+    .w-card-bg-1 { background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(26,59,255,.12) 0%, transparent 70%); }
+    .w-card-bg-2 { background: radial-gradient(ellipse 70% 80% at 30% 60%, rgba(255,34,0,.06) 0%, transparent 70%); }
+    .w-card-bg-3 { background: radial-gradient(ellipse 90% 50% at 60% 30%, rgba(100,60,200,.08) 0%, transparent 70%); }
+    .w-card-bg-4 { background: radial-gradient(ellipse 60% 70% at 40% 70%, rgba(0,200,130,.06) 0%, transparent 70%); }
+    .w-card-inner { position: relative; z-index: 1; }
+    .w-card-top {
+      position: absolute; top: 4rem; left: 4rem; right: 4rem;
+      display: flex; justify-content: space-between; align-items: flex-start; z-index: 1;
+    }
+    .w-card-num { font-size: 10px; color: var(--dim); font-family: monospace; }
+    .w-card-tags { font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: rgba(240,237,230,.2); text-align: right; line-height: 1.8; }
+    .w-card-year { font-size: 9px; color: rgba(240,237,230,.12); margin-top: .4rem; text-align: right; }
+    .w-card-title {
+      font-size: clamp(42px, 6vw, 96px);
+      font-weight: 900; line-height: .88; letter-spacing: -.03em;
+      color: var(--fg);
+    }
+    .w-card-desc { font-size: 13px; color: var(--dim); line-height: 1.7; margin-top: 1rem; max-width: 340px; }
+    .w-card-link {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--fg); text-decoration: none;
+      border-bottom: 1px solid var(--border); padding-bottom: 2px;
+      margin-top: 1.5rem; transition: border-color .2s;
+    }
+    .w-card-link:hover { border-color: rgba(240,237,230,.5); }
+    /* work header */
+    #work-header {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+      padding: 2rem 2.5rem; display: flex; justify-content: space-between;
+      align-items: center; pointer-events: none;
+    }
+    .wh-lbl { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--dim); }
+    .wh-cnt { font-size: 10px; color: rgba(240,237,230,.12); }
+    /* Mobile: vertical */
+    @media (max-width: 768px) {
+      #w-pin { height: auto; overflow: visible; }
+      #w-track { flex-direction: column; }
+      .w-card { width: 100%; height: auto; min-height: 80svh; padding: 2rem 1.25rem 3rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .w-card-top { top: 2rem; left: 1.25rem; right: 1.25rem; }
+      #work-header { padding: 1.5rem 1.25rem; }
+    }
+
+    /* ── TESTIMONIALS ────────────────────────────────────── */
+    #testimonials { padding: 10rem 2.5rem; border-top: 1px solid var(--border); }
+    .t-inner { max-width: 900px; margin: 0 auto; }
+    .t-eyebrow { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim); margin-bottom: 5rem; }
+    .t-item { padding: 4rem 0; border-bottom: 1px solid var(--border); opacity: 0; transform: translateY(24px); }
+    .t-quote {
+      font-size: clamp(22px, 3.5vw, 46px);
+      font-weight: 700; line-height: 1.2; letter-spacing: -.02em;
+      color: var(--fg); margin-bottom: 2rem;
+    }
+    .t-quote::before { content: '\201C'; color: var(--dimmer); }
+    .t-author { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+    @media (max-width: 768px) { #testimonials{padding:6rem 1.25rem;} }
+
+    /* ── CONTACT ─────────────────────────────────────────── */
+    #contact {
+      padding: 12rem 2.5rem; position: relative; overflow: hidden; text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    #c-glow {
       position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(600px circle at 50% 50%, rgba(240,237,230,.04) 0%, transparent 70%);
-      transition: background .1s linear;
+      transition: background .12s linear;
     }
-    .c-lbl {
-      position: relative; z-index: 1;
-      font-size: 9px; letter-spacing: .5em; text-transform: uppercase;
-      color: var(--dim); margin-bottom: 3rem;
-    }
+    .c-lbl { position: relative; z-index: 1; font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: var(--dim); margin-bottom: 3rem; }
     .c-head {
       position: relative; z-index: 1;
-      font-size: clamp(52px, 9vw, 136px);
+      font-size: clamp(48px, 8.5vw, 130px);
       font-weight: 900; line-height: .88; letter-spacing: -.035em;
       color: var(--fg); margin-bottom: 4.5rem;
     }
-    .c-head em {
-      font-style: italic; font-weight: 100;
-      color: var(--dim);
-    }
+    .c-head em { font-style: italic; font-weight: 100; color: var(--dim); }
     .c-email {
       position: relative; z-index: 1;
-      font-size: clamp(18px, 2.8vw, 44px); color: var(--fg);
+      font-size: clamp(18px, 2.6vw, 42px); color: var(--fg);
       text-decoration: none; letter-spacing: -.01em;
       border-bottom: 1px solid rgba(240,237,230,.15); padding-bottom: 4px;
-      transition: letter-spacing .5s cubic-bezier(0.16,1,0.3,1),
-                  border-color .3s;
+      transition: letter-spacing .5s cubic-bezier(.16,1,.3,1), border-color .3s;
       display: inline-block;
     }
-    .c-email:hover { letter-spacing: .05em; border-color: rgba(240,237,230,.7); }
-    @media (max-width: 768px) { #contact { padding: 7rem 1.25rem; } }
+    .c-email:hover { letter-spacing: .04em; border-color: rgba(240,237,230,.7); }
+    @media (max-width: 768px) { #contact{padding:7rem 1.25rem;} }
 
-    /* ── FOOTER ──────────────────────────────────────────────── */
+    /* ── EASTER EGG ──────────────────────────────────────── */
+    #egg {
+      position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg); display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    #egg.on { opacity: 1; pointer-events: all; }
+    #egg-text {
+      font-size: clamp(28px, 5vw, 72px); font-weight: 900;
+      letter-spacing: -.03em; color: var(--red); text-align: center;
+      opacity: 0; transform: scale(.9);
+      transition: opacity .5s ease .2s, transform .6s cubic-bezier(.16,1,.3,1) .2s;
+    }
+    #egg.on #egg-text { opacity: 1; transform: scale(1); }
+    #egg-sub { font-size: 12px; letter-spacing: .2em; color: var(--dim); margin-top: 1rem; }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 2.5rem;
+      border-top: 1px solid var(--border); padding: 2rem 2.5rem;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .f-copy {
-      font-size: 10px; color: rgba(240,237,230,.15); letter-spacing: .05em;
-    }
+    .f-copy { font-size: 10px; color: rgba(240,237,230,.15); letter-spacing: .05em; }
     .f-links { display: flex; gap: 2rem; }
-    .f-links a {
-      font-size: 10px; color: rgba(240,237,230,.15);
-      text-decoration: none; letter-spacing: .05em; transition: color .2s;
-    }
+    .f-links a { font-size: 10px; color: rgba(240,237,230,.15); text-decoration: none; letter-spacing: .05em; transition: color .2s; }
     .f-links a:hover { color: rgba(240,237,230,.6); }
-    @media (max-width: 768px) { footer { flex-direction: column; gap: 1rem; padding: 1.5rem 1.25rem; text-align: center; } }
-
-    /* ── REVEAL ──────────────────────────────────────────────── */
-    .rv {
-      opacity: 0; transform: translateY(28px);
-      transition: opacity .9s ease, transform 1.1s cubic-bezier(0.16,1,0.3,1);
-    }
-    .rv.on { opacity: 1; transform: none; }
+    @media (max-width: 768px) { footer{flex-direction:column;gap:1rem;padding:1.5rem 1.25rem;text-align:center;} }
   </style>
 </head>
 <body>
 
-<!-- GRAIN CANVAS (generated by JS) -->
+<div id="sp"></div>
 <canvas id="grain"></canvas>
-
-<!-- CURSOR -->
 <div id="c-dot" class="c-el"></div>
 <div id="c-r1"  class="c-el"></div>
 <div id="c-r2"  class="c-el"></div>
 <div id="c-r3"  class="c-el"></div>
+<a href="#contact" id="float-cta" class="mag">Projekt starten ↗</a>
 
-<!-- INTRO -->
+<!-- ── EASTER EGG ──────────────────────────────────────── -->
+<div id="egg">
+  <div>
+    <div id="egg-text">SEMP STUDIOS<br>INSIDER</div>
+    <div id="egg-sub">Sie haben den Code gefunden.</div>
+  </div>
+</div>
+
+<!-- ── INTRO ──────────────────────────────────────────── -->
 <div id="intro">
   <div id="s-canvas"></div>
   <div id="intro-copy">
@@ -404,16 +408,16 @@
   </div>
 </div>
 
-<!-- MAIN -->
+<!-- ── MAIN ───────────────────────────────────────────── -->
 <div id="main">
 
   <nav>
     <a href="#" class="nav-logo mag">Semp Studios</a>
-    <div class="nav-right">
+    <div class="nav-r">
       <ul class="nav-links">
-        <li><a href="#work"    class="mag">Work</a></li>
-        <li><a href="#about"   class="mag">About</a></li>
-        <li><a href="#contact" class="mag">Contact</a></li>
+        <li><a href="#work"         class="mag">Arbeit</a></li>
+        <li><a href="#process"      class="mag">Prozess</a></li>
+        <li><a href="#contact"      class="mag">Kontakt</a></li>
       </ul>
       <span id="nav-clock"></span>
     </div>
@@ -422,15 +426,12 @@
   <!-- HERO -->
   <section id="hero">
     <div class="hbl">
-      <p class="h-tag">
-        <span class="h-avail"></span>
-        Aktuell verfügbar · Frankfurt
-      </p>
+      <p class="h-tag"><span class="h-avail"></span>Aktuell verfügbar · Frankfurt</p>
       <h1 class="h-name">Advanced<br>Websites.<br>Affordable.</h1>
-      <p class="h-role">SEMP STUDIOS · Frankfurt</p>
+      <p class="h-role">SEMP STUDIOS</p>
       <div class="h-ctas">
-        <a href="#work"    class="btn-p mag">Selected Work</a>
-        <a href="#contact" class="btn-s mag">Get in touch ↗</a>
+        <a href="#work"    class="btn-p mag">Projekte ansehen</a>
+        <a href="#contact" class="btn-s mag">Gespräch starten ↗</a>
       </div>
     </div>
     <div class="h-scroll">
@@ -449,35 +450,54 @@
     </div>
   </div>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="about-stmt rv">
-      <div>Wir bauen keine Websites.</div>
-      <div class="dr">Wir bauen Argumente</div>
-      <div>für Businesses die es ernst meinen.</div>
-    </div>
-    <div class="about-grid">
-      <p class="about-sub rv">
-        Jede Seite die wir liefern ist von Grund auf für dein Business gebaut —
-        kein Template, keine Abkürzungen, kein generischer Look.
-        Deine Konkurrenz hat eine Website. Du brauchst eine Waffe.
+  <!-- MANIFESTO -->
+  <section id="manifesto">
+    <div class="mf-inner">
+      <div class="mf-text" id="mf-text">
+        Wir bauen keine Websites. Wir bauen Argumente. Für Businesses die verstehen dass ihre Website ihr bester Mitarbeiter sein könnte — wenn jemand sie richtig baut.
+      </div>
+      <p class="mf-sub" id="mf-sub">
+        Jede Entscheidung ist intentional. Jede Interaktion verdient ihren Platz.
+        Das Web ist voll von Lärm — wir schneiden durch ihn hindurch.
       </p>
-      <div class="about-stats rv">
-        <div class="stat-item">
-          <div class="stat-val" data-count="4">0</div>
-          <div class="stat-lbl">Projects Live</div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="proc-inner">
+      <div class="proc-left">
+        <p class="proc-eyebrow">Unser Prozess</p>
+        <h2 class="proc-title">Wie wir<br>arbeiten</h2>
+      </div>
+      <div class="proc-steps">
+        <div class="proc-step">
+          <span class="ps-num">01</span>
+          <div>
+            <h3 class="ps-title">Verstehen</h3>
+            <p class="ps-desc">Tiefes Research, echte Fragen, ehrliche Antworten. Wir lernen dein Business bevor wir eine Linie ziehen.</p>
+          </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-val" data-count="100">0</div>
-          <div class="stat-lbl">% Custom</div>
+        <div class="proc-step">
+          <span class="ps-num">02</span>
+          <div>
+            <h3 class="ps-title">Gestalten</h3>
+            <p class="ps-desc">Kein Template. Kein Baukastensystem. Reines Design — von Grund auf auf deine Marke und Zielgruppe zugeschnitten.</p>
+          </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-val">2–3</div>
-          <div class="stat-lbl">Weeks Delivery</div>
+        <div class="proc-step">
+          <span class="ps-num">03</span>
+          <div>
+            <h3 class="ps-title">Bauen</h3>
+            <p class="ps-desc">Sauberer Produktions-Code. Schnell. Optimiert für Google. Mobile-first, immer.</p>
+          </div>
         </div>
-        <div class="stat-item">
-          <div class="stat-val">∞</div>
-          <div class="stat-lbl">Attention to Detail</div>
+        <div class="proc-step">
+          <span class="ps-num">04</span>
+          <div>
+            <h3 class="ps-title">Launchen</h3>
+            <p class="ps-desc">Live in 2–3 Wochen. Deine Waffe ist scharf. Deine Konkurrenz hat ein Problem.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -485,123 +505,184 @@
 
   <!-- WORK -->
   <section id="work">
-    <div class="work-head rv">
-      <span class="wh-lbl">Selected Work</span>
-      <span class="wh-count">(04)</span>
+    <div id="work-header">
+      <span class="wh-lbl">Ausgewählte Arbeiten</span>
+      <span class="wh-cnt">(04)</span>
     </div>
-    <div class="p-list">
-      <div class="p-item rv mag-row">
-        <div class="p-sweep"></div>
-        <span class="p-num">01</span>
-        <div class="p-title" data-text="Kiwis Frankfurt">Kiwis Frankfurt</div>
-        <div class="p-meta">
-          <div class="p-tags"><span>Web Design</span><span>Development</span></div>
-          <div class="p-yr">2024</div>
+    <div id="w-pin">
+      <div id="w-track">
+        <div class="w-card">
+          <div class="w-card-bg w-card-bg-1"></div>
+          <div class="w-card-top">
+            <span class="w-card-num">01</span>
+            <div>
+              <div class="w-card-tags">Web Design<br>Development</div>
+              <div class="w-card-year">2024</div>
+            </div>
+          </div>
+          <div class="w-card-inner">
+            <div class="w-card-title scr" data-text="Kiwis Frankfurt">Kiwis Frankfurt</div>
+            <p class="w-card-desc">Restaurant-Website für Frankfurts authentischstes Kiwi-Bistro. Custom-built, schnell, emotional.</p>
+            <a href="#" class="w-card-link mag">Ansehen ↗</a>
+          </div>
+        </div>
+        <div class="w-card">
+          <div class="w-card-bg w-card-bg-2"></div>
+          <div class="w-card-top">
+            <span class="w-card-num">02</span>
+            <div>
+              <div class="w-card-tags">Brand Identity<br>Motion</div>
+              <div class="w-card-year">2024</div>
+            </div>
+          </div>
+          <div class="w-card-inner">
+            <div class="w-card-title scr" data-text="[Projekt 02]">[Projekt 02]</div>
+            <p class="w-card-desc">Vollständige Markenentwicklung und digitale Präsenz. Von der Strategie bis zum Launch.</p>
+            <a href="#contact" class="w-card-link mag">Anfrage stellen ↗</a>
+          </div>
+        </div>
+        <div class="w-card">
+          <div class="w-card-bg w-card-bg-3"></div>
+          <div class="w-card-top">
+            <span class="w-card-num">03</span>
+            <div>
+              <div class="w-card-tags">E-Commerce<br>SEO</div>
+              <div class="w-card-year">2024</div>
+            </div>
+          </div>
+          <div class="w-card-inner">
+            <div class="w-card-title scr" data-text="[Projekt 03]">[Projekt 03]</div>
+            <p class="w-card-desc">High-converting E-Commerce Lösung mit tiefem SEO-Fundament. Sichtbar. Schnell. Profitabel.</p>
+            <a href="#contact" class="w-card-link mag">Anfrage stellen ↗</a>
+          </div>
+        </div>
+        <div class="w-card">
+          <div class="w-card-bg w-card-bg-4"></div>
+          <div class="w-card-top">
+            <span class="w-card-num">04</span>
+            <div>
+              <div class="w-card-tags">Interaction<br>Creative Tech</div>
+              <div class="w-card-year">2023</div>
+            </div>
+          </div>
+          <div class="w-card-inner">
+            <div class="w-card-title scr" data-text="[Projekt 04]">[Projekt 04]</div>
+            <p class="w-card-desc">Digitale Experience die Menschen mid-scroll stoppt. Interaktiv. Unvergesslich. Einzigartig.</p>
+            <a href="#contact" class="w-card-link mag">Anfrage stellen ↗</a>
+          </div>
         </div>
       </div>
-      <div class="p-item rv mag-row">
-        <div class="p-sweep"></div>
-        <span class="p-num">02</span>
-        <div class="p-title" data-text="[Projekt 02]">[Projekt 02]</div>
-        <div class="p-meta">
-          <div class="p-tags"><span>Brand Identity</span><span>Motion</span></div>
-          <div class="p-yr">2024</div>
-        </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="t-inner">
+      <p class="t-eyebrow">Was Kunden sagen</p>
+      <div class="t-item">
+        <p class="t-quote">Die beste Entscheidung des Jahres. Unsere neue Website hat unseren Umsatz in den ersten drei Monaten messbar gesteigert.</p>
+        <span class="t-author">— Maximilian K., Kiwis Frankfurt</span>
       </div>
-      <div class="p-item rv mag-row">
-        <div class="p-sweep"></div>
-        <span class="p-num">03</span>
-        <div class="p-title" data-text="[Projekt 03]">[Projekt 03]</div>
-        <div class="p-meta">
-          <div class="p-tags"><span>E-Commerce</span><span>SEO</span></div>
-          <div class="p-yr">2024</div>
-        </div>
+      <div class="t-item">
+        <p class="t-quote">In 2 Wochen von Idee zu fertiger Website. Kein Template, kein Kompromiss. Genau so hatten wir es uns vorgestellt — nur besser.</p>
+        <span class="t-author">— [Client Name], [Company]</span>
       </div>
-      <div class="p-item rv mag-row">
-        <div class="p-sweep"></div>
-        <span class="p-num">04</span>
-        <div class="p-title" data-text="[Projekt 04]">[Projekt 04]</div>
-        <div class="p-meta">
-          <div class="p-tags"><span>Interaction</span><span>3D</span></div>
-          <div class="p-yr">2023</div>
-        </div>
+      <div class="t-item">
+        <p class="t-quote">SEMP STUDIOS hat verstanden was wir brauchen bevor wir es selbst wussten. Das ist keine Agentur. Das ist ein Partner.</p>
+        <span class="t-author">— [Client Name], [Company]</span>
       </div>
     </div>
   </section>
 
   <!-- CONTACT -->
   <section id="contact">
-    <div id="contact-glow"></div>
-    <p class="c-lbl rv">Projekt starten</p>
-    <h2 class="c-head rv">
+    <div id="c-glow"></div>
+    <p class="c-lbl">Projekt starten</p>
+    <h2 class="c-head">
       Bereit für eine Website<br>die <em>wirklich funktioniert?</em>
     </h2>
     <a href="mailto:hello@sempstudios.de" class="c-email mag">hello@sempstudios.de</a>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <span class="f-copy">SEMP STUDIOS · Frankfurt · <span id="f-yr"></span></span>
     <div class="f-links">
-      <a href="#" class="mag">Twitter</a>
-      <a href="#" class="mag">LinkedIn</a>
       <a href="#" class="mag">Instagram</a>
+      <a href="#" class="mag">LinkedIn</a>
+      <a href="#" class="mag">Twitter</a>
     </div>
   </footer>
 
 </div><!-- /main -->
 
 <script>
-/* ──────────────────────────────────────────────────────────
-   0. UTILITIES
-────────────────────────────────────────────────────────── */
-document.getElementById('f-yr').textContent = new Date().getFullYear();
+/* ═══════════════════════════════════════════════════════
+   0 — GSAP + LENIS SETUP
+═══════════════════════════════════════════════════════ */
+gsap.registerPlugin(ScrollTrigger);
 
-// Live clock
+const lenis = new Lenis({
+  duration: 1.25,
+  easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smooth: true,
+});
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add(time => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
+
+// Scroll progress bar
+lenis.on('scroll', ({ progress }) => {
+  document.getElementById('sp').style.width = (progress * 100) + '%';
+});
+
+// Float CTA appears after hero
+ScrollTrigger.create({
+  trigger: '#manifesto',
+  start: 'top 80%',
+  onEnter: () => document.getElementById('float-cta').classList.add('on'),
+  onLeaveBack: () => document.getElementById('float-cta').classList.remove('on'),
+});
+
+/* ═══════════════════════════════════════════════════════
+   1 — UTILS: CLOCK + YEAR
+═══════════════════════════════════════════════════════ */
+document.getElementById('f-yr').textContent = new Date().getFullYear();
 (function tick() {
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  document.getElementById('nav-clock').textContent =
-    pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  document.getElementById('nav-clock').textContent = p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
   setTimeout(tick, 1000);
 })();
 
-/* ──────────────────────────────────────────────────────────
-   1. ANIMATED FILM GRAIN
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   2 — ANIMATED FILM GRAIN
+═══════════════════════════════════════════════════════ */
 (function() {
   const c = document.getElementById('grain');
   c.style.cssText = 'position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.038;';
   const ctx = c.getContext('2d');
   let W, H;
-  function resize() {
-    W = c.width  = window.innerWidth;
-    H = c.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-  function drawGrain() {
-    const img = ctx.createImageData(W, H);
-    const d = img.data;
+  function resize() { W = c.width = innerWidth; H = c.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  let f = 0;
+  (function loop() {
+    requestAnimationFrame(loop);
+    if (++f % 3 !== 0) return;
+    const img = ctx.createImageData(W, H), d = img.data;
     for (let i = 0; i < d.length; i += 4) {
       const v = Math.random() * 255 | 0;
       d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
     }
     ctx.putImageData(img, 0, 0);
-  }
-  // Redraw grain every 3 frames for subtle flicker
-  let f = 0;
-  (function loop() { requestAnimationFrame(loop); if (++f % 3 === 0) drawGrain(); })();
+  })();
 })();
 
-/* ──────────────────────────────────────────────────────────
-   2. THREE.JS INTRO SHADER
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   3 — THREE.JS INTRO SHADER
+═══════════════════════════════════════════════════════ */
 (function() {
   const container = document.getElementById('s-canvas');
   const cam = new THREE.Camera(); cam.position.z = 1;
   const scene = new THREE.Scene();
-  const geo = new THREE.PlaneBufferGeometry(2, 2);
   const uni = {
     time:       { type: 'f',  value: 1.0 },
     resolution: { type: 'v2', value: new THREE.Vector2() }
@@ -628,128 +709,191 @@ document.getElementById('f-yr').textContent = new Date().getFullYear();
       }
     `
   });
-  scene.add(new THREE.Mesh(geo, mat));
+  scene.add(new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2), mat));
   const rnd = new THREE.WebGLRenderer();
   rnd.setPixelRatio(devicePixelRatio);
   container.appendChild(rnd.domElement);
-
-  function resize() {
-    rnd.setSize(innerWidth, innerHeight);
-    uni.resolution.value.set(rnd.domElement.width, rnd.domElement.height);
-  }
+  function resize() { rnd.setSize(innerWidth, innerHeight); uni.resolution.value.set(rnd.domElement.width, rnd.domElement.height); }
   resize(); window.addEventListener('resize', resize);
-
   let id;
   (function animate() { id = requestAnimationFrame(animate); uni.time.value += .05; rnd.render(scene, cam); })();
 
   // Progress bar
   const fill = document.getElementById('bar-fill');
   let p = 0;
-  const pi = setInterval(() => {
-    p = Math.min(100, p + Math.random() * 4 + 1);
-    fill.style.width = p + '%';
-    if (p >= 100) clearInterval(pi);
-  }, 40);
+  const pi = setInterval(() => { p = Math.min(100, p + Math.random() * 5 + 1); fill.style.width = p + '%'; if (p >= 100) clearInterval(pi); }, 35);
 
-  // Text reveal
-  setTimeout(() => document.getElementById('intro-copy').classList.add('vis'), 250);
+  setTimeout(() => document.getElementById('intro-copy').classList.add('vis'), 280);
 
-  // Fade out
   const intro = document.getElementById('intro'), main = document.getElementById('main');
   setTimeout(() => { intro.classList.add('fading'); main.classList.add('vis'); }, 4000);
   setTimeout(() => { intro.classList.add('done'); cancelAnimationFrame(id); rnd.dispose(); }, 5600);
 })();
 
-/* ──────────────────────────────────────────────────────────
-   3. HERO ANIMATIONS (after intro)
-────────────────────────────────────────────────────────── */
-setTimeout(() => {
-  function ai(el, d) {
-    if (!el) return;
-    el.style.transition = `opacity 1.2s ease ${d}s, transform 1.3s cubic-bezier(0.16,1,0.3,1) ${d}s`;
-    el.style.opacity = '1'; el.style.transform = 'translateY(0)';
-  }
-  ai(document.querySelector('.h-tag'),   .05);
-  ai(document.querySelector('.h-name'),  .18);
-  ai(document.querySelector('.h-role'),  .34);
-  ai(document.querySelector('.h-ctas'),  .50);
-}, 4200);
-
-/* ──────────────────────────────────────────────────────────
-   4. HERO MESH GRADIENT  (WebGL — Shepard IDW, #000→#1a1a1a→#333→#fff)
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   4 — HERO MESH GRADIENT  (WebGL — Shepard IDW)
+═══════════════════════════════════════════════════════ */
 (function() {
   const hero = document.getElementById('hero');
   const cv = document.createElement('canvas');
   cv.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
   hero.insertAdjacentElement('afterbegin', cv);
-
   const gl = cv.getContext('webgl') || cv.getContext('experimental-webgl');
   if (!gl) return;
-
   function resize() { cv.width = hero.offsetWidth; cv.height = hero.offsetHeight; gl.viewport(0,0,cv.width,cv.height); }
   resize(); window.addEventListener('resize', resize);
-
-  const VS = `attribute vec2 a; void main(){gl_Position=vec4(a,0,1);}`;
+  const VS = `attribute vec2 a;void main(){gl_Position=vec4(a,0,1);}`;
   const FS = `
     precision mediump float;
-    uniform float t; uniform vec2 r;
+    uniform float t; uniform vec2 r; uniform vec2 mouse;
     void main(){
       vec2 uv=gl_FragCoord.xy/r;
-      vec2 p0=vec2(.5+.44*sin(t*.17),.5+.44*cos(t*.13));
-      vec2 p1=vec2(.5+.38*cos(t*.21+2.09),.5+.38*sin(t*.16+2.09));
-      vec2 p2=vec2(.5+.42*sin(t*.14+4.19),.5+.42*cos(t*.19+4.19));
-      vec2 p3=vec2(.5+.35*cos(t*.23+1.05),.5+.35*sin(t*.25+3.14));
-      vec3 c0=vec3(0.),c1=vec3(.102),c2=vec3(.2),c3=vec3(1.);
+      float mt=t;
+      // 6 control points for richer gradient
+      vec2 p0=vec2(.5+.44*sin(mt*.17),.5+.44*cos(mt*.13));
+      vec2 p1=vec2(.5+.38*cos(mt*.21+2.09),.5+.38*sin(mt*.16+2.09));
+      vec2 p2=vec2(.5+.42*sin(mt*.14+4.19),.5+.42*cos(mt*.19+4.19));
+      vec2 p3=vec2(.5+.35*cos(mt*.23+1.05),.5+.35*sin(mt*.25+3.14));
+      vec2 p4=vec2(.5+.28*sin(mt*.31+0.55),.5+.28*cos(mt*.27+5.23));
+      vec2 p5=vec2(.5+.32*cos(mt*.19+3.77),.5+.32*sin(mt*.22+1.88));
+      vec3 c0=vec3(0.),c1=vec3(.08),c2=vec3(.18),c3=vec3(1.),c4=vec3(.04),c5=vec3(.55);
       float e=.0001;
       float d0=dot(uv-p0,uv-p0); float w0=1./(d0*d0+e);
       float d1=dot(uv-p1,uv-p1); float w1=1./(d1*d1+e);
       float d2=dot(uv-p2,uv-p2); float w2=1./(d2*d2+e);
       float d3=dot(uv-p3,uv-p3); float w3=1./(d3*d3+e);
-      float ww=w0+w1+w2+w3;
-      vec3 col=(c0*w0+c1*w1+c2*w2+c3*w3)/ww;
+      float d4=dot(uv-p4,uv-p4); float w4=1./(d4*d4+e);
+      float d5=dot(uv-p5,uv-p5); float w5=1./(d5*d5+e);
+      float ww=w0+w1+w2+w3+w4+w5;
+      vec3 col=(c0*w0+c1*w1+c2*w2+c3*w3+c4*w4+c5*w5)/ww;
       gl_FragColor=vec4(col,1.);
     }
   `;
-
-  function mkShader(type, src) { const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s; }
+  function mkS(type, src) { const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); return s; }
   const prog = gl.createProgram();
-  gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, VS));
-  gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FS));
+  gl.attachShader(prog, mkS(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, mkS(gl.FRAGMENT_SHADER, FS));
   gl.linkProgram(prog); gl.useProgram(prog);
-
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
-  const aLoc = gl.getAttribLocation(prog, 'a');
-  gl.enableVertexAttribArray(aLoc);
-  gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
-
-  const uT = gl.getUniformLocation(prog,'t'), uR = gl.getUniformLocation(prog,'r');
-  let time = 0;
+  const aLoc = gl.getAttribLocation(prog,'a');
+  gl.enableVertexAttribArray(aLoc); gl.vertexAttribPointer(aLoc,2,gl.FLOAT,false,0,0);
+  const uT=gl.getUniformLocation(prog,'t'), uR=gl.getUniformLocation(prog,'r');
+  let time=0;
   (function draw() {
-    requestAnimationFrame(draw); time += .016;
-    gl.uniform1f(uT, time); gl.uniform2f(uR, cv.width, cv.height);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(draw); time+=.016;
+    gl.uniform1f(uT,time); gl.uniform2f(uR,cv.width,cv.height);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
   })();
-
-  window.addEventListener('scroll', () => {
-    cv.style.transform = `translateY(-${scrollY*.35}px)`;
-  }, { passive: true });
+  window.addEventListener('scroll',()=>{ cv.style.transform=`translateY(-${scrollY*.3}px)`; },{passive:true});
 })();
 
-/* ──────────────────────────────────────────────────────────
-   5. CUSTOM CURSOR  (dot + 3 trailing rings, all mix-blend-mode:difference)
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   5 — HERO PARTICLES  (2D canvas, mix-blend-mode:screen)
+═══════════════════════════════════════════════════════ */
+(function() {
+  const hero = document.getElementById('hero');
+  const cv = document.createElement('canvas');
+  cv.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;mix-blend-mode:screen;';
+  hero.insertAdjacentElement('afterbegin', cv);
+  const ctx = cv.getContext('2d');
+  let W, H, mx = -9999, my = -9999;
+
+  function resize() { W = cv.width = hero.offsetWidth; H = cv.height = hero.offsetHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  hero.addEventListener('mousemove', e => {
+    const r = hero.getBoundingClientRect();
+    mx = e.clientX - r.left; my = e.clientY - r.top;
+  });
+  hero.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+
+  class P {
+    constructor() { this.init(); }
+    init() {
+      this.x = Math.random() * W; this.y = Math.random() * H;
+      this.vx = (Math.random() - .5) * .4; this.vy = (Math.random() - .5) * .4;
+      this.sz = Math.random() * 1.8 + .4;
+      this.life = Math.random() * 300; this.maxLife = 200 + Math.random() * 200;
+      this.bright = Math.random() * .45 + .1;
+    }
+    update() {
+      const dx = this.x - mx, dy = this.y - my;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 180) {
+        const f = (180 - dist) / 180 * .025;
+        this.vx += dx * f; this.vy += dy * f;
+      }
+      this.vx += (Math.random()-.5)*.015; this.vy += (Math.random()-.5)*.015;
+      this.vx *= .97; this.vy *= .97;
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < 0) this.x = W; if (this.x > W) this.x = 0;
+      if (this.y < 0) this.y = H; if (this.y > H) this.y = 0;
+      this.life++;
+      if (this.life > this.maxLife) this.init();
+    }
+    draw() {
+      const a = Math.sin(this.life / this.maxLife * Math.PI) * this.bright;
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.sz, 0, Math.PI*2); ctx.fill();
+    }
+  }
+
+  const particles = Array.from({length: 520}, () => new P());
+  (function loop() {
+    requestAnimationFrame(loop);
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+  })();
+})();
+
+/* ═══════════════════════════════════════════════════════
+   6 — HERO 3D TILT
+═══════════════════════════════════════════════════════ */
+(function() {
+  const hero = document.getElementById('hero');
+  const name = document.querySelector('.h-name');
+  hero.addEventListener('mousemove', e => {
+    const r = hero.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - .5;
+    const y = (e.clientY - r.top)  / r.height - .5;
+    gsap.to(name, {
+      rotateX: y * -4, rotateY: x * 4,
+      transformPerspective: 900,
+      duration: .9, ease: 'power2.out',
+    });
+  });
+  hero.addEventListener('mouseleave', () => {
+    gsap.to(name, { rotateX: 0, rotateY: 0, duration: 1.2, ease: 'elastic.out(1,.4)' });
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════
+   7 — HERO ELEMENT ANIMATIONS
+═══════════════════════════════════════════════════════ */
+setTimeout(() => {
+  function ai(el, d) {
+    if (!el) return;
+    gsap.to(el, { opacity: 1, y: 0, duration: 1.3, ease: 'expo.out', delay: d });
+  }
+  ai(document.querySelector('.h-tag'),  .1);
+  ai(document.querySelector('.h-name'), .22);
+  ai(document.querySelector('.h-role'), .38);
+  ai(document.querySelector('.h-ctas'), .52);
+}, 4200);
+
+/* ═══════════════════════════════════════════════════════
+   8 — CUSTOM CURSOR  (dot + 3 trailing rings)
+═══════════════════════════════════════════════════════ */
 (function() {
   const dot = document.getElementById('c-dot');
   const rings = [
-    { el: document.getElementById('c-r1'), lag: .14 },
-    { el: document.getElementById('c-r2'), lag: .085 },
-    { el: document.getElementById('c-r3'), lag: .045 },
+    { el: document.getElementById('c-r1'), lag: .16, x: -100, y: -100 },
+    { el: document.getElementById('c-r2'), lag: .09, x: -100, y: -100 },
+    { el: document.getElementById('c-r3'), lag: .05, x: -100, y: -100 },
   ];
-  let mx = -200, my = -200;
-  rings.forEach(r => { r.x = -200; r.y = -200; });
+  let mx = -100, my = -100;
 
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
@@ -766,198 +910,337 @@ setTimeout(() => {
     });
   })();
 
-  document.querySelectorAll('a,button,.mag,.mag-row').forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('hov'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('hov'));
+  // Hover: expand first ring to fill the element
+  document.querySelectorAll('a, button, .mag').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      gsap.to('#c-r1', { width: 56, height: 56, duration: .35, ease: 'expo.out' });
+      gsap.to('#c-dot', { opacity: 0, duration: .2 });
+    });
+    el.addEventListener('mouseleave', () => {
+      gsap.to('#c-r1', { width: 40, height: 40, duration: .5, ease: 'expo.out' });
+      gsap.to('#c-dot', { opacity: 1, duration: .2 });
+    });
   });
 })();
 
-/* ──────────────────────────────────────────────────────────
-   6. MAGNETIC ELEMENTS
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   9 — MAGNETIC ELEMENTS
+═══════════════════════════════════════════════════════ */
 document.querySelectorAll('.mag').forEach(el => {
   el.addEventListener('mousemove', e => {
     const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left - r.width  / 2) * .28;
-    const y = (e.clientY - r.top  - r.height / 2) * .28;
-    el.style.transform = `translate(${x}px,${y}px)`;
-    el.style.transition = 'transform .1s ease';
+    gsap.to(el, {
+      x: (e.clientX - r.left - r.width  / 2) * .28,
+      y: (e.clientY - r.top  - r.height / 2) * .28,
+      duration: .4, ease: 'power2.out',
+    });
   });
   el.addEventListener('mouseleave', () => {
-    el.style.transform = '';
-    el.style.transition = 'transform .6s cubic-bezier(0.16,1,0.3,1)';
+    gsap.to(el, { x: 0, y: 0, duration: .8, ease: 'elastic.out(1,.4)' });
   });
 });
 
-/* ──────────────────────────────────────────────────────────
-   7. SMOOTH SCROLL
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   10 — WEB AUDIO  (subtle feedback)
+═══════════════════════════════════════════════════════ */
+(function() {
+  let AC;
+  function getAC() {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    return AC;
+  }
+  function tone(freq, vol = .015, dur = .08) {
+    try {
+      const ac = getAC();
+      const osc = ac.createOscillator();
+      const g   = ac.createGain();
+      osc.connect(g); g.connect(ac.destination);
+      osc.type = 'sine'; osc.frequency.value = freq;
+      g.gain.setValueAtTime(vol, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + dur);
+      osc.start(); osc.stop(ac.currentTime + dur);
+    } catch(e) {}
+  }
+
+  // Subtle hover tones on interactive elements
+  let lastTone = 0;
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      const now = Date.now();
+      if (now - lastTone < 80) return;
+      lastTone = now;
+      tone(660 + Math.random() * 220, .012, .06);
+    });
+  });
+
+  // Click feedback
+  document.addEventListener('click', () => tone(440, .02, .12));
+})();
+
+/* ═══════════════════════════════════════════════════════
+   11 — SMOOTH SCROLL
+═══════════════════════════════════════════════════════ */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const t = document.querySelector(a.getAttribute('href'));
-    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    if (t) { e.preventDefault(); lenis.scrollTo(t, { offset: -60, duration: 1.4 }); }
   });
 });
 
-/* ──────────────────────────────────────────────────────────
-   8. SCROLL REVEALS  (staggered per group)
-────────────────────────────────────────────────────────── */
-const rvIO = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const el = e.target;
-    setTimeout(() => el.classList.add('on'), (el._rvDelay || 0) * 1000);
-    rvIO.unobserve(el);
-  });
-}, { threshold: .12 });
-
-// Group siblings and stagger
-const rvGroups = {};
-document.querySelectorAll('.rv').forEach(el => {
-  const parent = el.parentElement;
-  if (!rvGroups.has) rvGroups[parent] = rvGroups[parent] || [];
-  rvGroups[parent].push(el);
-});
-Object.values(rvGroups).forEach(group => {
-  group.forEach((el, i) => { el._rvDelay = i * .12; rvIO.observe(el); });
-});
-
-/* ──────────────────────────────────────────────────────────
-   9. TEXT SCRAMBLE  (project titles on viewport enter)
-────────────────────────────────────────────────────────── */
-const GLYPHS = '!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-function scramble(el, final) {
-  let iter = 0;
-  const id = setInterval(() => {
-    el.textContent = final.split('').map((ch, i) => {
-      if (ch === ' ') return ' ';
-      if (i < iter) return final[i];
-      return GLYPHS[Math.random() * GLYPHS.length | 0];
-    }).join('');
-    iter += .4;
-    if (iter >= final.length) { el.textContent = final; clearInterval(id); }
-  }, 22);
-}
-
-const scrIO = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const el = e.target;
-    scramble(el, el.dataset.text || el.textContent);
-    scrIO.unobserve(el);
-  });
-}, { threshold: .6 });
-
-document.querySelectorAll('.p-title').forEach(el => scrIO.observe(el));
-
-/* ──────────────────────────────────────────────────────────
-   10. COUNTER ANIMATION  (stats count up)
-────────────────────────────────────────────────────────── */
-const ctIO = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    const el = e.target;
-    const target = +el.dataset.count;
-    if (!target) return;
-    let cur = 0;
-    const step = target / 40;
-    const id = setInterval(() => {
-      cur = Math.min(target, cur + step);
-      el.textContent = Math.round(cur) + (target === 100 ? '' : '+');
-      if (cur >= target) clearInterval(id);
-    }, 30);
-    ctIO.unobserve(el);
-  });
-}, { threshold: .5 });
-
-document.querySelectorAll('[data-count]').forEach(el => ctIO.observe(el));
-
-/* ──────────────────────────────────────────────────────────
-   11. CONTACT MOUSE GLOW
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   12 — MANIFESTO WORD REVEAL  (GSAP)
+═══════════════════════════════════════════════════════ */
 (function() {
-  const section = document.getElementById('contact');
-  const glow    = document.getElementById('contact-glow');
+  const el = document.getElementById('mf-text');
+  const text = el.textContent.trim();
+  el.innerHTML = text.split(/\s+/).map(w =>
+    `<span class="wo"><span class="wi">${w}</span></span>`
+  ).join(' ');
 
-  section.addEventListener('mousemove', e => {
-    const r = section.getBoundingClientRect();
-    const x = e.clientX - r.left;
-    const y = e.clientY - r.top;
-    glow.style.background = `radial-gradient(700px circle at ${x}px ${y}px, rgba(240,237,230,.055) 0%, transparent 65%)`;
+  gsap.to('#mf-text .wi', {
+    y: 0, opacity: 1,
+    duration: 1.1, stagger: .028, ease: 'expo.out',
+    scrollTrigger: { trigger: '#manifesto', start: 'top 68%' },
+    onStart() {
+      document.querySelectorAll('#mf-text .wi').forEach(el => {
+        el.style.transform = 'translateY(110%)'; el.style.opacity = '0';
+      });
+    }
   });
-  section.addEventListener('mouseleave', () => {
-    glow.style.background = '';
+
+  // Sub
+  gsap.to('#mf-sub', {
+    opacity: 1, y: 0, duration: 1, ease: 'expo.out',
+    scrollTrigger: { trigger: '#manifesto', start: 'top 50%' }
   });
 })();
 
-/* ──────────────────────────────────────────────────────────
-   12. CURSOR PIXEL SPARKLES
-────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   13 — PROCESS STEPS  (stagger reveal)
+═══════════════════════════════════════════════════════ */
+gsap.to('.proc-step', {
+  opacity: 1, y: 0,
+  duration: 1, stagger: .15, ease: 'expo.out',
+  scrollTrigger: { trigger: '#process', start: 'top 65%' }
+});
+
+gsap.from('.proc-title', {
+  y: 40, opacity: 0, duration: 1.2, ease: 'expo.out',
+  scrollTrigger: { trigger: '.proc-title', start: 'top 75%' }
+});
+
+/* ═══════════════════════════════════════════════════════
+   14 — WORK HORIZONTAL SCROLL  (GSAP ScrollTrigger pin)
+═══════════════════════════════════════════════════════ */
+(function() {
+  if (window.innerWidth <= 768) return; // vertical on mobile
+
+  const pin  = document.getElementById('w-pin');
+  const track = document.getElementById('w-track');
+
+  // Let layout settle then measure
+  ScrollTrigger.refresh();
+
+  const tween = gsap.to(track, {
+    x: () => -(track.scrollWidth - window.innerWidth),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#work',
+      pin: '#w-pin',
+      start: 'top top',
+      end: () => `+=${track.scrollWidth - window.innerWidth}`,
+      scrub: .8,
+      invalidateOnRefresh: true,
+      anticipatePin: 1,
+    }
+  });
+
+  // Animate card content on horizontal progress
+  const cards = document.querySelectorAll('.w-card-title');
+  cards.forEach((c, i) => {
+    gsap.from(c, {
+      opacity: 0, y: 40,
+      duration: .8, ease: 'expo.out',
+      scrollTrigger: {
+        trigger: '#work',
+        start: () => `top+=${i * (track.scrollWidth / cards.length - window.innerWidth / 2)} top`,
+        containerAnimation: tween,
+        scrub: false,
+        toggleActions: 'play none none reverse',
+      }
+    });
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════
+   15 — TESTIMONIALS REVEAL
+═══════════════════════════════════════════════════════ */
+gsap.to('.t-item', {
+  opacity: 1, y: 0,
+  duration: 1.1, stagger: .2, ease: 'expo.out',
+  scrollTrigger: { trigger: '#testimonials', start: 'top 70%' }
+});
+
+/* ═══════════════════════════════════════════════════════
+   16 — TEXT SCRAMBLE  (work card titles on enter)
+═══════════════════════════════════════════════════════ */
+(function() {
+  const GL = '!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  function scramble(el, final) {
+    let iter = 0;
+    const id = setInterval(() => {
+      el.textContent = final.split('').map((ch, i) => {
+        if (ch === ' ') return ' ';
+        if (i < iter) return final[i];
+        return GL[Math.random() * GL.length | 0];
+      }).join('');
+      iter += .5;
+      if (iter >= final.length) { el.textContent = final; clearInterval(id); }
+    }, 20);
+  }
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      scramble(e.target, e.target.dataset.text || e.target.textContent);
+      io.unobserve(e.target);
+    });
+  }, { threshold: .3 });
+
+  document.querySelectorAll('.scr').forEach(el => io.observe(el));
+})();
+
+/* ═══════════════════════════════════════════════════════
+   17 — CONTACT MOUSE GLOW
+═══════════════════════════════════════════════════════ */
+(function() {
+  const section = document.getElementById('contact');
+  const glow    = document.getElementById('c-glow');
+  section.addEventListener('mousemove', e => {
+    const r = section.getBoundingClientRect();
+    glow.style.background = `radial-gradient(800px circle at ${e.clientX-r.left}px ${e.clientY-r.top}px,rgba(240,237,230,.06) 0%,transparent 60%)`;
+  });
+  section.addEventListener('mouseleave', () => { glow.style.background = ''; });
+})();
+
+/* ═══════════════════════════════════════════════════════
+   18 — CURSOR PIXEL SPARKLES
+═══════════════════════════════════════════════════════ */
 (function() {
   const cv = document.createElement('canvas');
   cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9995;';
   document.body.appendChild(cv);
   const ctx = cv.getContext('2d');
   function resize() {
-    cv.width  = innerWidth  * devicePixelRatio;
-    cv.height = innerHeight * devicePixelRatio;
-    cv.style.width  = innerWidth  + 'px';
-    cv.style.height = innerHeight + 'px';
+    cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio;
+    cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
     ctx.scale(devicePixelRatio, devicePixelRatio);
   }
   resize(); window.addEventListener('resize', resize);
-
   const COLS = ['#1e3a8a','#1d4ed8','#2563eb','#3b82f6','#1e1b4b','#312e81','#4c1d95','#7c3aed'];
   class Spark {
-    constructor(x, y) {
-      this.x = x + (Math.random()-.5)*20;
-      this.y = y + (Math.random()-.5)*20;
-      this.col = COLS[Math.random()*COLS.length|0];
-      this.max = Math.random()*3+1;
-      this.sz = 0; this.sp = Math.random()*.1+.05;
-      this.ss = Math.random()*.3+.1;
-      this.shimmer = false; this.rev = false;
-      this.a = 1; this.done = false;
+    constructor(x,y) {
+      this.x=x+(Math.random()-.5)*20; this.y=y+(Math.random()-.5)*20;
+      this.col=COLS[Math.random()*COLS.length|0];
+      this.max=Math.random()*3+1; this.sz=0; this.sp=Math.random()*.1+.05;
+      this.ss=Math.random()*.3+.1; this.shimmer=false; this.rev=false;
+      this.a=1; this.done=false;
     }
     draw() {
-      if (!this.shimmer) {
-        this.sz += this.ss;
-        if (this.sz >= this.max) this.shimmer = true;
-      } else {
-        this.sz += this.rev ? -this.sp : this.sp;
-        if (this.sz >= this.max) this.rev = true;
-        if (this.sz <= this.max*.5) this.rev = false;
-        this.a -= .019;
-        if (this.a <= 0) { this.done = true; return; }
+      if (!this.shimmer) { this.sz+=this.ss; if(this.sz>=this.max) this.shimmer=true; }
+      else {
+        this.sz+=this.rev?-this.sp:this.sp;
+        if(this.sz>=this.max) this.rev=true; if(this.sz<=this.max*.5) this.rev=false;
+        this.a-=.02; if(this.a<=0){this.done=true;return;}
       }
-      ctx.save();
-      ctx.globalAlpha = this.a;
-      ctx.fillStyle = this.col;
-      ctx.translate(this.x, this.y);
-      ctx.rotate(Math.PI/4);
-      const h = this.sz/2;
-      ctx.fillRect(-h,-h,this.sz,this.sz);
-      ctx.restore();
+      ctx.save(); ctx.globalAlpha=this.a; ctx.fillStyle=this.col;
+      ctx.translate(this.x,this.y); ctx.rotate(Math.PI/4);
+      const h=this.sz/2; ctx.fillRect(-h,-h,this.sz,this.sz); ctx.restore();
     }
   }
-
-  const sparks = []; let mx=-999, my=-999, last=0;
-  window.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
-
+  const sparks=[]; let mx=-999,my=-999,last=0;
+  window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
   (function loop(now) {
-    requestAnimationFrame(loop);
-    ctx.clearRect(0,0,innerWidth,innerHeight);
-    if (now-last > 28 && mx > 0) {
-      for (let i=0;i<2;i++) sparks.push(new Spark(mx,my));
-      last = now;
-    }
-    for (let i=sparks.length-1;i>=0;i--) {
-      sparks[i].draw();
-      if (sparks[i].done) sparks.splice(i,1);
-    }
+    requestAnimationFrame(loop); ctx.clearRect(0,0,innerWidth,innerHeight);
+    if(now-last>28&&mx>0){for(let i=0;i<2;i++)sparks.push(new Spark(mx,my));last=now;}
+    for(let i=sparks.length-1;i>=0;i--){sparks[i].draw();if(sparks[i].done)sparks.splice(i,1);}
   })();
 })();
+
+/* ═══════════════════════════════════════════════════════
+   19 — DEVICE ORIENTATION  (mobile gyro parallax)
+═══════════════════════════════════════════════════════ */
+(function() {
+  if (!window.DeviceOrientationEvent) return;
+  const hero = document.querySelector('.h-name');
+  window.addEventListener('deviceorientation', e => {
+    if (!e.gamma) return;
+    const x = Math.max(-1, Math.min(1, e.gamma / 30));
+    const y = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+    gsap.to(hero, { x: x * 15, y: y * 8, duration: 1, ease: 'power2.out' });
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════
+   20 — KONAMI CODE EASTER EGG
+═══════════════════════════════════════════════════════ */
+(function() {
+  const CODE = [38,38,40,40,37,39,37,39,66,65];
+  let ki = 0;
+  const egg = document.getElementById('egg');
+
+  document.addEventListener('keydown', e => {
+    if (e.keyCode === CODE[ki++]) {
+      if (ki === CODE.length) {
+        ki = 0;
+        egg.classList.add('on');
+        // Three.js flash inside egg
+        setTimeout(() => {
+          egg.classList.remove('on');
+        }, 3200);
+      }
+    } else {
+      ki = e.keyCode === CODE[0] ? 1 : 0;
+    }
+  });
+
+  egg.addEventListener('click', () => egg.classList.remove('on'));
+})();
+
+/* ═══════════════════════════════════════════════════════
+   21 — SCROLL REVEAL  (general elements via IntersectionObserver)
+═══════════════════════════════════════════════════════ */
+(function() {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      gsap.to(el, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', delay: el._d || 0 });
+      io.unobserve(el);
+    });
+  }, { threshold: .12 });
+
+  document.querySelectorAll('.proc-eyebrow, .t-eyebrow, .c-lbl, .c-head, .c-email').forEach((el, i) => {
+    gsap.set(el, { opacity: 0, y: 24 });
+    el._d = i * .08;
+    io.observe(el);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════
+   22 — INIT GSAP DEFAULTS
+═══════════════════════════════════════════════════════ */
+gsap.defaults({ ease: 'expo.out' });
+
+// Hero blend layer initial states (set before animations)
+gsap.set(['.h-tag','.h-name','.h-role','.h-ctas'], { opacity: 0 });
+gsap.set('.h-name', { y: 32 });
+gsap.set('.h-tag',  { y: 14 });
+gsap.set('.h-role', { y: 20 });
+gsap.set('.h-ctas', { y: 20 });
+
+// Manifesto initial states
+gsap.set('#mf-sub', { opacity: 0, y: 20 });
 </script>
 </body>
 </html>
