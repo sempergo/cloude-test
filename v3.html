@@ -994,36 +994,65 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 /* ═══════════════════════════════════════════════════════
-   12 — MANIFESTO SIRNIK EXPAND  (GSAP scrub)
+   12 — MANIFESTO WORD FLY-IN  (GSAP scrub, word-by-word)
 ═══════════════════════════════════════════════════════ */
 (function() {
   const el = document.getElementById('mf-text');
+  const rawText = el.textContent.trim();
 
-  // Apply initial state immediately so text is visible on enter
-  el.style.letterSpacing = '-0.02em';
-  el.style.wordSpacing   = '0';
+  // ── Pass 1: render words as bare spans to measure line positions ──
+  el.innerHTML = rawText.split(/\s+/)
+    .map(w => `<span class="mf-w">${w}</span>`)
+    .join(' ');
 
-  const proxy = { ls: -0.02, ws: 0 };
+  const wordEls = Array.from(el.querySelectorAll('.mf-w'));
 
-  // onUpdate must be on the TWEEN — that's when proxy values are current
-  const tween = gsap.to(proxy, {
-    ls: 2,
-    ws: 8,
-    ease: 'none',
-    paused: true,
-    onUpdate() {
-      el.style.letterSpacing = proxy.ls + 'vw';
-      el.style.wordSpacing   = proxy.ws + 'vw';
-    }
+  // ── Pass 2: group words by line (same offsetTop) ──────────────────
+  const lines = [];
+  let curLine = [], curTop = null;
+  wordEls.forEach(w => {
+    const t = w.offsetTop;
+    if (curTop === null) curTop = t;
+    if (t !== curTop) { lines.push(curLine); curLine = []; curTop = t; }
+    curLine.push(w);
+  });
+  if (curLine.length) lines.push(curLine);
+
+  // ── Pass 3: rebuild DOM with overflow:hidden line wrappers ─────────
+  el.innerHTML = '';
+  lines.forEach(lw => {
+    const div = document.createElement('div');
+    div.style.cssText = 'overflow:hidden; display:block; line-height:1.15;';
+    lw.forEach((w, i) => {
+      if (i > 0) div.appendChild(document.createTextNode('\u00a0'));
+      div.appendChild(w);
+      if (i < lw.length - 1) div.appendChild(document.createTextNode(' '));
+    });
+    el.appendChild(div);
+  });
+
+  // ── Initial state: all words hidden far right ──────────────────────
+  gsap.set(wordEls, { opacity: 0, x: '150vw' });
+
+  // ── Timeline: words fly in sequentially ───────────────────────────
+  const tl = gsap.timeline({ paused: true });
+  let pos = 0;
+
+  lines.forEach((lw, li) => {
+    if (li > 0) pos += 0.12;          // extra gap between lines
+    lw.forEach(w => {
+      tl.to(w, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, pos);
+      pos += 0.04;                     // stagger between words
+    });
   });
 
   ScrollTrigger.create({
     trigger:       '#manifesto',
     start:         'top top',
-    end:           '+=280%',
+    end:           '+=800%',
     pin:           '#mf-pin',
     scrub:         1,
-    animation:     tween,
+    animation:     tl,
     anticipatePin: 1,
   });
 })();
