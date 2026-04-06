@@ -156,10 +156,12 @@
       font-size: 10px;
       letter-spacing: 0.4em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
+      color: #ffffff;
       margin-bottom: 2rem;
       opacity: 0;
       transform: translateY(16px);
+      background: transparent;
+      mix-blend-mode: difference;
     }
     .hero-headline {
       font-size: clamp(58px, 11.5vw, 172px);
@@ -169,8 +171,12 @@
       color: #ffffff;
       opacity: 0;
       transform: translateY(24px);
+      background: transparent;
+      mix-blend-mode: difference;
     }
     .hero-headline .outline {
+      /* transparent fill: underlying canvas shows through unchanged */
+      /* white stroke: inverts via difference — black on white bg, white on dark */
       -webkit-text-stroke: 2px #ffffff;
       color: transparent;
     }
@@ -490,8 +496,8 @@
 
     <!-- Hero -->
     <section id="hero" style="position:relative;overflow:hidden;">
-      <p class="hero-eyebrow" style="position:relative;z-index:1;">Frankfurt · Custom · Bezahlbar</p>
-      <h2 class="hero-headline" style="position:relative;z-index:1;">
+      <p class="hero-eyebrow" style="position:relative;z-index:2;">Frankfurt · Custom · Bezahlbar</p>
+      <h2 class="hero-headline" style="position:relative;z-index:2;">
         Advanced<br>
         <span class="outline">Websites.</span><br>
         Affordable.
