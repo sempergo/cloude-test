@@ -145,57 +145,60 @@
     #hero {
       min-height: 100svh;
       display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 7rem 2.5rem 5.5rem;
+      padding: 7rem 2.5rem 5rem;
       background: #000; position: relative; overflow: hidden;
-      isolation: isolate;
     }
     .hbl {
       position: relative; z-index: 2;
-      mix-blend-mode: difference; background: transparent;
       display: flex; flex-direction: column;
     }
     .h-tag {
-      font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: #fff;
-      margin-bottom: 2rem; background: transparent;
-      display: flex; align-items: center; gap: .75rem;
+      font-size: 10px; letter-spacing: .4em; text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+      margin-bottom: 2rem;
       opacity: 0; transform: translateY(14px);
     }
-    .h-avail {
-      width: 6px; height: 6px; border-radius: 50%; background: #00e676;
-      animation: pulse-g 2s ease-in-out infinite;
-    }
-    @keyframes pulse-g { 0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 6px rgba(0,230,118,0)} }
     .h-name {
-      font-size: clamp(58px, 13vw, 210px);
-      font-weight: 900; line-height: .85; letter-spacing: -.04em; color: #fff; background: transparent;
+      font-size: clamp(58px, 11.5vw, 172px);
+      font-weight: 900; line-height: .88; letter-spacing: -.03em; color: #fff;
       opacity: 0; transform: translateY(32px);
     }
-    .h-role {
-      font-size: clamp(11px, 1.2vw, 16px); font-weight: 400;
-      color: rgba(255,255,255,.5); letter-spacing: .18em; text-transform: uppercase;
-      margin-top: 2rem; background: transparent;
+    .h-name-outline {
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(255,255,255,.9);
+    }
+    .h-bottom {
+      margin-top: 2.5rem; display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;
       opacity: 0; transform: translateY(20px);
     }
-    .h-ctas {
-      margin-top: 3rem; display: flex; gap: 1.5rem; align-items: center;
-      background: transparent; opacity: 0; transform: translateY(20px);
+    @media (min-width: 768px) {
+      .h-bottom { flex-direction: row; align-items: flex-end; gap: 4rem; }
     }
+    .h-sub {
+      color: rgba(255,255,255,.55); font-size: 1rem; line-height: 1.65; max-width: 28rem;
+    }
+    .h-ctas { display: flex; flex-direction: column; gap: .75rem; }
+    @media (min-width: 640px) { .h-ctas { flex-direction: row; } }
     .btn-p {
-      padding: .9rem 1.8rem; background: #fff; color: #000;
-      font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      padding: 1rem 1.75rem; background: #fff; color: #000;
+      font-size: 12px; font-weight: 600; letter-spacing: .06em;
       text-decoration: none; display: inline-block;
+      transition: background .2s;
     }
+    .btn-p:hover { background: rgba(255,255,255,.9); }
     .btn-s {
-      font-size: 10px; color: #fff; letter-spacing: .1em; text-transform: uppercase;
-      text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.3); padding-bottom: 2px;
+      padding: 1rem 1.75rem; border: 1px solid rgba(255,255,255,.25); color: #fff;
+      font-size: 12px; letter-spacing: .06em;
+      text-decoration: none; display: inline-block;
+      transition: border-color .2s;
     }
+    .btn-s:hover { border-color: rgba(255,255,255,.6); }
     .h-scroll {
-      position: absolute; bottom: 3rem; right: 2.5rem; z-index: 2;
-      display: flex; flex-direction: column; align-items: center; gap: .75rem;
-      mix-blend-mode: difference;
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
     }
-    .h-scroll span { font-size: 8px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.3); writing-mode: vertical-rl; }
-    .h-scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom,transparent,rgba(255,255,255,.3)); }
+    .h-scroll span { font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+    .h-scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(255,255,255,.4), transparent); }
     @media (max-width: 768px) { #hero{padding:7rem 1.25rem 4.5rem;} .h-scroll{display:none;} }
 
     /* ── MARQUEE ─────────────────────────────────────────── */
@@ -528,12 +531,24 @@
   <!-- HERO -->
   <section id="hero">
     <div class="hbl">
-      <p class="h-tag"><span class="h-avail"></span>Aktuell verfügbar · Frankfurt</p>
-      <h1 class="h-name">Advanced<br>Websites.<br>Affordable.</h1>
-      <p class="h-role">SEMP STUDIOS</p>
-      <div class="h-ctas">
-        <a href="#work"    class="btn-p mag">Projekte ansehen</a>
-        <a href="#contact" class="btn-s mag">Gespräch starten ↗</a>
+      <p class="h-tag">Frankfurt · Custom · Bezahlbar</p>
+      <div style="overflow:hidden;">
+        <h1 class="h-name">
+          Advanced<br>
+          <span class="h-name-outline">Websites.</span><br>
+          Affordable.
+        </h1>
+      </div>
+      <div class="h-bottom">
+        <p class="h-sub">
+          No templates. No bloat.<br>
+          Websites built from scratch that<br>
+          actually earn their place online.
+        </p>
+        <div class="h-ctas">
+          <a href="#contact" class="btn-p">Projekt starten →</a>
+          <a href="#usps"    class="btn-s">Mehr erfahren</a>
+        </div>
       </div>
     </div>
     <div class="h-scroll">
@@ -1034,10 +1049,9 @@ setTimeout(() => {
     if (!el) return;
     gsap.to(el, { opacity: 1, y: 0, duration: 1.3, ease: 'expo.out', delay: d });
   }
-  ai(document.querySelector('.h-tag'),  .1);
-  ai(document.querySelector('.h-name'), .22);
-  ai(document.querySelector('.h-role'), .38);
-  ai(document.querySelector('.h-ctas'), .52);
+  ai(document.querySelector('.h-tag'),    .1);
+  ai(document.querySelector('.h-name'),   .22);
+  ai(document.querySelector('.h-bottom'), .42);
 }, 4200);
 
 /* ═══════════════════════════════════════════════════════
@@ -1425,11 +1439,10 @@ gsap.to('.t-item', {
 gsap.defaults({ ease: 'expo.out' });
 
 // Hero blend layer initial states (set before animations)
-gsap.set(['.h-tag','.h-name','.h-role','.h-ctas'], { opacity: 0 });
-gsap.set('.h-name', { y: 32 });
-gsap.set('.h-tag',  { y: 14 });
-gsap.set('.h-role', { y: 20 });
-gsap.set('.h-ctas', { y: 20 });
+gsap.set(['.h-tag', '.h-name', '.h-bottom'], { opacity: 0 });
+gsap.set('.h-name',   { y: 32 });
+gsap.set('.h-tag',    { y: 14 });
+gsap.set('.h-bottom', { y: 20 });
 
 // (mf-sub removed — manifesto is now pinned expand section)
 </script>
