@@ -78,33 +78,73 @@
       z-index: 9996; top: -100px; left: -100px;
     }
 
-    /* ── CHROME BUTTONS ─────────────────────────────────────── */
+    /* ── FROSTED GLASS BUTTONS ──────────────────────────────── */
     .btn-p, .btn-s, #float-cta {
       border-radius: 50px;
       position: relative;
       overflow: hidden;
-      will-change: transform;
       cursor: none;
-      background: #07070a;
-      border: 1px solid rgba(255,255,255,.1);
-      text-decoration: none; display: inline-block;
-    }
-    .btn-p {
-      color: #fff;
+      text-decoration: none;
+      display: inline-block;
+      color: rgba(255,255,255,0.92);
       font-size: 12px; font-weight: 700;
       letter-spacing: .09em; text-transform: uppercase;
       padding: 1rem 1.75rem;
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.45),
+        0 2px 8px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+      transition: color 0.55s ease, box-shadow 0.3s ease;
+      will-change: transform;
     }
-    .btn-s {
-      color: rgba(255,255,255,.8);
-      font-size: 12px; letter-spacing: .09em; text-transform: uppercase;
-      padding: 1rem 1.75rem;
+
+    /* Liquid silver — rises from bottom on hover/touch */
+    .btn-p::before, .btn-s::before, #float-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        148deg,
+        #a8adb3 0%,
+        #e4e7ea 16%,
+        #c2c8ce 32%,
+        #f0f2f4 50%,
+        #b4bbc2 66%,
+        #dde1e5 82%,
+        #a2a8ae 100%
+      );
+      transform: translateY(106%);
+      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      z-index: 0;
     }
-    /* text above the canvas */
+
+    .btn-p:hover::before, .btn-s:hover::before, #float-cta:hover::before,
+    .btn-p:active::before, .btn-s:active::before, #float-cta:active::before,
+    .btn-p.btn-touched::before, .btn-s.btn-touched::before {
+      transform: translateY(0);
+    }
+
+    .btn-p:hover, .btn-s:hover, #float-cta:hover,
+    .btn-p.btn-touched, .btn-s.btn-touched {
+      color: #0c0c0e;
+      box-shadow:
+        0 20px 52px rgba(0,0,0,0.55),
+        0 6px 20px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+
+    /* Text sits above the liquid fill */
     .btn-label {
-      position: relative; z-index: 2;
-      pointer-events: none; display: block;
-      mix-blend-mode: difference;
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+      display: block;
     }
 
     /* ── FLOAT CTA ───────────────────────────────────────── */
@@ -207,20 +247,6 @@
     }
     .h-ctas { display: flex; flex-direction: column; gap: .75rem; }
     @media (min-width: 640px) { .h-ctas { flex-direction: row; } }
-    .btn-p {
-      padding: 1rem 1.75rem; background: #fff; color: #000;
-      font-size: 12px; font-weight: 600; letter-spacing: .06em;
-      text-decoration: none; display: inline-block;
-      transition: background .2s;
-    }
-    .btn-p:hover { background: rgba(255,255,255,.9); }
-    .btn-s {
-      padding: 1rem 1.75rem; border: 1px solid rgba(255,255,255,.25); color: #fff;
-      font-size: 12px; letter-spacing: .06em;
-      text-decoration: none; display: inline-block;
-      transition: border-color .2s;
-    }
-    .btn-s:hover { border-color: rgba(255,255,255,.6); }
     .h-scroll {
       position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 2;
       display: flex; flex-direction: column; align-items: center; gap: .5rem;
@@ -1610,293 +1636,54 @@ gsap.set('.h-bottom', { y: 20 });
 // (mf-sub removed — manifesto is now pinned expand section)
 
 /* ═══════════════════════════════════════════════════════
-   23 — CHROME BUTTONS  (LiquidMetal WebGL2 per button)
-   Exact same shader as the hero cube — full-fill, live CA
+   23 — FROSTED GLASS BUTTONS  (3D tilt + liquid silver fill)
 ═══════════════════════════════════════════════════════ */
 (function() {
 
-  /* ── Wrap button text so canvas can sit behind it ── */
+  /* Wrap text so it sits above the ::before liquid fill */
   document.querySelectorAll('.btn-p, .btn-s, #float-cta').forEach(btn => {
     btn.innerHTML = `<span class="btn-label">${btn.innerHTML}</span>`;
   });
 
-  /* ── Shared GLSL (identical to hero module 4) ── */
-  const VS = `#version 300 es
-  precision mediump float;
-  layout(location=0) in vec4 a_position;
-  uniform vec2 u_resolution; uniform float u_pixelRatio;
-  uniform float u_imageAspectRatio,u_originX,u_originY;
-  uniform float u_worldWidth,u_worldHeight,u_fit,u_scale,u_rotation,u_offsetX,u_offsetY;
-  out vec2 v_objectUV,v_objectBoxSize,v_responsiveUV,v_responsiveBoxGivenSize,v_patternUV,v_patternBoxSize,v_imageUV;
-  vec3 getBoxSize(float br,vec2 gs){
-    vec2 b=vec2(0.); b.x=br*min(gs.x/br,gs.y); float nfw=b.x;
-    if(u_fit==1.)b.x=br*min(u_resolution.x/br,u_resolution.y);
-    else if(u_fit==2.)b.x=br*max(u_resolution.x/br,u_resolution.y);
-    b.y=b.x/br; return vec3(b,nfw);
-  }
-  void main(){
-    gl_Position=a_position;
-    vec2 uv=gl_Position.xy*.5;
-    vec2 bo=vec2(.5-u_originX,u_originY-.5);
-    vec2 gs=max(vec2(u_worldWidth,u_worldHeight),vec2(1.))*u_pixelRatio;
-    float r=u_rotation*3.14159265/180.;
-    mat2 gr=mat2(cos(r),sin(r),-sin(r),cos(r));
-    vec2 go=vec2(-u_offsetX,u_offsetY);
-    vec2 frbs=vec2(u_worldWidth==0.?u_resolution.x:gs.x,u_worldHeight==0.?u_resolution.y:gs.y);
-    v_objectBoxSize=getBoxSize(1.,frbs).xy;
-    vec2 ows=u_resolution.xy/v_objectBoxSize;
-    v_objectUV=(uv*ows+bo*(ows-1.)+go)/u_scale; v_objectUV=gr*v_objectUV;
-    v_responsiveBoxGivenSize=vec2(u_worldWidth==0.?u_resolution.x:gs.x,u_worldHeight==0.?u_resolution.y:gs.y);
-    float rr=v_responsiveBoxGivenSize.x/v_responsiveBoxGivenSize.y;
-    vec2 rbs=getBoxSize(rr,v_responsiveBoxGivenSize).xy;
-    vec2 rws=u_resolution.xy/rbs;
-    v_responsiveUV=(uv*rws+bo*(rws-1.)+go)/u_scale;
-    v_responsiveUV.x*=rr; v_responsiveUV=gr*v_responsiveUV; v_responsiveUV.x/=rr;
-    v_patternBoxSize=vec2(1.); v_patternUV=vec2(0.);
-    vec2 ibs;
-    if(u_fit==1.)ibs.x=min(u_resolution.x/u_imageAspectRatio,u_resolution.y)*u_imageAspectRatio;
-    else if(u_fit==2.)ibs.x=max(u_resolution.x/u_imageAspectRatio,u_resolution.y)*u_imageAspectRatio;
-    else ibs.x=min(10.,10./u_imageAspectRatio*u_imageAspectRatio);
-    ibs.y=ibs.x/u_imageAspectRatio;
-    vec2 iws=u_resolution.xy/ibs;
-    v_imageUV=(uv*iws+bo*(iws-1.)+go)/u_scale;
-    v_imageUV.x*=u_imageAspectRatio; v_imageUV=gr*v_imageUV; v_imageUV.x/=u_imageAspectRatio;
-    v_imageUV+=.5; v_imageUV.y=1.-v_imageUV.y;
-  }`;
-
-  const FS = `#version 300 es
-  precision mediump float;
-  uniform sampler2D u_image;
-  uniform float u_imageAspectRatio;
-  uniform vec2 u_resolution; uniform float u_time;
-  uniform vec4 u_colorBack,u_colorTint;
-  uniform float u_softness,u_repetition,u_shiftRed,u_shiftBlue,u_distortion,u_contour,u_angle,u_shape;
-  uniform bool u_isImage;
-  in vec2 v_objectUV,v_responsiveUV,v_responsiveBoxGivenSize,v_imageUV;
-  out vec4 fragColor;
-  #define PI 3.14159265358979323846
-  vec2 rotate(vec2 u,float th){return mat2(cos(th),sin(th),-sin(th),cos(th))*u;}
-  vec3 permute(vec3 x){return mod(((x*34.)+1.)*x,289.);}
-  float snoise(vec2 v){
-    const vec4 C=vec4(.211324865405187,.366025403784439,-.577350269189626,.024390243902439);
-    vec2 i=floor(v+dot(v,C.yy)),x0=v-i+dot(i,C.xx),i1;
-    i1=(x0.x>x0.y)?vec2(1.,0.):vec2(0.,1.);
-    vec4 x12=x0.xyxy+C.xxzz; x12.xy-=i1; i=mod(i,289.);
-    vec3 p=permute(permute(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));
-    vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);
-    m=m*m; m=m*m;
-    vec3 x=2.*fract(p*C.www)-1.,h=abs(x)-.5,ox=floor(x+.5),a0=x-ox;
-    m*=1.79284291400159-.85373472095314*(a0*a0+h*h);
-    vec3 g; g.x=a0.x*x0.x+h.x*x0.y; g.yz=a0.yz*x12.xz+h.yz*x12.yw;
-    return 130.*dot(m,g);
-  }
-  float getCC(float c1,float c2,float sp,vec3 w,float blur,float bump,float tint){
-    float ch=mix(c2,c1,smoothstep(0.,2.*blur,sp));
-    float b=w[0]; ch=mix(ch,c2,smoothstep(b,b+2.*blur,sp));
-    b=w[0]+.4*(1.-bump)*w[1]; ch=mix(ch,c1,smoothstep(b,b+2.*blur,sp));
-    b=w[0]+.5*(1.-bump)*w[1]; ch=mix(ch,c2,smoothstep(b,b+2.*blur,sp));
-    b=w[0]+w[1]; ch=mix(ch,c1,smoothstep(b,b+2.*blur,sp));
-    float gt=(sp-w[0]-w[1])/w[2];
-    ch=mix(ch,mix(c1,c2,smoothstep(0.,1.,gt)),smoothstep(b,b+.5*blur,sp));
-    ch=mix(ch,1.-min(1.,(1.-ch)/max(tint,.0001)),u_colorTint.a);
-    return ch;
-  }
-  void main(){
-    float t=.3*(u_time+2.8);
-    vec2 uv=v_imageUV;
-    vec4 img=texture(u_image,clamp(uv,0.,1.));
-    /* full-fill: u_shape=0 */
-    uv=v_responsiveUV;
-    float ratio=v_responsiveBoxGivenSize.x/v_responsiveBoxGivenSize.y;
-    if(ratio>1.)uv.y/=ratio; else uv.x*=ratio;
-    uv+=.5; uv.y=1.-uv.y;
-    float cw=u_repetition*2.,edge=0.;
-    vec2 borderUV=v_responsiveUV+.5;
-    vec2 mask=min(borderUV,1.-borderUV);
-    vec2 pt=250./v_responsiveBoxGivenSize;
-    float mx=pow(smoothstep(0.,pt.x,mask.x),.25),my=pow(smoothstep(0.,pt.y,mask.y),.25);
-    edge=clamp(1.-mx*my,0.,1.);
-    edge=mix(smoothstep(.9-2.*fwidth(edge),.9,edge),edge,smoothstep(0.,.4,u_contour));
-    float opacity=1.-smoothstep(.9-2.*fwidth(edge),.9,edge);
-    edge=1.2*edge;
-    vec2 ruv=uv-.5;
-    float ang=(-u_angle+70.)*PI/180.;
-    ruv=vec2(ruv.x*cos(ang)-ruv.y*sin(ang),ruv.x*sin(ang)+ruv.y*cos(ang))+.5;
-    float dBT=ruv.x-ruv.y,dTB=ruv.x+ruv.y;
-    vec3 c1=vec3(.98,.98,1.),c2=vec3(.1,.1,.1+.1*smoothstep(.7,1.3,dTB));
-    vec2 gu=uv-.5;
-    float dist=length(gu+vec2(0.,.2*dBT));
-    gu=rotate(gu,(.25-.2*dBT)*PI);
-    float dir=gu.x;
-    float bump=1.-pow(1.8*dist,1.2); bump*=pow(uv.y,.3);
-    float r1=.12/cw*(1.-.4*bump),r2=.07/cw*(1.+.4*bump),rw=1.-r1-r2;
-    float w1=cw*r1,w2=cw*r2;
-    float noise=snoise(uv-t);
-    edge+=(1.-edge)*u_distortion*noise;
-    dir+=dBT;
-    dir-=2.*noise*dBT*(smoothstep(0.,1.,edge)*(1.-smoothstep(0.,1.,edge)));
-    dir*=mix(1.,1.-edge,smoothstep(.5,1.,u_contour));
-    dir-=1.7*edge*smoothstep(.5,1.,u_contour);
-    dir+=.2*pow(u_contour,4.)*(1.-smoothstep(0.,1.,edge));
-    bump*=clamp(pow(uv.y,.1),.3,1.);
-    dir*=(.1+(1.1-edge)*bump);
-    dir*=(.4+.6*(1.-smoothstep(.5,1.,edge)));
-    dir+=.18*(smoothstep(.1,.2,uv.y)*(1.-smoothstep(.2,.4,uv.y)));
-    dir+=.03*(smoothstep(.1,.2,1.-uv.y)*(1.-smoothstep(.2,.4,1.-uv.y)));
-    dir*=(.5+.5*pow(uv.y,2.)); dir*=cw; dir-=t;
-    float cd=clamp(1.-bump,0.,1.);
-    float dr=cd+.03*bump*noise+5.*(smoothstep(-.1,.2,uv.y)*(1.-smoothstep(.1,.5,uv.y)))*(smoothstep(.4,.6,bump)*(1.-smoothstep(.4,1.,bump)))-dBT;
-    float db=cd*1.3+(smoothstep(0.,.4,uv.y)*(1.-smoothstep(.1,.8,uv.y)))*(smoothstep(.4,.6,bump)*(1.-smoothstep(.4,.8,bump)))-.2*edge;
-    dr*=u_shiftRed/20.; db*=u_shiftBlue/20.;
-    float blur=u_softness/15.;
-    vec3 w=vec3(w1,w2,rw); w[1]-=.02*smoothstep(0.,1.,edge+bump);
-    float sr=fract(dir+dr),sg=fract(dir),sb=fract(dir-db);
-    vec3 col=vec3(
-      getCC(c1.r,c2.r,sr,w,blur+fwidth(sr),bump,u_colorTint.r),
-      getCC(c1.g,c2.g,sg,w,blur+fwidth(sg),bump,u_colorTint.g),
-      getCC(c1.b,c2.b,sb,w,blur+fwidth(sb),bump,u_colorTint.b)
-    );
-    col*=opacity;
-    col=col+u_colorBack.rgb*u_colorBack.a*(1.-opacity);
-    opacity=opacity+u_colorBack.a*(1.-opacity);
-    col+=1./256.*(fract(sin(dot(.014*gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5);
-    fragColor=vec4(col,opacity);
-  }`;
-
-  function mkShader(gl, type, src) {
-    const s = gl.createShader(type);
-    gl.shaderSource(s, src); gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
-      console.error(gl.getShaderInfoLog(s));
-    return s;
-  }
-
-  function initButton(btn, timeOffset) {
-    /* canvas fills button */
-    const cv = document.createElement('canvas');
-    cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:1;border-radius:inherit;pointer-events:none;';
-    btn.insertBefore(cv, btn.firstChild);
-
-    const gl = cv.getContext('webgl2');
-    if (!gl) return;
-
-    const prog = gl.createProgram();
-    gl.attachShader(prog, mkShader(gl, gl.VERTEX_SHADER,   VS));
-    gl.attachShader(prog, mkShader(gl, gl.FRAGMENT_SHADER, FS));
-    gl.linkProgram(prog); gl.useProgram(prog);
-
-    const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
-    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
-    gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-
-    const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-
-    const U = {};
-    ['resolution','time','pixelRatio','imageAspectRatio','originX','originY',
-     'worldWidth','worldHeight','fit','scale','rotation','offsetX','offsetY',
-     'colorBack','colorTint','softness','repetition','shiftRed','shiftBlue',
-     'distortion','contour','angle','shape','isImage','image'].forEach(n => {
-      U[n] = gl.getUniformLocation(prog, 'u_' + n);
-    });
-
-    const PR = Math.min(devicePixelRatio, 2);
-    function resize() {
-      const r = btn.getBoundingClientRect();
-      cv.width  = Math.max(1, r.width  * PR);
-      cv.height = Math.max(1, r.height * PR);
-      gl.viewport(0, 0, cv.width, cv.height);
-      gl.uniform2f(U.resolution, cv.width, cv.height);
-      gl.uniform1f(U.pixelRatio, PR);
-    }
-
-    /* static uniforms */
-    gl.uniform1f(U.imageAspectRatio, 1.0); gl.uniform1f(U.originX, 0.5); gl.uniform1f(U.originY, 0.5);
-    gl.uniform1f(U.worldWidth, 0.0);  gl.uniform1f(U.worldHeight, 0.0);
-    gl.uniform1f(U.fit, 0.0); gl.uniform1f(U.scale, 1.0); gl.uniform1f(U.rotation, 0.0);
-    gl.uniform1f(U.offsetX, 0.0);    gl.uniform1f(U.offsetY, 0.0);
-    gl.uniform4f(U.colorBack, 0.03, 0.03, 0.04, 1.0);   /* #080810 */
-    gl.uniform4f(U.colorTint, 0.78, 0.84, 0.94, 1.0);   /* #c8d8f0 */
-    gl.uniform1f(U.softness,   0.06);
-    gl.uniform1f(U.repetition, 2.2);
-    gl.uniform1f(U.distortion, 0.18);
-    gl.uniform1f(U.contour,    0.0);
-    gl.uniform1f(U.angle,      70.0);
-    gl.uniform1f(U.shape,      0.0);   /* full fill */
-    gl.uniform1i(U.isImage,    0);
-    gl.uniform1i(U.image,      0);
-
-    resize();
-    window.addEventListener('resize', resize);
-
-    /* animated CA: lerp shiftRed/Blue toward target */
-    let srNow = 0.3, sbNow = 0.3, srTarget = 0.3, sbTarget = 0.3;
-    let shadowX = 0, shadowY = 0;
-
-    /* 3D tilt */
-    const DEPTH = 380, TILT = 38;
-
-    btn.addEventListener('mouseenter', () => {
-      srTarget = 3.5; sbTarget = 3.5;
-      gsap.to(btn, { scale: 1.06, z: 8, transformPerspective: DEPTH,
-        boxShadow: '0 24px 60px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.18)',
-        duration: .2, ease: 'power2.out' });
-    });
+  /* 3D tilt + floating shadow on mousemove */
+  document.querySelectorAll('.btn-p, .btn-s, #float-cta').forEach(btn => {
+    const DEPTH = 600, TILT = 16;
 
     btn.addEventListener('mousemove', e => {
-      const r = btn.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width  - .5;
-      const ny = (e.clientY - r.top)  / r.height - .5;
-      shadowX =  nx * 30; shadowY = -ny * 30 + 20;
+      const r  = btn.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width  - 0.5;
+      const ny = (e.clientY - r.top)  / r.height - 0.5;
       gsap.to(btn, {
         rotateY:  nx * TILT * 2,
         rotateX: -ny * TILT,
+        scale: 1.05,
         transformPerspective: DEPTH,
-        boxShadow: `${-nx*30}px ${ny*30+20}px 60px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.2)`,
-        duration: .12, ease: 'power2.out', overwrite: 'auto',
+        boxShadow: `${-nx * 22}px ${ny * 22 + 24}px 50px rgba(0,0,0,0.6),
+                    inset 0 1px 0 rgba(255,255,255,0.18)`,
+        duration: 0.15,
+        ease: 'power2.out',
+        overwrite: 'auto',
       });
     });
 
     btn.addEventListener('mouseleave', () => {
-      srTarget = 0.3; sbTarget = 0.3;
       gsap.to(btn, {
-        rotateX: 0, rotateY: 0, scale: 1, z: 0,
-        boxShadow: '0 0 0 rgba(0,0,0,0)',
+        rotateY: 0, rotateX: 0, scale: 1,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)',
         transformPerspective: DEPTH,
-        duration: .9, ease: 'elastic.out(1,.35)',
+        duration: 1.0,
+        ease: 'elastic.out(1, 0.4)',
       });
     });
 
-    /* mobile */
-    btn.addEventListener('touchstart', () => { srTarget = 3.5; sbTarget = 3.5; }, { passive: true });
-    btn.addEventListener('touchend',   () => { setTimeout(() => { srTarget = 0.3; sbTarget = 0.3; }, 500); }, { passive: true });
-
-    const SPEED = 0.8;
-    let time = timeOffset, last = performance.now();
-    (function draw(now) {
-      requestAnimationFrame(draw);
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
-      time += dt * SPEED;
-
-      /* smooth CA lerp */
-      srNow += (srTarget - srNow) * 0.1;
-      sbNow += (sbTarget - sbNow) * 0.1;
-
-      gl.uniform1f(U.time,     time);
-      gl.uniform1f(U.shiftRed, srNow);
-      gl.uniform1f(U.shiftBlue,sbNow);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    })(performance.now());
-  }
-
-  /* init each button with staggered time offset so they look different */
-  const all = document.querySelectorAll('.btn-p, .btn-s, #float-cta');
-  all.forEach((btn, i) => initButton(btn, i * 3.7));
+    /* mobile: toggle silver fill on tap */
+    btn.addEventListener('touchstart', () => {
+      btn.classList.add('btn-touched');
+    }, { passive: true });
+    btn.addEventListener('touchend', () => {
+      setTimeout(() => btn.classList.remove('btn-touched'), 700);
+    }, { passive: true });
+  });
 
 })();
 </script>
