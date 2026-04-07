@@ -1435,19 +1435,19 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   let pos = 0;
 
   lines.forEach((lw, li) => {
-    if (li > 0) pos += 0.12;          // extra gap between lines
+    if (li > 0) pos += 0.08;
     lw.forEach(w => {
-      tl.to(w, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, pos);
-      pos += 0.04;                     // stagger between words
+      tl.to(w, { opacity: 1, x: 0, duration: 0.6, ease: 'expo.out' }, pos);
+      pos += 0.025;
     });
   });
 
   ScrollTrigger.create({
     trigger:       '#manifesto',
-    start:         'top top',
-    end:           '+=800%',
+    start:         'top 30%',
+    end:           '+=600%',
     pin:           '#mf-pin',
-    scrub:         1,
+    scrub:         0.4,
     animation:     tl,
     anticipatePin: 1,
   });
