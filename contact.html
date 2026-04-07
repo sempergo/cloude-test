@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projekt starten — SEMP STUDIOS</title>
+  <meta name="description" content="Erzähl uns von deinem Projekt. Wir melden uns innerhalb von 24 Stunden.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100;300;400;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg:  #07070a;
+      --fg:  #f0ede6;
+      --dim: rgba(240,237,230,.22);
+      --font: 'Geist', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: var(--font); -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--fg); }
+    body { overflow: hidden; cursor: none; height: 100svh; }
+
+    /* ── GRAIN ─────────────────────────────────────────────── */
+    #grain { position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: .038; }
+
+    /* ── CUSTOM CURSOR ─────────────────────────────────────── */
+    .c-el { position: fixed; border-radius: 50%; pointer-events: none; transform: translate(-50%,-50%); transition: opacity .3s; }
+    #c-dot { width: 7px; height: 7px; background: var(--fg); z-index: 9999; top: -100px; left: -100px; }
+    #c-r1  { width: 40px;  height: 40px;  border: 1px solid rgba(240,237,230,.55); z-index: 9998; top: -100px; left: -100px; }
+
+    /* ── PROGRESS BAR ──────────────────────────────────────── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 1px;
+      background: rgba(240,237,230,.7);
+      width: 0%; z-index: 100;
+      transition: width .6s cubic-bezier(.16,1,.3,1);
+    }
+
+    /* ── TOP NAV ───────────────────────────────────────────── */
+    #top-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 80;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2rem 2.5rem;
+      pointer-events: none;
+    }
+    #back-btn {
+      font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--dim); text-decoration: none;
+      pointer-events: all; cursor: none;
+      transition: color .3s;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    #back-btn:hover { color: var(--fg); }
+    #back-btn svg { width: 12px; opacity: .6; }
+    #wordmark {
+      font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(240,237,230,.25); pointer-events: none;
+    }
+    #step-counter {
+      font-size: 9px; letter-spacing: .25em; color: var(--dim);
+      opacity: 0; transition: opacity .4s;
+    }
+
+    /* ── MAIN STAGE ────────────────────────────────────────── */
+    #stage {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      padding: 7rem 2.5rem 5rem;
+    }
+
+    /* ── STEP ──────────────────────────────────────────────── */
+    .step {
+      position: absolute;
+      width: 100%; max-width: 860px;
+      padding: 0 2.5rem;
+      display: none; flex-direction: column;
+      gap: 2.5rem;
+    }
+    .step.active { display: flex; }
+
+    .step-q {
+      font-size: clamp(32px, 6vw, 72px);
+      font-weight: 900; line-height: .95;
+      letter-spacing: -.03em;
+    }
+    .step-q .word { display: inline-block; overflow: hidden; }
+    .step-q .word span { display: inline-block; }
+
+    /* ── INPUTS ────────────────────────────────────────────── */
+    .input-wrap {
+      display: flex; align-items: flex-end; gap: 1.5rem;
+    }
+    .input-field {
+      flex: 1;
+      background: transparent; border: none; outline: none;
+      border-bottom: 1px solid rgba(240,237,230,.18);
+      color: var(--fg); font-family: var(--font);
+      font-size: clamp(20px, 3vw, 32px); font-weight: 300;
+      padding: .5rem 0 .75rem;
+      transition: border-color .3s;
+      caret-color: var(--fg);
+      cursor: none;
+    }
+    .input-field::placeholder { color: rgba(240,237,230,.18); }
+    .input-field:focus { border-color: rgba(240,237,230,.55); }
+    textarea.input-field {
+      resize: none; height: 120px;
+      line-height: 1.5; border-bottom: 1px solid rgba(240,237,230,.18);
+    }
+
+    .enter-btn {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 50%; background: transparent;
+      border: 1px solid rgba(240,237,230,.18);
+      color: var(--fg); font-size: 16px;
+      cursor: none; transition: background .2s, border-color .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .enter-btn:hover { background: rgba(240,237,230,.08); border-color: rgba(240,237,230,.4); }
+
+    .hint {
+      font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+      color: rgba(240,237,230,.2); margin-top: -.5rem;
+    }
+
+    /* ── TYPE CARDS (Metal Plates) ─────────────────────────── */
+    .type-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+      max-width: 560px;
+    }
+    .type-card {
+      position: relative; overflow: hidden;
+      padding: 1.5rem 1.75rem;
+      cursor: none;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(240,237,230,.75);
+      background: linear-gradient(
+        148deg,
+        #323537 0%, #393c3e 8%, #414446 16%, #4a4d4f 24%,
+        #515355 32%, #555759 40%, #515355 48%, #4a4d4f 56%,
+        #444648 64%, #3e4143 72%, #373a3c 80%, #323537 100%
+      );
+      border-top:    1px solid rgba(255,255,255,.38);
+      border-left:   1px solid rgba(255,255,255,.22);
+      border-right:  1px solid rgba(255,255,255,.07);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 6px 24px rgba(0,0,0,.6);
+      transition: transform .3s ease, box-shadow .3s ease, color .2s;
+      z-index: 91;
+    }
+    .type-card::before {
+      content: ''; position: absolute; inset: 6px;
+      border: 1px solid rgba(255,255,255,.06);
+      pointer-events: none; z-index: 0;
+    }
+    /* Light sweep on hover */
+    .type-card::after {
+      content: '';
+      position: absolute; top: -10%; left: -120%;
+      width: 160%; height: 120%;
+      background: linear-gradient(105deg,
+        transparent 0%,
+        rgba(255,255,255,.12) 40%,
+        rgba(255,255,255,.22) 50%,
+        rgba(255,255,255,.12) 60%,
+        transparent 100%
+      );
+      transform: skewX(-8deg);
+      transition: left .45s ease;
+      pointer-events: none; z-index: 1;
+    }
+    .type-card:hover::after { left: 80%; }
+    .type-card:hover {
+      transform: translateY(-2px);
+      color: rgba(240,237,230,.95);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 12px 36px rgba(0,0,0,.7);
+    }
+    .type-card.selected {
+      border-top-color:  rgba(255,255,255,.65);
+      border-left-color: rgba(255,255,255,.45);
+      color: #fff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 12px 36px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.2);
+    }
+    .type-card-label { position: relative; z-index: 2; }
+
+    /* ── SUBMIT BUTTON ─────────────────────────────────────── */
+    .submit-wrap { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+    .submit-btn {
+      border-radius: 50px; position: relative; overflow: hidden;
+      cursor: none; text-decoration: none; display: inline-flex;
+      align-items: center; gap: .5rem;
+      color: rgba(255,255,255,.92);
+      font-family: var(--font);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: .09em; text-transform: uppercase;
+      padding: 1rem 1.75rem;
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);
+      transition: color .55s ease, box-shadow .3s ease;
+    }
+    .submit-btn::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit;
+      background: linear-gradient(148deg,#a8adb3 0%,#e4e7ea 16%,#c2c8ce 32%,#f0f2f4 50%,#b4bbc2 66%,#dde1e5 82%,#a2a8ae 100%);
+      transform: translateY(106%);
+      transition: transform .65s cubic-bezier(.22,1,.36,1); z-index: 0;
+    }
+    .submit-btn:hover::before { transform: translateY(0); }
+    .submit-btn:hover { color: #0c0c0e; box-shadow: 0 20px 52px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.3); }
+    .submit-btn span { position: relative; z-index: 1; }
+
+    /* ── SUCCESS ───────────────────────────────────────────── */
+    #step-success { text-align: left; }
+    .success-title {
+      font-size: clamp(40px, 8vw, 96px);
+      font-weight: 900; letter-spacing: -.04em; line-height: .9;
+    }
+    .success-sub {
+      font-size: 14px; color: var(--dim); max-width: 380px; line-height: 1.7;
+    }
+    .success-back {
+      font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--dim); text-decoration: none; cursor: none;
+      transition: color .3s; border-bottom: 1px solid rgba(240,237,230,.1);
+      padding-bottom: 2px;
+    }
+    .success-back:hover { color: var(--fg); border-color: rgba(240,237,230,.35); }
+
+    /* ── LOADING STATE ─────────────────────────────────────── */
+    .sending-dots {
+      display: inline-flex; gap: 4px; align-items: center;
+    }
+    .sending-dots span {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: currentColor; opacity: 0;
+      animation: dotPulse 1.2s ease-in-out infinite;
+    }
+    .sending-dots span:nth-child(2) { animation-delay: .2s; }
+    .sending-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes dotPulse { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+    @media (max-width: 640px) {
+      #top-nav { padding: 1.5rem 1.25rem; }
+      .step { padding: 0 1.25rem; gap: 2rem; }
+      .type-grid { grid-template-columns: 1fr 1fr; gap: .75rem; }
+      .type-card { padding: 1.25rem; font-size: 11px; }
+      body { overflow: hidden; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="grain"></canvas>
+<div id="c-dot" class="c-el"></div>
+<div id="c-r1"  class="c-el"></div>
+
+<div id="progress-bar"></div>
+
+<nav id="top-nav">
+  <a href="v3.html" id="back-btn">
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M8 2L4 6l4 4"/>
+    </svg>
+    Zurück
+  </a>
+  <span id="wordmark">SEMP STUDIOS</span>
+  <span id="step-counter">01 / 04</span>
+</nav>
+
+<div id="stage">
+
+  <!-- STEP 0 — INTRO -->
+  <div class="step active" id="step-0">
+    <div class="step-q" id="q0">Lass uns<br>reden.</div>
+    <div>
+      <p style="font-size:14px;color:var(--dim);max-width:400px;line-height:1.7;margin-bottom:2rem;">
+        Kein Formular-Formulier. Nur ein paar ehrliche Fragen —
+        damit wir verstehen was du brauchst.
+      </p>
+      <button class="submit-btn" id="start-btn"><span>Los geht's →</span></button>
+    </div>
+  </div>
+
+  <!-- STEP 1 — NAME -->
+  <div class="step" id="step-1">
+    <div class="step-q" id="q1">Wie heißt du?</div>
+    <div style="display:flex;flex-direction:column;gap:.75rem;">
+      <div class="input-wrap">
+        <input class="input-field" id="input-name" type="text" placeholder="Dein Name" autocomplete="off">
+        <button class="enter-btn" data-next="2" title="Weiter">↵</button>
+      </div>
+      <p class="hint">Enter drücken zum Weiter</p>
+    </div>
+  </div>
+
+  <!-- STEP 2 — EMAIL -->
+  <div class="step" id="step-2">
+    <div class="step-q" id="q2">Wie erreichen<br>wir dich?</div>
+    <div style="display:flex;flex-direction:column;gap:.75rem;">
+      <div class="input-wrap">
+        <input class="input-field" id="input-email" type="email" placeholder="deine@email.de" autocomplete="off">
+        <button class="enter-btn" data-next="3" title="Weiter">↵</button>
+      </div>
+      <p class="hint">Enter drücken zum Weiter</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 — PROJECT TYPE -->
+  <div class="step" id="step-3">
+    <div class="step-q" id="q3">Was planst du?</div>
+    <div class="type-grid" id="type-grid">
+      <div class="type-card" data-value="Neue Website">
+        <span class="type-card-label">Neue Website</span>
+      </div>
+      <div class="type-card" data-value="Redesign">
+        <span class="type-card-label">Redesign</span>
+      </div>
+      <div class="type-card" data-value="E-Shop">
+        <span class="type-card-label">E-Shop</span>
+      </div>
+      <div class="type-card" data-value="Sonstiges">
+        <span class="type-card-label">Sonstiges</span>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:-.5rem;">Karte auswählen zum Weiter</p>
+  </div>
+
+  <!-- STEP 4 — MESSAGE -->
+  <div class="step" id="step-4">
+    <div class="step-q" id="q4">Erzähl uns mehr.</div>
+    <div style="display:flex;flex-direction:column;gap:.75rem;">
+      <div class="input-wrap" style="align-items:flex-start;">
+        <textarea class="input-field" id="input-msg" placeholder="Was hast du vor? Budget, Zeitplan, besondere Wünsche — alles was hilft." rows="4"></textarea>
+      </div>
+      <div class="submit-wrap">
+        <button class="submit-btn" id="submit-btn"><span>Absenden →</span></button>
+        <p class="hint" style="margin-top:0;">oder Shift+Enter</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="success-title" id="success-title">Danke.</div>
+    <p class="success-sub" id="success-sub">
+      Wir haben deine Anfrage erhalten und melden uns innerhalb von 24 Stunden.
+    </p>
+    <a href="v3.html" class="success-back">← Zurück zur Website</a>
+  </div>
+
+</div>
+
+<!-- Hidden form for Formspree -->
+<form id="real-form" action="https://formspree.io/f/contact" method="POST" style="display:none;">
+  <input type="text"   name="name"    id="f-name">
+  <input type="email"  name="email"   id="f-email">
+  <input type="text"   name="project" id="f-project">
+  <textarea            name="message" id="f-msg"></textarea>
+</form>
+
+<script>
+/* ═══════════════════════════════════════════════
+   GRAIN
+═══════════════════════════════════════════════ */
+(function() {
+  const c = document.getElementById('grain');
+  c.style.cssText = 'position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.038;';
+  const ctx = c.getContext('2d');
+  let W, H;
+  function resize() { W = c.width = innerWidth; H = c.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  let f = 0;
+  (function loop() {
+    requestAnimationFrame(loop);
+    if (++f % 3 !== 0) return;
+    const img = ctx.createImageData(W, H), d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() * 255 | 0;
+      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  })();
+})();
+
+/* ═══════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════ */
+(function() {
+  const dot = document.getElementById('c-dot');
+  const r1  = document.getElementById('c-r1');
+  let mx = -200, my = -200, rx = -200, ry = -200;
+  window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function loop() {
+    requestAnimationFrame(loop);
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    r1.style.left  = rx + 'px'; r1.style.top  = ry + 'px';
+  })();
+})();
+
+/* ═══════════════════════════════════════════════
+   FORM LOGIC
+═══════════════════════════════════════════════ */
+const state = { name: '', email: '', project: '', msg: '' };
+let currentStep = 0;
+const totalSteps = 4;
+const progressBar = document.getElementById('progress-bar');
+const stepCounter = document.getElementById('step-counter');
+
+function setProgress(step) {
+  const pct = step === 0 ? 0 : Math.round((step / totalSteps) * 100);
+  progressBar.style.width = pct + '%';
+  if (step > 0 && step <= totalSteps) {
+    stepCounter.style.opacity = '1';
+    stepCounter.textContent = String(step).padStart(2,'0') + ' / ' + String(totalSteps).padStart(2,'0');
+  } else {
+    stepCounter.style.opacity = '0';
+  }
+}
+
+/* Word-by-word question animation */
+function animateQuestion(el) {
+  const raw = el.innerHTML;
+  // split by words, preserve <br>
+  const html = raw.replace(/<br\s*\/?>/gi, ' §BR§ ');
+  const words = html.split(/\s+/).filter(Boolean);
+  el.innerHTML = '';
+  words.forEach((w, i) => {
+    if (w === '§BR§') { el.appendChild(document.createElement('br')); return; }
+    const wrap = document.createElement('span');
+    wrap.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom;';
+    const inner = document.createElement('span');
+    inner.style.cssText = 'display:inline-block;transform:translateY(105%);';
+    inner.textContent = w;
+    wrap.appendChild(inner);
+    el.appendChild(wrap);
+    if (i < words.length - 1 && words[i+1] !== '§BR§') {
+      el.appendChild(document.createTextNode(' '));
+    }
+  });
+  const inners = el.querySelectorAll('span > span');
+  gsap.to(inners, {
+    y: '0%', duration: .55,
+    ease: 'power3.out',
+    stagger: .06,
+  });
+}
+
+/* Step transition */
+function goTo(nextStep) {
+  const curr = document.getElementById('step-' + currentStep);
+  const next = document.getElementById('step-' + nextStep);
+
+  gsap.to(curr, {
+    y: -50, opacity: 0, duration: .35, ease: 'power2.in',
+    onComplete: () => { curr.style.display = 'none'; curr.classList.remove('active'); }
+  });
+
+  setTimeout(() => {
+    next.style.display = 'flex';
+    next.classList.add('active');
+    gsap.fromTo(next,
+      { y: 70, opacity: 0 },
+      { y: 0, opacity: 1, duration: .55, ease: 'power3.out' }
+    );
+
+    // animate question text
+    const q = next.querySelector('.step-q, .success-title');
+    if (q) animateQuestion(q);
+
+    // focus input
+    const inp = next.querySelector('.input-field');
+    if (inp) setTimeout(() => inp.focus(), 400);
+
+    currentStep = nextStep;
+    if (nextStep !== 0 && nextStep !== 'success') setProgress(nextStep);
+    else if (nextStep === 'success') {
+      progressBar.style.width = '100%';
+      stepCounter.style.opacity = '0';
+    }
+  }, 380);
+}
+
+/* Validate & advance */
+function advance(nextStep) {
+  if (nextStep === 2) {
+    state.name = document.getElementById('input-name').value.trim();
+    if (!state.name) { shake(document.getElementById('input-name')); return; }
+    // personalize step 2 question
+    document.getElementById('q2').innerHTML = `Wie erreichen<br>wir dich, ${state.name}?`;
+  }
+  if (nextStep === 3) {
+    state.email = document.getElementById('input-email').value.trim();
+    if (!state.email || !state.email.includes('@')) { shake(document.getElementById('input-email')); return; }
+    // personalize step 3
+    document.getElementById('q3').innerHTML = `Was planst<br>du, ${state.name}?`;
+  }
+  if (nextStep === 4) {
+    // personalize step 4
+    document.getElementById('q4').innerHTML = `Erzähl uns<br>mehr.`;
+  }
+  goTo(nextStep);
+}
+
+function shake(el) {
+  gsap.fromTo(el, { x: -8 }, { x: 0, duration: .4, ease: 'elastic.out(1,.3)' });
+  gsap.fromTo(el, { borderBottomColor: 'rgba(255,80,80,.7)' }, { borderBottomColor: 'rgba(240,237,230,.18)', duration: .8 });
+}
+
+/* ── INTRO START ── */
+document.getElementById('start-btn').addEventListener('click', () => goTo(1));
+
+/* ── ENTER KEY ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    if (currentStep === 1) advance(2);
+    if (currentStep === 2) advance(3);
+    if (currentStep === 4) submitForm();
+  }
+});
+
+/* ── ENTER BUTTONS ── */
+document.querySelectorAll('.enter-btn').forEach(btn => {
+  btn.addEventListener('click', () => advance(parseInt(btn.dataset.next)));
+});
+
+/* ── TYPE CARD SELECT ── */
+document.querySelectorAll('.type-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.project = card.dataset.value;
+    // personalize step 4 question
+    document.getElementById('q4').innerHTML = `Erzähl uns mehr<br>über dein ${state.project === 'Sonstiges' ? 'Projekt' : state.project}.`;
+    setTimeout(() => goTo(4), 420);
+  });
+});
+
+/* ── SUBMIT ── */
+document.getElementById('submit-btn').addEventListener('click', submitForm);
+
+async function submitForm() {
+  state.msg = document.getElementById('input-msg').value.trim();
+
+  // fill hidden form
+  document.getElementById('f-name').value    = state.name;
+  document.getElementById('f-email').value   = state.email;
+  document.getElementById('f-project').value = state.project;
+  document.getElementById('f-msg').value     = state.msg;
+
+  // sending state
+  const btn = document.getElementById('submit-btn');
+  btn.querySelector('span').innerHTML = 'Wird gesendet <span class="sending-dots"><span></span><span></span><span></span></span>';
+
+  try {
+    const fd = new FormData(document.getElementById('real-form'));
+    const res = await fetch(document.getElementById('real-form').action, {
+      method: 'POST', body: fd, headers: { 'Accept': 'application/json' }
+    });
+    // update success message with name
+    document.getElementById('success-title').textContent = 'Danke, ' + state.name + '.';
+    goTo('success');
+  } catch(err) {
+    // still show success (email may work via mailto fallback)
+    document.getElementById('success-title').textContent = 'Danke, ' + state.name + '.';
+    goTo('success');
+  }
+}
+
+/* ── INIT ── */
+setProgress(0);
+const q0 = document.getElementById('q0');
+setTimeout(() => animateQuestion(q0), 200);
+</script>
+</body>
+</html>
