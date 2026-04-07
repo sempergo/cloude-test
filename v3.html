@@ -78,10 +78,74 @@
       z-index: 9996; top: -100px; left: -100px;
     }
 
+    /* ── CHROME BUTTONS ─────────────────────────────────────── */
+    @keyframes chromeFlow {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes caFlash {
+      0%   { text-shadow: none; }
+      30%  { text-shadow: -2.5px 0 rgba(255,30,40,.8), 2.5px 0 rgba(20,100,255,.8); }
+      60%  { text-shadow: -1.5px 0 rgba(255,30,40,.5), 1.5px 0 rgba(20,100,255,.5); }
+      100% { text-shadow: -2px 0 rgba(255,30,40,.65), 2px 0 rgba(20,100,255,.65); }
+    }
+
+    .btn-p, .btn-s, #float-cta {
+      border-radius: 50px;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+      cursor: none;
+    }
+    /* Primary — light silver chrome */
+    .btn-p {
+      background: linear-gradient(110deg,
+        #b8b8be 0%, #f0f0f4 18%, #888890 36%,
+        #e8e8ec 54%, #a0a0a8 72%, #f4f4f6 100%);
+      background-size: 300% 300%;
+      animation: chromeFlow 5s ease-in-out infinite;
+      color: #0a0a0a;
+      border: none;
+      font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
+      padding: 1rem 1.75rem;
+    }
+    /* Secondary — dark chrome */
+    .btn-s {
+      background: linear-gradient(110deg,
+        #1c1c22 0%, #585860 18%, #0a0a10 36%,
+        #484850 54%, #141418 72%, #606068 100%);
+      background-size: 300% 300%;
+      animation: chromeFlow 5s ease-in-out infinite .8s;
+      color: #f0f0f4;
+      border: none;
+      font-size: 12px; letter-spacing: .07em; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
+      padding: 1rem 1.75rem;
+    }
+    /* Chromatic aberration state */
+    .btn-p.btn-ca, .btn-s.btn-ca, #float-cta.btn-ca {
+      animation: chromeFlow 5s ease-in-out infinite, caFlash .2s ease forwards;
+    }
+    /* Mobile :active press */
+    @media (hover: none) {
+      .btn-p:active, .btn-s:active, #float-cta:active {
+        transform: scale(.96) translateY(2px);
+        text-shadow: -2px 0 rgba(255,30,40,.7), 2px 0 rgba(20,100,255,.7);
+      }
+    }
+
     /* ── FLOAT CTA ───────────────────────────────────────── */
     #float-cta {
       position: fixed; bottom: 2rem; right: 2rem; z-index: 60;
-      background: var(--fg); color: var(--bg);
+      background: linear-gradient(110deg,
+        #b8b8be 0%, #f0f0f4 18%, #888890 36%,
+        #e8e8ec 54%, #a0a0a8 72%, #f4f4f6 100%);
+      background-size: 300% 300%;
+      animation: chromeFlow 5s ease-in-out infinite 1.2s;
+      color: #0a0a0a;
       padding: .85rem 1.6rem;
       font-size: 10px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
       text-decoration: none;
@@ -1580,6 +1644,60 @@ gsap.set('.h-tag',    { y: 14 });
 gsap.set('.h-bottom', { y: 20 });
 
 // (mf-sub removed — manifesto is now pinned expand section)
+
+/* ═══════════════════════════════════════════════════════
+   23 — CHROME BUTTONS  (3D tilt + chromatic aberration)
+═══════════════════════════════════════════════════════ */
+(function() {
+  const btns = document.querySelectorAll('.btn-p, .btn-s, #float-cta');
+
+  btns.forEach(btn => {
+    const DEPTH  = 700;   // perspective depth px
+    const TILT   = 18;    // max tilt degrees
+    const LIFT   = -6;    // translateZ on hover px
+
+    /* ── Desktop hover / mousemove ── */
+    btn.addEventListener('mouseenter', () => {
+      btn.classList.add('btn-ca');
+      gsap.to(btn, {
+        z: LIFT, scale: 1.04,
+        transformPerspective: DEPTH,
+        duration: .25, ease: 'power2.out',
+      });
+    });
+
+    btn.addEventListener('mousemove', e => {
+      const r  = btn.getBoundingClientRect();
+      const nx = (e.clientX - r.left)  / r.width  - .5;   // -0.5 → 0.5
+      const ny = (e.clientY - r.top)   / r.height - .5;
+      gsap.to(btn, {
+        rotateY:  nx * TILT * 2,
+        rotateX: -ny * TILT,
+        transformPerspective: DEPTH,
+        duration: .2, ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      btn.classList.remove('btn-ca');
+      gsap.to(btn, {
+        rotateX: 0, rotateY: 0, z: 0, scale: 1,
+        transformPerspective: DEPTH,
+        duration: .6, ease: 'elastic.out(1, .45)',
+      });
+    });
+
+    /* ── Mobile tap → chromatic aberration flash ── */
+    btn.addEventListener('touchstart', () => {
+      btn.classList.add('btn-ca');
+    }, { passive: true });
+
+    btn.addEventListener('touchend', () => {
+      setTimeout(() => btn.classList.remove('btn-ca'), 400);
+    }, { passive: true });
+  });
+})();
 </script>
 </body>
 </html>
