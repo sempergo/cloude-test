@@ -1,93 +1,101 @@
-# Design System: Semp Studios
+# Design System: BKK Thai Street Food
 
 ## 1. Visual Theme & Atmosphere
 
-A bold editorial interface built for a web agency that leads with craft and confidence. The atmosphere is like a high-end print magazine that learned to move — every element deliberate, nothing decorative for its own sake. Cream-warm background, off-black ink, a single electric-green accent that punctuates with precision.
+**Bangkok bei Nacht.** Eine dunkle, atmosphärische Restaurantseite die sich anfühlt wie das Innere eines coolen urbanen Lokals in Bangkok — kurz vor Mitternacht. Nicht traditionell, nicht Klischee-Thai. Die Seite hat die Energie einer Stadt, die nie schläft: reich, komplex, warm durch Kerzenlicht und rote Akzente, aber mit der Ruhe eines Ortes, der weiß wie gut er ist.
 
-- **Density:** 5/10 — Balanced. Generous breathing room in hero, tighter in feature sections
-- **Variance:** 8/10 — Strongly asymmetric. Left-weighted layouts, staggered grids, no centering in heroes
-- **Motion:** 7/10 — Cinematic but controlled. Spring-physics reveals, perpetual ticker, text scramble on scroll
-
-The design language is: editorial agency, not startup SaaS. Strong blackletter weight in display type, structured by contrast rather than decoration.
+- **Density:** 5 — Ausgewogen. Großzügiges Whitespace neben dichten Foto-Momenten.
+- **Variance:** 7 — Asymmetrisch. Kein einziges symmetrisches gleichwertiges Layout.
+- **Motion:** 6 — Fluid. Scroll-Reveals, staggered Text, subtile Parallax. Kein Overload.
+- **Mood Keywords:** Cinematic, editorial, nocturnal, warm-dark, confident, sensual, honest.
 
 ---
 
 ## 2. Color Palette & Roles
 
-- **Warm Cream** (#f4f2ed) — Primary background. Not white. Warm, tactile, like uncoated paper
-- **Off-Black Ink** (#0a0a0a) — Primary text, button fills, borders. Never pure black
-- **Muted Stone** (#6b6560) — Secondary text, labels, metadata, subdued captions
-- **Surface Warm** (#e8e5df) — Card and container fills, ticker background, divider shims
-- **Whisper Border** (rgba(10,10,10,0.1)) — Structural 1px lines, card edges, nav underlines
-- **Electric Moss** (#b8ff00) — Single accent. CTAs, active states, accent dots, focus rings. Use sparingly — it earns its place
-- **Banned:** Any purple, neon blue, gradient fills spanning multiple colors, oversaturated hues
+- **Night Canvas** (`#0A0A08`) — Primärer Hintergrund. Fast-schwarz mit warmem Unterton. Nie pure black.
+- **Deep Surface** (`#141410`) — Cards, Sections-Hintergrund. Leichte Erhebung über Canvas.
+- **Ember Surface** (`#1C1A14`) — Hover-States, aktive Bereiche. Warmer Kohle-Ton.
+- **Warm Ivory** (`#F2EDE4`) — Primärer Text. Off-white, niemals reines Weiß.
+- **Muted Sand** (`#9E9A8E`) — Sekundärer Text, Labels, Metadaten.
+- **Ghost Border** (`rgba(242, 237, 228, 0.08)`) — Card-Borders, strukturelle Linien. Kaum sichtbar.
+- **BKK Red** (`#D41A1A`) — Einziger Akzent. CTAs, aktive Zustände, Logo-Kontext, Hover-Highlights.
+- **Ember Gold** (`#C49A3C`) — Warmth-Akzent für Food/Wine Kontext. Sparsam — nur dekorativ oder für Weinbereich.
+
+**Verboten:** Kein reines `#000000`. Kein Neon. Kein Blau. Kein helles Thai-Restaurant-Layout. Kein Gold-Drachen-Vibe.
 
 ---
 
 ## 3. Typography Rules
 
-- **Display (Headlines):** Bricolage Grotesque — weight 800–900, letter-spacing -0.03em to -0.04em, scale via `clamp()`. Hierarchy through massive size contrast, not multiple weights
-- **Body:** Satoshi or Cabinet Grotesk — NOT Inter (banned in premium contexts). Weight 400–500, leading 1.6, max 65ch per line
-- **Labels / Metadata:** Inter Tight or Geist Mono — small caps or uppercase tracking for section labels, timestamps, counters
-- **Scale:** Display clamp(52px, 17vw, 248px) → Section Titles clamp(32px, 6vw, 72px) → Body 16px/1.6 → Labels 12–13px uppercase
-- **Banned:** Inter for body text in premium contexts. Generic serifs. Anything that screams "template"
+- **Display / Headlines:** **Syne** (700, 800) — Geometrisch-bold, modern. Tight tracking (`letter-spacing: -0.02em`). Skalierung via `clamp()`. Hierarchie durch Gewicht und Farbe.
+- **Body:** **DM Sans** (300, 400, 500) — Clean, modern, sehr lesbar. Line-height 1.65. Max 65 Zeichen pro Zeile. Muted Sand für Sekundärtext.
+- **Labels / Kategorien:** **DM Sans** 500 Uppercase, letter-spacing 0.1em — für Section-Labels, kleine Metadaten.
+- **Scale:** Headlines `clamp(48px, 10vw, 120px)` → Section Titles `clamp(28px, 5vw, 56px)` → Body `16px/1.65` → Labels `12px uppercase`
+- **Google Fonts Import:**
+  ```css
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap');
+  ```
+
+**Verboten:** Inter. Georgia. Times New Roman. Gradient-Text auf großen Headlines.
 
 ---
 
 ## 4. Component Stylings
 
-- **Primary Buttons:** Flat rectangle, Off-Black fill, Warm Cream text. On active: -1px translate (tactile push). On hover: slightly lighter (#2a2a2a). Zero border-radius or sharp 2px max. No outer glow. No gradients
-- **Ghost Buttons:** 1px Off-Black border, transparent fill. Hover: fill with Off-Black, text flips to Cream
-- **Cards (Work/Portfolio):** Sharp corners or 4px max radius. Surface Warm fill. 1px Whisper Border. Hover: lift via `translateY(-4px)` + shadow deepens. No rounded-xl. No drop shadows with color
-- **Contact Form:** Labels above inputs, always. No floating labels. Focus ring in Electric Moss. Inputs: 1px border, no background fill, transparent. Error text below in muted red
-- **Section Labels:** Uppercase, 12px, letter-spacing 0.12em, Stone Muted color — acts as wayfinding, never decorative
-- **Ticker / Marquee:** Continuous scroll. Surface Warm strip. Off-Black text. No pause on hover
-- **Loaders:** Skeletal shimmer matching layout shape. No spinners
+- **Buttons (Primary):** BKK Red Hintergrund (`#D41A1A`), Warm Ivory Text. Sharp Corners (4px max). `-1px translateY` auf active. `150ms ease-out`. Kein Outer Glow.
+- **Buttons (Ghost):** 1px Border `rgba(242, 237, 228, 0.25)`, transparent. Hover: Border und Text `#F2EDE4` voll.
+- **Cards:** Dark Surface (`#141410`), 1px Ghost Border. Box-shadow `0 4px 32px rgba(0,0,0,0.5)`. Hover: `scale(1.01)` + leichte Helligkeit. Max 12px border-radius.
+- **Nav:** Transparent auf Hero, solid `rgba(10,10,8,0.95)` beim Scroll mit `backdrop-filter: blur(12px)`. Logo links, Links rechts, CTA ganz rechts. Mobile: Hamburger → Full-Screen Overlay.
+- **Food Photo Containers:** Full-bleed, `object-fit: cover`. Gradient-Overlay unten (`rgba(10,10,8,0)` → `rgba(10,10,8,0.7)`) für Lesbarkeit. Kein weißer Rand.
+- **Review Cards:** Minimal — kein schwerer Box-Shadow. Ghost Border genügt. Zitat groß, Name klein in Muted Sand.
+- **Dividers:** Nie sichtbare HR. Stattdessen negatives Space oder Ghost Border.
 
 ---
 
 ## 5. Layout Principles
 
-- **Hero:** Left-aligned, bottom-anchored headline. Full viewport height. Headline occupies most of viewport width. No centering
-- **Grid:** CSS Grid primary. 12-column at desktop, 4-column at tablet, 1-column at mobile. No flexbox `calc()` hacks
-- **Asymmetry:** Avoid 3-equal-column layouts. Use 1+2 splits, 2/3+1/3 splits, staggered masonry for portfolio
-- **Max-width:** 1440px container, 48px side padding desktop, 24px mobile
-- **Section spacing:** `clamp(80px, 12vw, 160px)` vertical gaps between sections
-- **No overlapping elements:** Every element has its own clear spatial zone. Absolute positioning only for decorative, pointer-events: none elements
-- **Mobile-first:** All multi-column collapses to single column below 768px. No horizontal scroll ever
+- **Mobile-First.** Alle Multi-Column Layouts kollabieren unter 768px zu Single Column. Null horizontales Scrollen.
+- **Asymmetrisch.** Kein zentrierter Hero. Kein gleichwertiges 3-Spalten-Grid. Bevorzuge: Left-aligned Headlines, Split-Screen 60/40, Offset-Grids.
+- **CSS Grid** over Flexbox-Math. Kein `calc()`. Max-width Container: `1400px centered`.
+- **Fullscreen Sections:** `min-height: 100dvh`. Vertikaler Spacing via `clamp(4rem, 8vw, 8rem)`.
+- **Sections Reihenfolge:** Hero → Story (1974 + BKK 2020) → Speisekarte CTA → Social Proof (Reviews) → Wein-Moment → Öffnungszeiten + Reservation → Footer
+- **Foto-First:** Bilder sind die Stars. Kein Content der Fotos überlagert.
 
 ---
 
 ## 6. Motion & Interaction
 
-- **Spring physics:** `stiffness: 120, damping: 22` — weighted, premium feel. No linear easing. No ease-in-out on primary transitions
-- **Page intro:** Logo slam-in then dissolve — sets the editorial tone immediately
-- **Hero text:** Staggered word-by-word reveal, translateY from 40px + opacity 0 → 1
-- **Scroll reveals:** Section titles scramble (character randomization → resolve). Section content stagger cascade 80ms delay per item
-- **Custom cursor:** Dot + ring, mix-blend-mode: difference — only on desktop (hover: pointer devices)
-- **Guide shape:** Blob morph following scroll position — purely decorative, opacity low
-- **Micro-interactions:** Every card, button, nav link has a defined hover state. Nothing is static
-- **Ticker:** `animation: scroll linear infinite` — never pauses
-- **Banned:** Animating width/height/top/left. Janky scroll-jank on mobile. Motion on touch devices
+- **Engine:** Motion CDN (`motion@latest`) + Lenis Smooth Scroll (`lenis@latest`)
+- **Init:**
+  ```js
+  const lenis = new Lenis();
+  lenis.on('scroll', Motion.scroll);
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  ```
+- **Scroll-Reveals:** Alle Blöcke starten `opacity: 0, translateY: 30px`. Reveal beim Viewport-Eintritt. `duration: 0.6s, easing: [0.16, 1, 0.3, 1]`.
+- **Staggered Text:** Headlines Wort-für-Wort. Cascade-Delay `0.08s` pro Element.
+- **Hover Fotos:** `scale(1.03)` auf `img` (nicht Container). `200ms ease`.
+- **Kein Animate:** Nie `width`, `height`, `top`, `left` — nur `transform` + `opacity`.
+- **Reduced Motion:** `@media (prefers-reduced-motion: reduce)` → alle Durations auf `0.01ms`.
 
 ---
 
-## 7. Anti-Patterns (Banned)
+## 7. Anti-Patterns (Verboten)
 
-- No Inter font for body in premium layout
-- No pure black (#000000) anywhere
-- No neon outer glows or colored box-shadows
-- No centered hero layouts
-- No 3 equal cards in a row
-- No emoji anywhere
-- No generic AI copy: "Elevate", "Seamless", "Next-Gen", "Unleash", "Transform your business"
-- No filler UI: "Scroll to explore", chevron bounce animations, scroll indicators
-- No fabricated metrics or fake statistics — if real numbers aren't provided, use clear placeholder labels
-- No gradient text on large headlines
-- No custom cursor on touch/mobile devices
-- No overlapping stacked elements
-- No broken image links — use picsum.photos or SVG placeholders
-- No LABEL // YEAR formatting convention
-- No fake system metrics dashboards
-- No generic placeholder names ("Acme Corp", "John Doe")
-- No oversaturated second accent colors — Electric Moss (#b8ff00) is the only accent, used with restraint
+- Kein Gold-Drachen, Thai-Tempel oder Lotus-Klischee in Design oder Text
+- Kein helles Restaurant-Template (weißer Hintergrund, bunte Kacheln)
+- Kein Inter Font
+- Kein reines `#000000` oder `#ffffff`
+- Kein Neon-Glow, kein farbiger Box-Shadow auf Buttons
+- Kein 3-Spalten gleichwertiges Feature-Grid
+- Kein zentrierter Hero-Layout
+- Kein "Lorem ipsum" oder Placeholder-Content
+- Kein "Scroll to explore" oder Scroll-Pfeil-Bounce
+- Keine Emojis als Icons
+- Keine KI-Copywriting-Klischees: "Erleben Sie", "Entdecken Sie", "Authentisch wie nie zuvor", "Einzigartig"
+- Keine erfundenen Statistiken oder Metriken
+- Keine Unsplash-Bilder — echte BKK-Fotos verwenden
+- Kein Custom Mouse Cursor
+- Keine überlappenden Elemente

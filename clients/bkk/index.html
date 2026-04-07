@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BKK Thai Street Food Frankfurt | Seit 1974</title>
+<meta name="description" content="BKK Thai Street Food Frankfurt — authentische Bangkoker Straßenküche seit 1974. Modernes Konzept, handverlesene Weine. Oeder Weg 14, Frankfurt. Jetzt reservieren.">
+<meta property="og:title" content="BKK Thai Street Food Frankfurt">
+<meta property="og:description" content="Authentische Bangkoker Straßenküche seit 1974. Modernes Konzept, handverlesene Weine. Oeder Weg 14, Frankfurt.">
+<meta property="og:image" content="https://images.squarespace-cdn.com/content/v1/5cebb77651545f0001c73b8a/05c7baca-a39a-4a8d-bb6f-6d52512d183c/DSC_7705+2.jpg?format=2500w">
+<meta property="og:url" content="https://sempergo.github.io/semp-studios/clients/bkk/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="https://images.squarespace-cdn.com/content/v1/5cebb77651545f0001c73b8a/3e8636a3-fb15-401e-bb29-65e4d0989128/favicon.ico?format=100w">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --canvas:   #0A0A08;
+    --surface:  #141410;
+    --surface2: #1C1A14;
+    --ivory:    #F2EDE4;
+    --sand:     #9E9A8E;
+    --red:      #D41A1A;
+    --gold:     #C49A3C;
+    --border:   rgba(242,237,228,0.08);
+    --ff-head:  'Syne', sans-serif;
+    --ff-body:  'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    background: var(--canvas);
+    color: var(--ivory);
+    font-family: var(--ff-body);
+    font-weight: 300;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+
+  /* ─── NAV ─────────────────────────────────────────────── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 2.5rem;
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  .nav.scrolled {
+    background: rgba(10,10,8,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .nav-logo-mark {
+    width: 40px; height: 40px; border-radius: 50%;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .nav-logo-mark img { width: 100%; height: 100%; object-fit: cover; }
+  .nav-logo-name {
+    font-family: var(--ff-head);
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 2.5rem;
+    list-style: none;
+    font-family: var(--ff-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .nav-links a {
+    color: var(--sand);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ivory); }
+  .nav-cta {
+    background: var(--red);
+    color: var(--ivory);
+    font-family: var(--ff-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.65rem 1.5rem;
+    border: none; cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-block;
+  }
+  .nav-cta:hover { background: #b81515; }
+  .nav-cta:active { transform: translateY(1px); }
+
+  /* Mobile nav */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    cursor: pointer; padding: 4px;
+    background: none; border: none;
+  }
+  .nav-hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--ivory); border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .nav-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 99;
+    background: var(--canvas);
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 2.5rem;
+  }
+  .nav-overlay.open { display: flex; }
+  .nav-overlay a {
+    font-family: var(--ff-head);
+    font-size: 2.5rem; font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--ivory);
+    transition: color 0.2s;
+  }
+  .nav-overlay a:hover { color: var(--red); }
+  .nav-overlay-close {
+    position: absolute; top: 1.5rem; right: 2.5rem;
+    background: none; border: none; cursor: pointer;
+    color: var(--ivory); font-size: 2rem; line-height: 1;
+  }
+
+  /* ─── HERO ────────────────────────────────────────────── */
+  .hero {
+    position: relative; width: 100%;
+    min-height: 100dvh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    overflow: hidden;
+  }
+  .hero-img {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .hero-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.42) contrast(1.05);
+  }
+  .hero-gradient {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to top,
+      rgba(10,10,8,0.95) 0%,
+      rgba(10,10,8,0.3) 45%,
+      rgba(10,10,8,0.0) 70%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: clamp(2rem, 5vw, 6rem) clamp(1.5rem, 6vw, 8rem);
+    padding-bottom: clamp(3rem, 6vw, 7rem);
+    max-width: 1400px;
+  }
+  .hero-label {
+    font-family: var(--ff-body);
+    font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1.25rem;
+    display: block;
+  }
+  .hero-headline {
+    font-family: var(--ff-head);
+    font-weight: 800;
+    font-size: clamp(3.5rem, 12vw, 11rem);
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    color: var(--ivory);
+    margin-bottom: 2.5rem;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+    background: var(--red);
+    color: var(--ivory);
+    font-family: var(--ff-body);
+    font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .hero-cta:hover { background: #b81515; }
+  .hero-cta:active { transform: translateY(1px); }
+  .hero-cta svg { width: 16px; height: 16px; }
+
+  /* ─── STORY ───────────────────────────────────────────── */
+  .story {
+    padding: clamp(4rem, 10vw, 10rem) clamp(1.5rem, 6vw, 8rem);
+    background: var(--canvas);
+  }
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .story-quote {
+    font-family: var(--ff-head);
+    font-size: clamp(1.6rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+  .story-quote em { color: var(--red); font-style: normal; }
+  .story-body {
+    color: var(--sand);
+    font-size: 1.05rem;
+    font-weight: 300;
+    max-width: 52ch;
+  }
+  .story-body p + p { margin-top: 1.25rem; }
+  .story-photo {
+    position: relative; aspect-ratio: 4/5; overflow: hidden;
+  }
+  .story-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75);
+    transition: filter 0.6s, transform 0.6s;
+  }
+  .story-photo:hover img {
+    filter: brightness(0.9);
+    transform: scale(1.03);
+  }
+
+  /* ─── MENU CTA ────────────────────────────────────────── */
+  .menu-cta {
+    padding: clamp(4rem, 10vw, 10rem) 1.5rem;
+    background: var(--surface);
+    text-align: center;
+  }
+  .menu-cta-label {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--red);
+    display: block; margin-bottom: 1.5rem;
+  }
+  .menu-cta-headline {
+    font-family: var(--ff-head);
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .menu-cta-sub {
+    color: var(--sand); font-weight: 300;
+    max-width: 40ch; margin: 0 auto 3rem;
+    font-size: 1.05rem;
+  }
+  .menu-cta-buttons {
+    display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+  }
+  .btn-ghost {
+    display: inline-block;
+    padding: 0.9rem 2.5rem;
+    border: 1px solid rgba(242,237,228,0.2);
+    color: var(--ivory);
+    font-family: var(--ff-body);
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    border-radius: 4px;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+  }
+  .btn-ghost:hover {
+    background: var(--ivory); color: var(--canvas);
+    border-color: var(--ivory);
+  }
+
+  /* ─── REVIEWS ─────────────────────────────────────────── */
+  .reviews {
+    padding: clamp(4rem, 10vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+    background: var(--canvas);
+    overflow: hidden;
+  }
+  .reviews-label {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--sand);
+    display: block; margin-bottom: 3rem;
+    text-align: center;
+  }
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 1300px; margin: 0 auto;
+  }
+  .review-card {
+    background: var(--surface);
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+  }
+  .review-card::before {
+    content: '"';
+    font-family: var(--ff-head);
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--red);
+    opacity: 0.6;
+    position: absolute; top: 1.2rem; left: 2rem;
+  }
+  .review-text {
+    font-style: italic;
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--ivory);
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .review-author {
+    font-family: var(--ff-body);
+    font-size: 0.68rem; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--sand);
+  }
+
+  /* ─── WINE ────────────────────────────────────────────── */
+  .wine {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: 600px;
+    background: var(--canvas);
+  }
+  .wine-photo {
+    position: relative; min-height: 400px; overflow: hidden;
+  }
+  .wine-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.55) contrast(1.05);
+  }
+  .wine-content {
+    padding: clamp(3rem, 8vw, 7rem) clamp(1.5rem, 6vw, 6rem);
+    background: var(--surface);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .wine-label {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold);
+    display: block; margin-bottom: 1.5rem;
+  }
+  .wine-headline {
+    font-family: var(--ff-head);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    line-height: 1.05;
+  }
+  .wine-body {
+    color: var(--sand); font-weight: 300;
+    font-size: 1.05rem;
+    max-width: 48ch;
+    margin-bottom: 2.5rem;
+  }
+  .wine-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    color: var(--gold);
+    font-family: var(--ff-body);
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    transition: gap 0.2s;
+  }
+  .wine-link:hover { gap: 0.9rem; }
+  .wine-link svg { width: 16px; height: 16px; }
+
+  /* ─── INFO ────────────────────────────────────────────── */
+  .info {
+    padding: clamp(4rem, 10vw, 10rem) clamp(1.5rem, 6vw, 8rem);
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .info-block-label {
+    font-size: 0.65rem; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--red);
+    display: block; margin-bottom: 1rem;
+  }
+  .info-block-title {
+    font-family: var(--ff-head);
+    font-size: 1.5rem; font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .info-block-text {
+    color: var(--sand); font-weight: 300;
+    line-height: 1.8; font-size: 1rem;
+  }
+  .info-block + .info-block { margin-top: 2.5rem; }
+  .info-reserve {
+    display: flex; flex-direction: column; gap: 1.5rem;
+  }
+  .reserve-headline {
+    font-family: var(--ff-head);
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.88;
+    color: var(--ivory);
+    transition: color 0.4s;
+    cursor: pointer;
+  }
+  .reserve-headline:hover { color: var(--red); }
+  .reserve-line {
+    height: 2px;
+    background: var(--red);
+    width: 4rem;
+    transition: width 0.5s;
+  }
+  .reserve-headline:hover ~ .reserve-line,
+  .info-reserve:hover .reserve-line { width: 100%; }
+  .reserve-cta-link {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+  }
+  .map-container {
+    margin-top: 2rem;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 220px;
+    filter: invert(0.9) hue-rotate(180deg) brightness(0.85);
+  }
+  .map-container iframe {
+    width: 100%; height: 100%; border: none;
+  }
+  .whatsapp-btn {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: #25D366;
+    color: #fff;
+    font-family: var(--ff-body);
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    margin-top: 1.5rem;
+    transition: background 0.2s;
+  }
+  .whatsapp-btn:hover { background: #1ebe5d; }
+  .whatsapp-btn svg { width: 18px; height: 18px; }
+
+  /* ─── FOOTER ──────────────────────────────────────────── */
+  footer {
+    background: var(--canvas);
+    border-top: 1px solid var(--border);
+    padding: 3.5rem clamp(1.5rem, 6vw, 8rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .footer-logo {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .footer-logo-mark {
+    width: 36px; height: 36px; border-radius: 50%;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .footer-logo-mark img { width: 100%; height: 100%; object-fit: cover; }
+  .footer-logo-name {
+    font-family: var(--ff-head);
+    font-weight: 800; font-size: 1rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .footer-meta {
+    color: var(--sand); font-size: 0.85rem; font-weight: 300;
+    line-height: 1.8;
+  }
+  .footer-bottom {
+    display: flex; flex-wrap: wrap;
+    justify-content: space-between; align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+  .footer-copy {
+    color: var(--sand); font-size: 0.7rem;
+    font-weight: 300; letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .footer-links {
+    display: flex; gap: 1.5rem;
+    font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--sand);
+  }
+  .footer-links a:hover { color: var(--ivory); }
+
+  /* ─── ANIMATION BASE ──────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+                transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.08s; }
+  .reveal-delay-2 { transition-delay: 0.16s; }
+  .reveal-delay-3 { transition-delay: 0.24s; }
+
+  /* ─── DESKTOP ─────────────────────────────────────────── */
+  @media (min-width: 768px) {
+    .nav-links { display: flex; }
+    .nav-hamburger { display: none; }
+
+    .story-grid {
+      grid-template-columns: 60fr 40fr;
+      align-items: center;
+    }
+
+    .reviews-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .review-card:nth-child(1) { transform: translateY(3rem); }
+    .review-card:nth-child(3) { transform: translateY(5rem); }
+
+    .wine {
+      grid-template-columns: 1fr 1fr;
+      min-height: 680px;
+    }
+    .wine-photo { min-height: unset; }
+    .wine-photo img { position: absolute; }
+
+    .info-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+    .info-reserve { align-items: flex-start; }
+
+    footer {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .footer-meta { max-width: 360px; }
+  }
+
+  @media (max-width: 767px) {
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .nav-hamburger { display: flex; }
+
+    .review-card:nth-child(1),
+    .review-card:nth-child(3) { transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition-duration: 0.01ms !important; }
+    * { transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo" aria-label="BKK Thai Street Food">
+    <div class="nav-logo-mark">
+      <img src="https://images.squarespace-cdn.com/content/v1/5cebb77651545f0001c73b8a/bc6f42b8-7d17-4012-b658-040b4eb934b6/BKK-Logo-rund-rot.png?format=200w"
+           alt="BKK Logo" loading="lazy">
+    </div>
+    <span class="nav-logo-name">BKK</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#story">Story</a></li>
+    <li><a href="#menu">Menü</a></li>
+    <li><a href="#wein">Wein</a></li>
+    <li><a href="#info">Besuch</a></li>
+  </ul>
+
+  <a href="https://bkkthaistreetfood.com/home" target="_blank" rel="noopener" class="nav-cta">Reservieren</a>
+
+  <button class="nav-hamburger" id="hamburger" aria-label="Menü öffnen">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile overlay -->
+<div class="nav-overlay" id="nav-overlay">
+  <button class="nav-overlay-close" id="nav-close" aria-label="Schließen">×</button>
+  <a href="#story" class="nav-overlay-link">Story</a>
+  <a href="#menu" class="nav-overlay-link">Menü</a>
+  <a href="#wein" class="nav-overlay-link">Wein</a>
+  <a href="#info" class="nav-overlay-link">Besuch</a>
+  <a href="https://bkkthaistreetfood.com/home" target="_blank" rel="noopener" class="nav-overlay-link" style="color:var(--red)">Reservieren</a>
+</div>
+
+<!-- ─── HERO ─────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-img">
+    <img src="https://images.squarespace-cdn.com/content/v1/5cebb77651545f0001c73b8a/05c7baca-a39a-4a8d-bb6f-6d52512d183c/DSC_7705+2.jpg?format=2500w"
+         alt="BKK Thai Street Food Frankfurt — Atmosphärisches Interieur"
+         loading="eager">
+  </div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <span class="hero-label reveal">Thai Street Food · Frankfurt</span>
+    <h1 class="hero-headline reveal reveal-delay-1">Bangkok.<br>Seit 1974.</h1>
+    <a href="https://bkkthaistreetfood.com/home" target="_blank" rel="noopener" class="hero-cta reveal reveal-delay-2">
+      Tisch reservieren
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- ─── STORY ─────────────────────────────────────────────── -->
+<section class="story" id="story">
+  <div class="story-grid">
+    <div>
+      <blockquote class="story-quote reveal">
+        Das erste thailändische Restaurant in Frankfurt.<br>
+        <em>Seit 1974.</em> Das BKK ist<br>der nächste Schritt.
+      </blockquote>
+      <div class="story-body reveal reveal-delay-1">
+        <p>Was 1974 im Sandweg als Pionierleistung begann, ist heute eine Frankfurter Institution. Das Bangkok Restaurant war das erste seiner Art in der Stadt — und wird bis heute in zweiter Generation geführt.</p>
+        <p>2020 kam das BKK hinzu. Kein Nostalgie-Projekt, kein Ableger. Sondern eine eigene Sprache: das pulsierende Leben Bangkoks — seine Hitze, seine Energie, seine Kontraste — als Grundlage für alles, was auf dem Teller landet.</p>
+      </div>
+    </div>
+    <div class="story-photo reveal reveal-delay-2">
+      <img src="https://images.squarespace-cdn.com/content/v1/5cebb77651545f0001c73b8a/1644676556567-6UEZYIWEN7T6HKA1NKT6/MG_2677-HDR-Bearbeitet-scaled.jpeg?format=2500w"
+           alt="BKK Interieur Frankfurt"
+           loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- ─── MENU CTA ───────────────────────────────────────────── -->
+<section class="menu-cta" id="menu">
+  <span class="menu-cta-label reveal">Kulinarik</span>
+  <h2 class="menu-cta-headline reveal reveal-delay-1">Was uns antreibt.</h2>
+  <p class="menu-cta-sub reveal reveal-delay-2">Straßenküche mit Charakter. Keine westlichen Adaptionen. Keine Kompromisse.</p>
+  <div class="menu-cta-buttons reveal reveal-delay-3">
+    <a href="https://bkkthaistreetfood.com/s/BKK_Menuekarte_Marz_2026-kj4f.pdf"
+       target="_blank" rel="noopener" class="btn-ghost">Speisekarte</a>
+    <a href="https://bkkthaistreetfood.com/s/Weinkarte-BKK-JANUAR-2026-j8p4.pdf"
+       target="_blank" rel="noopener" class="btn-ghost">Weinkarte</a>
+  </div>
+</section>
+
+<!-- ─── REVIEWS ───────────────────────────────────────────── -->
+<section class="reviews">
+  <span class="reviews-label reveal">Was Gäste sagen</span>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <p class="review-text">„Die empfohlenen Gerichte waren allesamt sehr tasty. Wir fühlten uns rundum wohl und kommen gerne wieder."</p>
+      <span class="review-author">Gast via TripAdvisor</span>
+    </div>
+    <div class="review-card reveal reveal-delay-1">
+      <p class="review-text">„Sehr authentisch, gastfreundlich, der Service war sehr lässig und freundlich. Freu mich auf das nächste Mal!"</p>
+      <span class="review-author">Gast via TripAdvisor</span>
+    </div>
+    <div class="review-card reveal reveal-delay-2">
+      <p class="review-text">„Das Pad Thai ist besonders gut gebraten — Mango-Klebreis ist auch schön. Wirklich ein Genuss."</p>
+      <span class="review-author">Gast via TripAdvisor</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WINE ──────────────────────────────────────────────── -->
+<section class="wine" id="wein">
+  <div class="wine-photo">
+    <img src="https://images.squarespace-cdn.com/content/v1/5cebb77651545f0001c73b8a/ea3d9fac-6dab-42cd-91a9-c495b5300888/DSC_7405.jpg?format=2500w"
+         alt="BKK Atmosphäre und Wein"
+         loading="lazy">
+  </div>
+  <div class="wine-content">
+    <span class="wine-label reveal">Weinauswahl</span>
+    <h2 class="wine-headline reveal reveal-delay-1">Die Kuratierung<br>des Kontrasts.</h2>
+    <p class="wine-body reveal reveal-delay-2">Scharfe, salzige, saure Aromen treffen auf handverlesene Weine aus Deutschland, Frankreich und Italien. Von kleinen Winzern bis zu großen Ikonen — darunter die Domaine de la Romanée-Conti.</p>
+    <a href="https://bkkthaistreetfood.com/s/Weinkarte-BKK-JANUAR-2026-j8p4.pdf"
+       target="_blank" rel="noopener" class="wine-link reveal reveal-delay-3">
+      Zur Weinkarte
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- ─── INFO ──────────────────────────────────────────────── -->
+<section class="info" id="info">
+  <div class="info-grid">
+    <div>
+      <div class="info-block reveal">
+        <span class="info-block-label">Adresse</span>
+        <div class="info-block-text">
+          Oeder Weg 14<br>60318 Frankfurt am Main
+        </div>
+        <div class="map-container">
+          <iframe
+            src="https://maps.google.com/maps?q=Oeder+Weg+14,+60318+Frankfurt+am+Main&output=embed&hl=de"
+            allowfullscreen loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="BKK Thai Street Food auf der Karte">
+          </iframe>
+        </div>
+      </div>
+
+      <div class="info-block reveal reveal-delay-1" style="margin-top:2.5rem">
+        <span class="info-block-label">Öffnungszeiten</span>
+        <div class="info-block-text">
+          Mo – Fr &nbsp; 12:00 – 14:30 Uhr<br>
+          Mo – Sa &nbsp; 18:00 – 22:00 Uhr
+        </div>
+      </div>
+
+      <div class="info-block reveal reveal-delay-2" style="margin-top:2.5rem">
+        <span class="info-block-label">Kontakt</span>
+        <div class="info-block-text">
+          <a href="tel:+4969210879922" style="color:var(--sand);transition:color 0.2s"
+             onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='var(--sand)'">
+            +49 69 21087992
+          </a><br>
+          <a href="mailto:info@bangkok1974.com" style="color:var(--sand);transition:color 0.2s"
+             onmouseover="this.style.color='var(--ivory)'" onmouseout="this.style.color='var(--sand)'">
+            info@bangkok1974.com
+          </a>
+        </div>
+        <a href="https://wa.me/4969210879922" target="_blank" rel="noopener" class="whatsapp-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <div class="info-reserve reveal reveal-delay-1">
+      <a href="https://bkkthaistreetfood.com/home" target="_blank" rel="noopener">
+        <div class="reserve-headline">Tisch<br>reservieren.</div>
+        <div class="reserve-line"></div>
+      </a>
+      <p style="color:var(--sand);font-weight:300;font-size:0.95rem;margin-top:1.5rem;max-width:32ch">
+        Reservierungen direkt über unsere Website oder telefonisch.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────── -->
+<footer>
+  <div>
+    <div class="footer-logo" style="margin-bottom:1.25rem">
+      <div class="footer-logo-mark">
+        <img src="https://images.squarespace-cdn.com/content/v1/5cebb77651545f0001c73b8a/bc6f42b8-7d17-4012-b658-040b4eb934b6/BKK-Logo-rund-rot.png?format=200w"
+             alt="BKK Logo" loading="lazy">
+      </div>
+      <span class="footer-logo-name">BKK Thai Street Food</span>
+    </div>
+    <p class="footer-meta">
+      Oeder Weg 14 · 60318 Frankfurt am Main<br>
+      +49 69 21087992 · info@bangkok1974.com
+    </p>
+  </div>
+
+  <div>
+    <div class="footer-bottom" style="border:none;padding-top:0">
+      <div class="footer-links">
+        <a href="#">Impressum</a>
+        <a href="#">Datenschutz</a>
+        <a href="https://bkkthaistreetfood.com" target="_blank" rel="noopener">bkkthaistreetfood.com</a>
+      </div>
+    </div>
+    <div class="footer-copy" style="margin-top:1.5rem">
+      © 2026 BKK Thai Street Food Frankfurt
+    </div>
+  </div>
+</footer>
+
+<!-- ─── SCRIPTS ───────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
+<script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
+<script>
+  // Lenis smooth scroll
+  const lenis = new Lenis();
+  lenis.on('scroll', Motion.scroll);
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+
+  // Nav scroll behavior
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const overlay = document.getElementById('nav-overlay');
+  const navClose = document.getElementById('nav-close');
+  hamburger.addEventListener('click', () => overlay.classList.add('open'));
+  navClose.addEventListener('click', () => overlay.classList.remove('open'));
+  document.querySelectorAll('.nav-overlay-link').forEach(link => {
+    link.addEventListener('click', () => overlay.classList.remove('open'));
+  });
+
+  // Scroll reveals
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Hero reveals on load
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 200 + i * 150);
+    });
+  });
+</script>
+</body>
+</html>
