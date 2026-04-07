@@ -27,8 +27,7 @@
     /* ── LIQUID FILL ───────────────────────────────────────── */
     #liquid-fill {
       position: fixed; inset: 0; z-index: 160;
-      pointer-events: none; will-change: transform;
-      transform: translateY(100%);
+      pointer-events: none; will-change: clip-path;
     }
 
     /* ── CUSTOM CURSOR ─────────────────────────────────────── */
@@ -767,32 +766,70 @@ async function submitForm() {
   gl.uniform1f(U.shape,     3);  /* diamond — same as hero */
   gl.uniform1i(U.image,     0);
 
-  let time = 0, last = performance.now(), running = false;
-  function renderLoop(now) {
-    if (!running) return;
+  let time = 0, last = performance.now();
+  let fillLevel = 0, wavePhase = 0;
+  let fillStart = null, fillDone = false;
+  const FILL_DUR = 2800; // ms to go from empty to full
+
+  function setWaveMask() {
+    const W = window.innerWidth, H = window.innerHeight;
+    // Amplitude shrinks as liquid fills — starts sloshy, calms at the top
+    const amp1 = 38 * Math.pow(1 - fillLevel, 0.6);
+    const amp2 = 18 * Math.pow(1 - fillLevel, 0.8);
+    const amp3 = 10 * Math.pow(1 - fillLevel, 0.5);
+    const waveY = H * (1 - fillLevel);
+    const STEPS = 120;
+
+    const pts = [`0 ${H}`];
+    for (let i = 0; i <= STEPS; i++) {
+      const nx = i / STEPS;
+      const x  = nx * W;
+      const y  = waveY
+        + Math.sin(nx * 5.1 * Math.PI + wavePhase)         * amp1
+        + Math.sin(nx * 9.3 * Math.PI - wavePhase * 1.5)   * amp2
+        + Math.sin(nx * 2.7 * Math.PI + wavePhase * 0.6)   * amp3;
+      pts.push(`${x.toFixed(1)} ${y.toFixed(1)}`);
+    }
+    pts.push(`${W} ${H}`);
+    cv.style.clipPath = `polygon(${pts.join(',')})`;
+  }
+
+  function liquidLoop(now) {
+    requestAnimationFrame(liquidLoop);
+
+    // Render shader
     time += Math.min((now - last) / 1000, 0.05) * 0.8;
     last = now;
     gl.uniform1f(U.time, time);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(renderLoop);
-  }
 
-  /* Called after success message appears */
-  window.triggerLiquidFill = function() {
-    running = true;
-    last = performance.now();
-    requestAnimationFrame(renderLoop);
+    if (fillStart === null) return; // not started yet
 
-    /* Rise from bottom over 2.2s, then redirect */
-    gsap.to(cv, {
-      y: '0%',
-      duration: 2.2,
-      ease: 'power2.inOut',
-      delay: 1.6,
-      onComplete: () => {
-        setTimeout(() => { window.location.href = 'v3.html'; }, 300);
+    if (!fillDone) {
+      const t = Math.min((now - fillStart) / FILL_DUR, 1);
+      // ease: slow start, accelerates, eases to full
+      fillLevel = t < 0.5
+        ? 2 * t * t
+        : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+      wavePhase += 0.038;
+      setWaveMask();
+
+      if (t >= 1) {
+        fillDone = true;
+        cv.style.clipPath = 'none'; // full screen — clean edges
+        // Hold 3.5s to admire, then go home
+        setTimeout(() => { window.location.href = 'v3.html'; }, 3500);
       }
-    });
+    }
+  }
+  requestAnimationFrame(liquidLoop);
+
+  // Init clip to empty (bottom edge only)
+  cv.style.clipPath = `polygon(0 100vh, 0 100vh, 100vw 100vh, 100vw 100vh)`;
+
+  window.triggerLiquidFill = function() {
+    setTimeout(() => { fillStart = performance.now(); }, 1600);
   };
 })();
 
