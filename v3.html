@@ -306,16 +306,16 @@
       display: flex; flex-direction: column;
       overflow: hidden;
 
-      /* Polished steel — clean smooth gradient, no grain */
+      /* Polished steel — solid, no animation */
       background: linear-gradient(
         158deg,
-        #303235 0%,
-        #474a4d 18%,
-        #55585b 32%,
-        #404345 48%,
-        #525558 65%,
-        #404345 80%,
-        #313436 100%
+        #383b3e 0%,
+        #52565a 20%,
+        #63676b 34%,
+        #4a4e52 50%,
+        #5e6266 66%,
+        #484c50 82%,
+        #363a3d 100%
       );
 
       /* Machined bevel edge */
@@ -325,53 +325,39 @@
       border-bottom: 1px solid rgba(255,255,255,.06);
 
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.18),
-        inset 0 -1px 0 rgba(0,0,0,.5),
-        0 8px 36px rgba(0,0,0,.65),
-        0 2px 8px rgba(0,0,0,.45);
+        inset 0 1px 0 rgba(255,255,255,.22),
+        inset 0 -1px 0 rgba(0,0,0,.6),
+        0 12px 48px rgba(0,0,0,.75),
+        0 4px 12px rgba(0,0,0,.55),
+        0 1px 2px rgba(0,0,0,.4);
 
-      transition: box-shadow .45s ease, transform .45s ease;
+      transition: box-shadow .4s ease, transform .4s ease;
     }
     .award-card:hover {
-      transform: translateY(-3px);
+      transform: translateY(-4px);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.22),
-        inset 0 -1px 0 rgba(0,0,0,.5),
-        0 20px 56px rgba(0,0,0,.72),
-        0 4px 16px rgba(0,0,0,.5);
+        inset 0 1px 0 rgba(255,255,255,.28),
+        inset 0 -1px 0 rgba(0,0,0,.6),
+        0 24px 64px rgba(0,0,0,.82),
+        0 8px 24px rgba(0,0,0,.6),
+        0 2px 4px rgba(0,0,0,.4);
     }
 
-    /* Moving light sweep — wide soft beam, edges completely dissolved */
+    /* Static specular sheen — frozen light, no animation */
     .award-card::after {
       content: '';
-      position: absolute;
-      top: -10%; left: 0;
-      width: 200%; height: 120%;
+      position: absolute; inset: 0;
       background: linear-gradient(
-        105deg,
-        transparent                0%,
-        rgba(255,255,255,.002)     8%,
-        rgba(255,255,255,.008)    16%,
-        rgba(255,255,255,.022)    24%,
-        rgba(255,255,255,.055)    33%,
-        rgba(255,255,255,.10)     40%,
-        rgba(255,255,255,.15)     46%,
-        rgba(255,255,255,.18)     50%,
-        rgba(255,255,255,.15)     54%,
-        rgba(255,255,255,.10)     60%,
-        rgba(255,255,255,.055)    67%,
-        rgba(255,255,255,.022)    76%,
-        rgba(255,255,255,.008)    84%,
-        rgba(255,255,255,.002)    92%,
-        transparent               100%
+        148deg,
+        rgba(255,255,255,.18)  0%,
+        rgba(255,255,255,.08) 22%,
+        rgba(255,255,255,.02) 42%,
+        transparent            55%,
+        rgba(255,255,255,.03) 72%,
+        rgba(255,255,255,.09) 88%,
+        rgba(255,255,255,.04) 100%
       );
-      transform: skewX(-8deg);
-      animation: metalLight 6s ease-in-out infinite;
       pointer-events: none; z-index: 1;
-    }
-    @keyframes metalLight {
-      0%   { transform: translateX(-100%) skewX(-8deg); }
-      100% { transform: translateX(50%)   skewX(-8deg); }
     }
 
     /* Inner inset frame — machined recess */
