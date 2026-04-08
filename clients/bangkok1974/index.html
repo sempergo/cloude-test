@@ -23,15 +23,17 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #07050A;
-      --bg2: #0D0A12;
-      --bg3: #120E18;
+      --bg: #09060C;
+      --bg2: #0F0A14;
+      --bg3: #150F1C;
       --gold: #C9A84C;
       --gold-light: #E8D5A3;
-      --gold-dim: rgba(201, 168, 76, 0.2);
-      --gold-border: rgba(201, 168, 76, 0.15);
-      --red: #8B1A2A;
-      --cream: #F0E8D8;
+      --gold-dim: rgba(201, 168, 76, 0.18);
+      --gold-border: rgba(201, 168, 76, 0.14);
+      --amber: #C4722A;
+      --amber-dim: rgba(196, 114, 42, 0.12);
+      --red: #7A1520;
+      --cream: #F2EAD8;
       --text: #EAE0CC;
       --text-muted: #7A6E5E;
       --text-dim: #4A4035;
@@ -148,12 +150,35 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(
-        to bottom,
-        rgba(7, 5, 10, 0.3) 0%,
-        rgba(7, 5, 10, 0.1) 40%,
-        rgba(7, 5, 10, 0.7) 70%,
-        rgba(7, 5, 10, 0.95) 100%
+        160deg,
+        rgba(9, 6, 12, 0.25) 0%,
+        rgba(60, 30, 10, 0.1) 35%,
+        rgba(9, 6, 12, 0.72) 70%,
+        rgba(9, 6, 12, 0.97) 100%
       );
+    }
+    /* Filmkorn — macht es weniger digital, mehr lebendig */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.045;
+      pointer-events: none;
+      z-index: 3;
+    }
+    /* Warmer Lichtfleck im Hero — wie Kerzenlicht aus der Küche */
+    .hero-glow {
+      position: absolute;
+      bottom: 20%;
+      left: 15%;
+      width: 50vw;
+      height: 50vw;
+      max-width: 700px;
+      max-height: 700px;
+      background: radial-gradient(circle, rgba(196, 114, 42, 0.12) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 1;
     }
     .hero-year {
       position: absolute;
@@ -164,7 +189,7 @@
       font-size: clamp(12rem, 28vw, 26rem);
       font-weight: 300;
       color: transparent;
-      -webkit-text-stroke: 1px rgba(201, 168, 76, 0.08);
+      -webkit-text-stroke: 1px rgba(201, 168, 76, 0.07);
       letter-spacing: -0.04em;
       line-height: 1;
       pointer-events: none;
@@ -239,6 +264,111 @@
     @keyframes scrollLine {
       0%, 100% { transform: scaleY(1); opacity: 1; }
       50% { transform: scaleY(0.3); opacity: 0.3; }
+    }
+
+    /* ─── PULL QUOTE ─── */
+    .pullquote {
+      padding: 7rem 3rem;
+      background: var(--bg2);
+      border-top: 1px solid var(--gold-border);
+      border-bottom: 1px solid var(--gold-border);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .pullquote::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(196, 114, 42, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .pullquote-inner {
+      position: relative;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .pullquote-mark {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 9rem;
+      line-height: 0.6;
+      color: var(--amber);
+      opacity: 0.5;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    .pullquote-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--cream);
+      line-height: 1.3;
+      margin-bottom: 2rem;
+      letter-spacing: 0.01em;
+    }
+    .pullquote-attr {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ─── BRIEF ─── */
+    .brief {
+      padding: 8rem 3rem;
+      background: var(--bg2);
+      border-top: 1px solid var(--gold-border);
+    }
+    .brief-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7rem;
+      align-items: center;
+    }
+    .brief-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.8);
+    }
+    .brief-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--cream);
+      margin-bottom: 2.5rem;
+      line-height: 1.1;
+    }
+    .brief-text p {
+      font-size: 1.05rem;
+      line-height: 2;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .brief-text p:last-of-type { margin-bottom: 0; }
+    .brief-sign {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--gold-light);
+      margin-top: 2.5rem !important;
+    }
+
+    @media (max-width: 768px) {
+      .brief-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .brief-img { aspect-ratio: 16/9; }
+      .pullquote { padding: 5rem 1.5rem; }
+      .pullquote-mark { font-size: 6rem; }
     }
 
     /* ─── TICKER ─── */
@@ -434,13 +564,14 @@
       content: '"';
       font-family: var(--font-display);
       font-size: 8rem;
-      color: var(--gold-dim);
+      color: rgba(196, 114, 42, 0.18);
       position: absolute;
       top: 1rem;
       right: 2rem;
       line-height: 1;
       pointer-events: none;
     }
+    .review-card:hover { background: rgba(196, 114, 42, 0.04); }
 
     /* ─── DISHES ─── */
     .dishes {
@@ -1095,14 +1226,16 @@
   <section class="hero" aria-label="Hero">
     <div class="hero-bg" id="heroBg" role="img" aria-label="Bangkok Restaurant Frankfurt Interieur"></div>
     <div class="hero-overlay"></div>
+    <div class="hero-glow" aria-hidden="true"></div>
     <div class="hero-year" aria-hidden="true">1974</div>
     <div class="hero-content">
-      <p class="hero-eyebrow">Das erste Thai Restaurant Frankfurts</p>
+      <p class="hero-eyebrow">Frankfurt · Seit 1974</p>
       <h1 class="hero-title">
-        Das<br>
-        <em>Original.</em>
+        Manche Orte<br>
+        bleiben für<br>
+        <em>immer.</em>
       </h1>
-      <p class="hero-sub">Authentische thai­ländische Küche · Sandweg 17 · Frankfurt</p>
+      <p class="hero-sub">Wo man zum ersten Mal isst — und nie aufhört, zurückzukehren.</p>
     </div>
     <div class="hero-scroll" aria-hidden="true">
       <span>Entdecken</span>
@@ -1126,6 +1259,15 @@
     </div>
   </div>
 
+  <!-- ─── PULL QUOTE ─── -->
+  <section class="pullquote" aria-label="Zitat">
+    <div class="pullquote-inner reveal">
+      <span class="pullquote-mark" aria-hidden="true">„</span>
+      <p class="pullquote-text">Es gibt Abende, die man nicht vergisst.<br>Seit über 50 Jahren sind wir der Grund dafür.</p>
+      <span class="pullquote-attr">— Bangkok Restaurant, Frankfurt</span>
+    </div>
+  </section>
+
   <!-- ─── STORY ─── -->
   <section class="story" id="geschichte">
     <div class="story-left reveal-left">
@@ -1148,14 +1290,14 @@
     <div class="story-content reveal-right">
       <p class="section-label">Unsere Geschichte</p>
       <h2 class="story-heading">
-        Wo die Küche<br>
-        <em>Thail­ands lebt</em>
+        Eine Küche,<br>
+        <em>die Frankfurt<br>veränderte</em>
       </h2>
       <p class="story-text">
-        Als das Bangkok Restaurant 1974 seine Türen öffnete, kannte Frankfurt Thai-Küche noch nicht. Was als Pionier begann, ist heute ein Stück Stadtgeschichte: ein Ort, an dem Familien über Generationen hinweg immer wieder zurückkehren.
+        1974 brachte ein Familienvater Thai-Küche nach Frankfurt — in einer Zeit, als das Land noch unbekannt war und die Gewürze fremd. Heute ist das Bangkok mehr als ein Restaurant. Es ist ein Ort, an dem dieselben Familien seit Jahrzehnten ihren Geburtstag feiern, ihre erste Verabredung hatten, ihren Kindern die Welt erklärten.
       </p>
       <p class="story-text">
-        Heute führt die zweite Generation das Restaurant mit derselben Leidenschaft weiter — für frische Zutaten, authentische Rezepte und das Gefühl, nicht nur gut zu essen, sondern irgendwo wirklich willkommen zu sein.
+        Die zweite Generation führt weiter, was die erste begann: Keine Kompromisse bei den Zutaten. Kein Anpassen der Rezepte für westliche Gaumen. Nur Respekt — vor der Küche Thailands und den Menschen, die kommen um sie zu erleben.
       </p>
     </div>
   </section>
@@ -1228,8 +1370,8 @@
         >
         <div class="dish-overlay"></div>
         <div class="dish-info">
-          <h3 class="dish-name">Hausgemachte Spezialitäten</h3>
-          <p class="dish-desc">Täglich frisch · Traditionelle Rezepte</p>
+          <h3 class="dish-name">Aus unserer Küche</h3>
+          <p class="dish-desc">Frische Zutaten, täglich neu — Rezepte, die bleiben</p>
         </div>
       </div>
       <div class="dish-card reveal" style="transition-delay:0.1s">
@@ -1242,7 +1384,7 @@
         <div class="dish-overlay"></div>
         <div class="dish-info">
           <h3 class="dish-name">Chicken Satay</h3>
-          <p class="dish-desc">Mit hausgemachter Erdnuss­soße</p>
+          <p class="dish-desc">Zartes Hähnchen, mariniert in Lemongrass — die Erdnusssoße unserer Mutter</p>
         </div>
       </div>
       <div class="dish-card reveal" style="transition-delay:0.15s">
@@ -1255,7 +1397,7 @@
         <div class="dish-overlay"></div>
         <div class="dish-info">
           <h3 class="dish-name">Rotes Thai-Curry</h3>
-          <p class="dish-desc">Cremig · Aromatisch · Authentisch</p>
+          <p class="dish-desc">Kokosmilch, Galangal, Kaffir-Limette — jede Schüssel eine Reise nach Bangkok</p>
         </div>
       </div>
       <div class="dish-card reveal" style="transition-delay:0.2s">
@@ -1268,7 +1410,7 @@
         <div class="dish-overlay"></div>
         <div class="dish-info">
           <h3 class="dish-name">Frühlingsrollen</h3>
-          <p class="dish-desc">Klassisch · Knusprig</p>
+          <p class="dish-desc">So knusprig, dass man sie hört — ein klassischer Anfang</p>
         </div>
       </div>
       <div class="dish-card reveal" style="transition-delay:0.25s">
@@ -1281,7 +1423,7 @@
         <div class="dish-overlay"></div>
         <div class="dish-info">
           <h3 class="dish-name">Drunken Noodles</h3>
-          <p class="dish-desc">Scharf · Würzig · Unwiderstehlich</p>
+          <p class="dish-desc">Scharf, süß, tief — Straßenküche auf ihrem höchsten Niveau</p>
         </div>
       </div>
     </div>
@@ -1292,8 +1434,8 @@
     <div class="timeline-header reveal">
       <p class="section-label">Fünf Jahrzehnte</p>
       <h2 class="timeline-heading">
-        Eine Geschichte,<br>
-        <em>die Frankfurt prägte</em>
+        Fünfzig Jahre,<br>
+        <em>die Frankfurt<br>nie vergisst</em>
       </h2>
     </div>
     <div class="timeline-track" role="list">
@@ -1329,7 +1471,7 @@
   <section class="gallery" id="atmosphaere" aria-label="Atmosphäre und Eindrücke">
     <div class="gallery-header reveal">
       <p class="section-label">Atmosphäre</p>
-      <h2 class="gallery-heading">Ein Ort, der<br><em>bleibt</em></h2>
+      <h2 class="gallery-heading">Ein Abend hier<br><em>vergisst man nicht</em></h2>
     </div>
     <div class="gallery-grid">
       <div class="gallery-item reveal">
@@ -1420,16 +1562,46 @@
     </div>
   </section>
 
+  <!-- ─── BRIEF ─── -->
+  <section class="brief" aria-label="Ein Brief an unsere Gäste">
+    <div class="brief-inner">
+      <div class="brief-left reveal-left">
+        <img
+          src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521590253946-8QZ8B5431830R96A9XLQ/DSC_9018.JPG?format=2500w"
+          alt="Bangkok Restaurant Frankfurt — Atmosphäre"
+          loading="lazy"
+          class="brief-img"
+        >
+      </div>
+      <div class="brief-content reveal-right">
+        <p class="section-label">Ein Wort von uns</p>
+        <h2 class="brief-heading">Liebe Gäste</h2>
+        <div class="brief-text">
+          <p>
+            Mein Vater öffnete diese Tür 1974 mit einer einfachen Idee: Frankfurt zeigen, wie Thailand wirklich schmeckt. Nicht abgemildert, nicht angepasst — echt.
+          </p>
+          <p>
+            Heute stehe ich in seiner Küche, mit seinen Rezepten, und sehe Gäste, die als Kinder hier saßen und jetzt ihre eigenen Kinder mitbringen. Das ist kein Restaurant mehr. Das ist ein Stück Lebensgeschichte.
+          </p>
+          <p>
+            Wir kochen nicht für Sterne oder Trends. Wir kochen, damit dieser Abend einer wird, den Sie nicht vergessen.
+          </p>
+          <p class="brief-sign">— Die Familie</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── RESERVATION ─── -->
   <section class="reservation" id="reservierung" aria-label="Tisch reservieren">
     <div class="reveal">
       <p class="section-label" style="justify-content:center">Tisch reservieren</p>
       <h2 class="reservation-heading">
-        Wir freuen<br>uns auf<br>
-        <em>Sie.</em>
+        Ihr Abend<br>wartet<br>
+        <em>auf Sie.</em>
       </h2>
       <p class="reservation-text">
-        Reservieren Sie Ihren Tisch online oder rufen Sie uns direkt an. Für besondere Anlässe und Gruppen ab 8 Personen bitten wir um Voranmeldung per Telefon.
+        Reservieren Sie Ihren Tisch — per Telefon oder online. Für besondere Abende, runde Geburtstage oder einfach weil Ihnen der Sinn nach einem guten Abend steht.
       </p>
       <div class="reservation-actions">
         <a href="tel:+4969491360" class="btn-primary" aria-label="Jetzt anrufen">
