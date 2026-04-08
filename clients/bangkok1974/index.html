@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bangkok Restaurant Frankfurt — Authentische Thai Küche seit 1974</title>
-  <meta name="description" content="Das erste Thai Restaurant Frankfurts. Seit über 50 Jahren serviert das Bangkok Restaurant authentische thai­ländische Küche im Herzen des Nordends. Sandweg 17, Frankfurt.">
+  <meta name="description" content="Das erste Thai Restaurant Frankfurts. Seit über 50 Jahren authentische thai­ländische Küche im Herzen des Nordends. Sandweg 17, Frankfurt am Main.">
   <meta property="og:title" content="Bangkok Restaurant Frankfurt — Seit 1974">
   <meta property="og:description" content="Das erste Thai Restaurant Frankfurts. Authentische Küche, zweite Generation, Sandweg 17.">
   <meta property="og:image" content="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/92fdb414-5aa9-4845-8eec-1f4b7812c922/MG_2806-HDR-scaled.jpg?format=2500w">
@@ -14,7 +14,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
   <script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
@@ -23,1193 +23,1010 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #09060C;
-      --bg2: #0F0A14;
-      --bg3: #150F1C;
-      --gold: #C9A84C;
-      --gold-light: #E8D5A3;
-      --gold-dim: rgba(201, 168, 76, 0.18);
-      --gold-border: rgba(201, 168, 76, 0.14);
-      --amber: #C4722A;
-      --amber-dim: rgba(196, 114, 42, 0.12);
-      --red: #7A1520;
-      --cream: #F2EAD8;
-      --text: #EAE0CC;
-      --text-muted: #7A6E5E;
-      --text-dim: #4A4035;
-      --font-display: 'Cormorant Garamond', serif;
-      --font-body: 'Jost', sans-serif;
+      --wood-deep:  #080502;
+      --wood-dark:  #130B05;
+      --wood-mid:   #1E1008;
+      --wood-warm:  #2E1A0A;
+      --gold:       #C8943F;
+      --gold-light: #E4C068;
+      --gold-pale:  #F0DCA8;
+      --gold-dim:   rgba(200,148,63,.18);
+      --gold-line:  rgba(200,148,63,.22);
+      --saffron:    #B86012;
+      --jade:       #243D35;
+      --cream:      #F4ECD8;
+      --text:       #EADCBe;
+      --muted:      #7A6850;
+      --dim:        #3E2E1A;
+      --fd: 'Cormorant Garamond', serif;
+      --fb: 'Jost', sans-serif;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--bg);
+      background: var(--wood-deep);
       color: var(--text);
-      font-family: var(--font-body);
+      font-family: var(--fb);
       font-weight: 300;
-      line-height: 1.6;
+      line-height: 1.65;
       overflow-x: hidden;
+      cursor: none;
     }
 
-    /* ─── SCROLLBAR ─── */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--wood-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
 
-    /* ─── NAV ─── */
-    nav {
+    /* ══════════════════════════════
+       CURSOR
+    ══════════════════════════════ */
+    .cursor {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1.5rem 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: background 0.5s, backdrop-filter 0.5s, padding 0.4s;
+      width: 7px; height: 7px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform .08s, width .25s, height .25s, background .25s;
+      mix-blend-mode: normal;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(200,148,63,.55);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width .35s ease, height .35s ease, border-color .35s;
+    }
+    body:has(a:hover) .cursor,
+    body:has(button:hover) .cursor { width: 12px; height: 12px; background: var(--gold-light); }
+    body:has(a:hover) .cursor-ring,
+    body:has(button:hover) .cursor-ring { width: 54px; height: 54px; border-color: rgba(200,148,63,.3); }
+    @media (hover: none) { .cursor, .cursor-ring { display: none; } body { cursor: auto; } }
+
+    /* ══════════════════════════════
+       NAV
+    ══════════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 1.75rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background .6s, padding .4s, border-color .6s;
+      border-bottom: 1px solid transparent;
     }
     nav.scrolled {
-      background: rgba(7, 5, 10, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 1rem 3rem;
-      border-bottom: 1px solid var(--gold-border);
+      background: rgba(19,11,5,.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 1.1rem 3rem;
+      border-color: var(--gold-line);
     }
     .nav-logo {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
+      font-family: var(--fd);
+      font-size: 1rem;
       font-weight: 500;
-      letter-spacing: 0.12em;
-      color: var(--gold-light);
-      text-decoration: none;
+      letter-spacing: .2em;
       text-transform: uppercase;
+      color: var(--gold-pale);
+      text-decoration: none;
     }
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
-    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
     .nav-links a {
-      color: var(--text-muted);
+      color: var(--muted);
       text-decoration: none;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
+      font-size: .72rem;
+      letter-spacing: .18em;
       text-transform: uppercase;
-      transition: color 0.3s;
+      transition: color .3s;
+      cursor: none;
     }
     .nav-links a:hover { color: var(--gold-light); }
     .nav-cta {
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-decoration: none;
-      border: 1px solid var(--gold-border);
-      padding: 0.6rem 1.4rem;
-      transition: all 0.3s;
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      border: 1px solid var(--gold-line);
+      padding: .6rem 1.5rem;
+      transition: all .3s;
+      cursor: none;
     }
-    .nav-cta:hover {
-      background: var(--gold);
-      color: var(--bg);
+    .nav-cta:hover { background: var(--gold); color: var(--wood-deep); }
+    .nav-burger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: none; padding: 4px;
     }
-    .nav-mobile-toggle {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 4px;
+    .nav-burger span { display: block; width: 22px; height: 1px; background: var(--gold-pale); transition: .3s; }
+
+    /* ══════════════════════════════
+       MOBILE MENU
+    ══════════════════════════════ */
+    .mmenu {
+      display: none; position: fixed; inset: 0; z-index: 490;
+      background: rgba(8,5,2,.97);
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 2.5rem;
     }
-    .nav-mobile-toggle span {
-      display: block;
-      width: 24px;
-      height: 1px;
-      background: var(--gold-light);
-      transition: all 0.3s;
+    .mmenu.open { display: flex; }
+    .mmenu a {
+      font-family: var(--fd); font-size: clamp(2rem,8vw,3.5rem);
+      font-weight: 300; color: var(--cream); text-decoration: none;
+      letter-spacing: .04em; transition: color .3s; cursor: none;
+    }
+    .mmenu a:hover { color: var(--gold); }
+    .mmenu-close {
+      position: absolute; top: 1.75rem; right: 2.5rem;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.5rem; cursor: none; line-height: 1;
     }
 
-    /* ─── HERO ─── */
+    /* ══════════════════════════════
+       HERO
+    ══════════════════════════════ */
     .hero {
       position: relative;
-      height: 100svh;
-      min-height: 600px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 0 3rem 5rem;
+      height: 100svh; min-height: 640px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       overflow: hidden;
     }
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background-image: url('https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/92fdb414-5aa9-4845-8eec-1f4b7812c922/MG_2806-HDR-scaled.jpg?format=2500w');
-      background-size: cover;
-      background-position: center 40%;
-      will-change: transform;
+
+    /* Thai diamond pattern overlay */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 2;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M20 2 L38 20 L20 38 L2 20 Z' fill='none' stroke='rgba(200,148,63,0.04)' stroke-width='1'/%3E%3C/svg%3E");
+      pointer-events: none;
     }
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        160deg,
-        rgba(9, 6, 12, 0.25) 0%,
-        rgba(60, 30, 10, 0.1) 35%,
-        rgba(9, 6, 12, 0.72) 70%,
-        rgba(9, 6, 12, 0.97) 100%
-      );
-    }
-    /* Filmkorn — macht es weniger digital, mehr lebendig */
+    /* Film grain */
     .hero::after {
       content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.045;
-      pointer-events: none;
-      z-index: 3;
-    }
-    /* Warmer Lichtfleck im Hero — wie Kerzenlicht aus der Küche */
-    .hero-glow {
-      position: absolute;
-      bottom: 20%;
-      left: 15%;
-      width: 50vw;
-      height: 50vw;
-      max-width: 700px;
-      max-height: 700px;
-      background: radial-gradient(circle, rgba(196, 114, 42, 0.12) 0%, transparent 65%);
-      pointer-events: none;
-      z-index: 1;
-    }
-    .hero-year {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: var(--font-display);
-      font-size: clamp(12rem, 28vw, 26rem);
-      font-weight: 300;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(201, 168, 76, 0.07);
-      letter-spacing: -0.04em;
-      line-height: 1;
-      pointer-events: none;
-      white-space: nowrap;
-      user-select: none;
-    }
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 900px;
-    }
-    .hero-eyebrow {
-      font-size: 0.7rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .hero-eyebrow::before {
-      content: '';
-      display: block;
-      width: 40px;
-      height: 1px;
-      background: var(--gold);
-    }
-    .hero-title {
-      font-family: var(--font-display);
-      font-size: clamp(3.5rem, 10vw, 9rem);
-      font-weight: 300;
-      line-height: 0.92;
-      letter-spacing: -0.02em;
-      color: var(--cream);
-      margin-bottom: 2rem;
-    }
-    .hero-title em {
-      font-style: italic;
-      color: var(--gold-light);
-    }
-    .hero-sub {
-      font-size: 0.85rem;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      max-width: 400px;
-    }
-    .hero-scroll {
-      position: absolute;
-      bottom: 3rem;
-      right: 3rem;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .hero-scroll span {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      writing-mode: vertical-rl;
-    }
-    .hero-scroll-line {
-      width: 1px;
-      height: 60px;
-      background: linear-gradient(to bottom, var(--gold), transparent);
-      animation: scrollLine 2s ease-in-out infinite;
-    }
-    @keyframes scrollLine {
-      0%, 100% { transform: scaleY(1); opacity: 1; }
-      50% { transform: scaleY(0.3); opacity: 0.3; }
+      position: absolute; inset: 0; z-index: 3;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: .038; pointer-events: none;
     }
 
-    /* ─── PULL QUOTE ─── */
-    .pullquote {
-      padding: 7rem 3rem;
-      background: var(--bg2);
-      border-top: 1px solid var(--gold-border);
-      border-bottom: 1px solid var(--gold-border);
-      text-align: center;
-      position: relative;
+    .hero-left {
+      position: relative; z-index: 4;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 4rem 5.5rem 3rem;
+      background: linear-gradient(135deg, var(--wood-mid) 0%, var(--wood-dark) 100%);
+    }
+    .hero-left::after {
+      content: '';
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent 0%, var(--gold-line) 40%, var(--gold-line) 60%, transparent 100%);
+    }
+
+    .hero-eyebrow {
+      font-size: .65rem; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 2.5rem;
+      display: flex; align-items: center; gap: .8rem;
       overflow: hidden;
     }
-    .pullquote::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(196, 114, 42, 0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .pullquote-inner {
-      position: relative;
-      max-width: 860px;
-      margin: 0 auto;
-    }
-    .pullquote-mark {
-      display: block;
-      font-family: var(--font-display);
-      font-size: 9rem;
-      line-height: 0.6;
-      color: var(--amber);
-      opacity: 0.5;
-      margin-bottom: 1.5rem;
-      font-style: italic;
-    }
-    .pullquote-text {
-      font-family: var(--font-display);
-      font-size: clamp(1.8rem, 4vw, 3.2rem);
-      font-weight: 300;
-      font-style: italic;
-      color: var(--cream);
-      line-height: 1.3;
-      margin-bottom: 2rem;
-      letter-spacing: 0.01em;
-    }
-    .pullquote-attr {
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-muted);
+    .hero-eyebrow-line {
+      display: block; width: 40px; height: 1px; background: var(--gold); flex-shrink: 0;
     }
 
-    /* ─── BRIEF ─── */
-    .brief {
-      padding: 8rem 3rem;
-      background: var(--bg2);
-      border-top: 1px solid var(--gold-border);
-    }
-    .brief-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 7rem;
-      align-items: center;
-    }
-    .brief-img {
-      width: 100%;
-      aspect-ratio: 3/4;
-      object-fit: cover;
-      display: block;
-      filter: saturate(0.8);
-    }
-    .brief-heading {
-      font-family: var(--font-display);
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
+    .hero-title {
+      font-family: var(--fd);
+      font-size: clamp(4rem, 9vw, 8.5rem);
       font-weight: 300;
-      font-style: italic;
+      line-height: .9;
+      letter-spacing: -.02em;
       color: var(--cream);
       margin-bottom: 2.5rem;
-      line-height: 1.1;
-    }
-    .brief-text p {
-      font-size: 1.05rem;
-      line-height: 2;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-    }
-    .brief-text p:last-of-type { margin-bottom: 0; }
-    .brief-sign {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-style: italic;
-      color: var(--gold-light);
-      margin-top: 2.5rem !important;
-    }
-
-    @media (max-width: 768px) {
-      .brief-inner { grid-template-columns: 1fr; gap: 3rem; }
-      .brief-img { aspect-ratio: 16/9; }
-      .pullquote { padding: 5rem 1.5rem; }
-      .pullquote-mark { font-size: 6rem; }
-    }
-
-    /* ─── TICKER ─── */
-    .ticker {
-      border-top: 1px solid var(--gold-border);
-      border-bottom: 1px solid var(--gold-border);
-      padding: 1rem 0;
       overflow: hidden;
-      background: var(--bg2);
+    }
+    .hero-title-line {
+      display: block;
+      overflow: hidden;
+    }
+    .hero-title-line span {
+      display: block;
+      transform: translateY(110%);
+    }
+    .hero-title em { font-style: italic; color: var(--gold-light); }
+
+    .hero-sub {
+      font-size: .82rem; line-height: 1.9;
+      color: var(--muted);
+      max-width: 360px;
+      border-left: 1px solid var(--gold-line);
+      padding-left: 1.25rem;
+      opacity: 0; transform: translateX(-15px);
+    }
+
+    /* Large ghost year in left column */
+    .hero-ghost-year {
+      position: absolute; bottom: 4rem; right: -1rem;
+      font-family: var(--fd);
+      font-size: clamp(5rem, 12vw, 10rem);
+      font-weight: 300;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(200,148,63,.1);
+      letter-spacing: -.04em;
+      line-height: 1;
+      user-select: none; pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-right {
+      position: relative; overflow: hidden;
+    }
+    .hero-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.08);
+      will-change: transform;
+    }
+    .hero-right-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(30,16,8,.45) 0%, transparent 40%),
+                  linear-gradient(to bottom, rgba(8,5,2,.2) 0%, transparent 30%);
+    }
+    /* floating badge in image */
+    .hero-badge {
+      position: absolute; bottom: 3rem; left: 2rem; z-index: 10;
+      display: flex; flex-direction: column; gap: .25rem;
+      padding: 1.25rem 1.5rem;
+      background: rgba(8,5,2,.78);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--gold-line);
+      opacity: 0; transform: translateY(20px);
+    }
+    .hero-badge-num {
+      font-family: var(--fd); font-size: 2.2rem; font-weight: 300;
+      color: var(--gold-light); line-height: 1;
+    }
+    .hero-badge-label {
+      font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+    }
+
+    .hero-scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: .6rem;
+      opacity: 0;
+    }
+    .hero-scroll-hint span {
+      font-size: .58rem; letter-spacing: .25em; text-transform: uppercase; color: var(--muted);
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(.25); opacity: .25; }
+    }
+
+    /* ══════════════════════════════
+       STATS BAR
+    ══════════════════════════════ */
+    .stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      border-bottom: 1px solid var(--gold-line);
+      background: var(--wood-dark);
+    }
+    .stat-block {
+      padding: 3.5rem 3rem;
+      border-right: 1px solid var(--gold-line);
+      position: relative; overflow: hidden;
+    }
+    .stat-block:last-child { border-right: none; }
+    .stat-block::before {
+      content: '';
+      position: absolute; top: 0; left: 3rem; right: 3rem;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      transform: scaleX(0);
+      transition: transform .8s ease;
+    }
+    .stat-block.in-view::before { transform: scaleX(1); }
+    .stat-num {
+      font-family: var(--fd);
+      font-size: clamp(2.5rem,5vw,4.5rem);
+      font-weight: 300; color: var(--gold); line-height: 1;
+      margin-bottom: .6rem;
+    }
+    .stat-label {
+      font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ══════════════════════════════
+       TICKER
+    ══════════════════════════════ */
+    .ticker {
+      padding: .9rem 0; overflow: hidden;
+      background: var(--wood-mid);
+      border-bottom: 1px solid var(--gold-line);
     }
     .ticker-track {
-      display: flex;
-      gap: 0;
-      animation: tickerMove 25s linear infinite;
-      white-space: nowrap;
+      display: flex; white-space: nowrap;
+      animation: tick 30s linear infinite;
     }
     .ticker-item {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-style: italic;
-      color: var(--text-muted);
-      padding: 0 3rem;
-      flex-shrink: 0;
+      font-family: var(--fd); font-size: 1rem; font-style: italic;
+      color: var(--muted); padding: 0 2.5rem; flex-shrink: 0;
     }
-    .ticker-item .dot {
-      color: var(--gold);
-      margin-left: 3rem;
+    .ticker-dot { color: var(--gold); margin: 0 .5rem; font-style: normal; }
+    @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ══════════════════════════════
+       SECTION UTILITY
+    ══════════════════════════════ */
+    .section-tag {
+      font-size: .62rem; letter-spacing: .32em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: .8rem;
     }
-    @keyframes tickerMove {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
+    .section-tag::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
+
+    .divider {
+      text-align: center; padding: .5rem 0;
+      color: var(--gold-dim); font-size: .8rem; letter-spacing: .3em;
+      user-select: none;
     }
 
-    /* ─── STORY SECTION ─── */
+    /* clip-reveal utility */
+    .clip-reveal {
+      clip-path: inset(0 0 100% 0);
+      transition: clip-path .9s cubic-bezier(.16,1,.3,1);
+    }
+    .clip-reveal.revealed { clip-path: inset(0 0 0% 0); }
+
+    .fade-up {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
+    }
+    .fade-up.revealed { opacity: 1; transform: translateY(0); }
+
+    .fade-left {
+      opacity: 0; transform: translateX(-28px);
+      transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
+    }
+    .fade-left.revealed { opacity: 1; transform: translateX(0); }
+
+    .fade-right {
+      opacity: 0; transform: translateX(28px);
+      transition: opacity .9s ease, transform .9s cubic-bezier(.16,1,.3,1);
+    }
+    .fade-right.revealed { opacity: 1; transform: translateX(0); }
+
+    /* ══════════════════════════════
+       STORY
+    ══════════════════════════════ */
     .story {
-      padding: 10rem 3rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6rem;
-      align-items: center;
-      max-width: 1300px;
-      margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 90vh;
+      background: var(--wood-dark);
     }
-    .story-number {
-      font-family: var(--font-display);
-      font-size: clamp(6rem, 18vw, 16rem);
-      font-weight: 300;
-      line-height: 0.85;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(201, 168, 76, 0.4);
-      letter-spacing: -0.03em;
+    .story-img-wrap {
+      position: relative; overflow: hidden;
     }
-    .story-content {}
-    .section-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+    .story-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 1.2s ease;
     }
-    .section-label::before {
-      content: '';
-      display: block;
-      width: 30px;
-      height: 1px;
-      background: var(--gold);
+    .story-img-wrap:hover .story-img { transform: scale(1.04); }
+    .story-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, transparent 60%, rgba(19,11,5,.9) 100%);
+    }
+
+    .story-content {
+      padding: 8rem 4rem 8rem 5rem;
+      display: flex; flex-direction: column; justify-content: center;
+      background: var(--wood-dark);
+      border-left: 1px solid var(--gold-line);
     }
     .story-heading {
-      font-family: var(--font-display);
-      font-size: clamp(2.2rem, 4vw, 3.5rem);
-      font-weight: 400;
-      line-height: 1.15;
-      color: var(--cream);
+      font-family: var(--fd);
+      font-size: clamp(2.5rem, 4.5vw, 4rem);
+      font-weight: 300; line-height: 1.1; color: var(--cream);
       margin-bottom: 2rem;
     }
     .story-heading em { font-style: italic; color: var(--gold-light); }
+
     .story-text {
-      font-size: 0.95rem;
-      line-height: 1.9;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
+      font-size: .95rem; line-height: 2; color: var(--muted);
+      margin-bottom: 1.5rem; max-width: 480px;
     }
-    .story-detail {
-      display: flex;
-      gap: 3rem;
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--gold-border);
+
+    .story-nums {
+      display: flex; gap: 3rem; margin-top: 3rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--gold-line);
     }
-    .story-stat {}
-    .story-stat-num {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      font-weight: 300;
-      color: var(--gold);
-      line-height: 1;
+    .story-num-item {}
+    .story-num-val {
+      font-family: var(--fd); font-size: 2.8rem; font-weight: 300;
+      color: var(--gold); line-height: 1;
     }
-    .story-stat-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-top: 0.3rem;
+    .story-num-label {
+      font-size: .62rem; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--muted); margin-top: .3rem;
     }
-    .story-image {
+
+    /* ══════════════════════════════
+       PULL QUOTE
+    ══════════════════════════════ */
+    .pquote {
       position: relative;
-      aspect-ratio: 4/5;
+      padding: 9rem 3rem;
+      text-align: center;
+      background: var(--wood-mid);
+      border-top: 1px solid var(--gold-line);
+      border-bottom: 1px solid var(--gold-line);
       overflow: hidden;
     }
-    .story-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      display: block;
-    }
-    .story-image:hover img { transform: scale(1.04); }
-    .story-image::after {
+    .pquote::before {
       content: '';
-      position: absolute;
-      inset: 0;
-      border: 1px solid var(--gold-border);
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(184,96,18,.07) 0%, transparent 68%);
       pointer-events: none;
     }
+    .pquote-mark {
+      display: block;
+      font-family: var(--fd); font-size: clamp(6rem,14vw,11rem);
+      font-style: italic; font-weight: 300;
+      line-height: .7; color: var(--saffron); opacity: .35;
+      margin-bottom: 1rem;
+    }
+    .pquote-text {
+      font-family: var(--fd);
+      font-size: clamp(1.9rem,4vw,3.5rem);
+      font-weight: 300; font-style: italic;
+      color: var(--cream); line-height: 1.3;
+      max-width: 900px; margin: 0 auto 2.5rem;
+      letter-spacing: .01em;
+    }
+    .pquote-attr {
+      font-size: .65rem; letter-spacing: .28em; text-transform: uppercase; color: var(--muted);
+    }
 
-    /* ─── REVIEWS ─── */
-    .reviews {
-      padding: 8rem 3rem;
-      background: var(--bg2);
-      border-top: 1px solid var(--gold-border);
-      border-bottom: 1px solid var(--gold-border);
-    }
-    .reviews-header {
-      text-align: center;
-      margin-bottom: 5rem;
-    }
-    .reviews-heading {
-      font-family: var(--font-display);
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 300;
-      color: var(--cream);
-      margin-top: 1rem;
-    }
-    .reviews-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .review-card {
-      padding: 3rem;
-      background: var(--bg3);
-      position: relative;
-      transition: background 0.4s;
-    }
-    .review-card:hover { background: rgba(18, 14, 24, 0.9); }
-    .review-stars {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 1.5rem;
-    }
-    .review-stars svg {
-      width: 14px;
-      height: 14px;
-      fill: var(--gold);
-    }
-    .review-quote {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-style: italic;
-      font-weight: 300;
-      color: var(--cream);
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
-    .review-author {
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .review-source {
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      margin-top: 0.3rem;
-    }
-    .review-card::before {
-      content: '"';
-      font-family: var(--font-display);
-      font-size: 8rem;
-      color: rgba(196, 114, 42, 0.18);
-      position: absolute;
-      top: 1rem;
-      right: 2rem;
-      line-height: 1;
-      pointer-events: none;
-    }
-    .review-card:hover { background: rgba(196, 114, 42, 0.04); }
-
-    /* ─── DISHES ─── */
-    .dishes {
-      padding: 10rem 3rem;
-      max-width: 1400px;
-      margin: 0 auto;
+    /* ══════════════════════════════
+       DISHES — HORIZONTAL SCROLL
+    ══════════════════════════════ */
+    .dishes-section {
+      padding: 8rem 0 6rem;
+      background: var(--wood-dark);
+      border-top: 1px solid var(--gold-line);
+      overflow: hidden;
     }
     .dishes-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+      padding: 0 3rem;
+      display: flex; justify-content: space-between; align-items: flex-end;
       margin-bottom: 4rem;
     }
     .dishes-heading {
-      font-family: var(--font-display);
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      font-weight: 300;
-      line-height: 1.1;
-      color: var(--cream);
+      font-family: var(--fd);
+      font-size: clamp(2.2rem,4.5vw,4rem);
+      font-weight: 300; color: var(--cream); line-height: 1.05;
     }
     .dishes-heading em { font-style: italic; color: var(--gold-light); }
-    .dishes-link {
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      transition: gap 0.3s;
-      flex-shrink: 0;
+    .dishes-menu-link {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      display: flex; align-items: center; gap: .75rem;
+      transition: gap .3s; flex-shrink: 0;
+      cursor: none;
     }
-    .dishes-link:hover { gap: 1.25rem; }
-    .dishes-link svg { width: 18px; height: 18px; stroke: var(--gold); }
-    .dishes-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-    }
-    .dish-card {
-      position: relative;
-      aspect-ratio: 3/4;
-      overflow: hidden;
-      cursor: pointer;
-      background: var(--bg3);
-    }
-    .dish-card:first-child {
-      grid-column: span 2;
-      aspect-ratio: auto;
-    }
-    .dish-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      display: block;
-    }
-    .dish-card:hover .dish-img { transform: scale(1.06); }
-    .dish-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(7,5,10,0.9) 0%, transparent 60%);
-      transition: opacity 0.4s;
-    }
-    .dish-info {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 2rem 1.5rem;
-      transform: translateY(8px);
-      transition: transform 0.4s;
-    }
-    .dish-card:hover .dish-info { transform: translateY(0); }
-    .dish-name {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-weight: 400;
-      color: var(--cream);
-      margin-bottom: 0.3rem;
-    }
-    .dish-desc {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-    .dish-card:first-child .dish-name { font-size: 1.8rem; }
+    .dishes-menu-link:hover { gap: 1.2rem; }
+    .dishes-menu-link svg { width: 16px; height: 16px; stroke: var(--gold); flex-shrink: 0; }
 
-    /* ─── TIMELINE (SPECIAL SECTION 1) ─── */
+    .dishes-scroll {
+      display: flex; gap: 0;
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      scrollbar-width: none; cursor: grab;
+      padding-left: 3rem;
+    }
+    .dishes-scroll:active { cursor: grabbing; }
+    .dishes-scroll::-webkit-scrollbar { display: none; }
+
+    .dish-card {
+      flex: 0 0 360px;
+      height: 520px;
+      position: relative; overflow: hidden;
+      scroll-snap-align: start;
+      margin-right: 3px;
+      background: var(--wood-mid);
+    }
+    .dish-card:last-child { margin-right: 3rem; }
+    .dish-card.large { flex: 0 0 520px; }
+
+    .dish-card-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 1s cubic-bezier(.16,1,.3,1);
+    }
+    .dish-card:hover .dish-card-img { transform: scale(1.07); }
+
+    .dish-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(8,5,2,.92) 0%, rgba(8,5,2,.1) 55%, transparent 100%);
+    }
+    .dish-card-body {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2rem 1.75rem;
+      transform: translateY(6px);
+      transition: transform .4s ease;
+    }
+    .dish-card:hover .dish-card-body { transform: translateY(0); }
+    .dish-card-num {
+      font-family: var(--fd); font-size: .75rem;
+      color: var(--gold); opacity: .7; margin-bottom: .4rem;
+      letter-spacing: .12em;
+    }
+    .dish-card-name {
+      font-family: var(--fd); font-size: 1.45rem; font-weight: 400;
+      color: var(--cream); margin-bottom: .4rem; line-height: 1.2;
+    }
+    .dish-card-desc {
+      font-size: .75rem; line-height: 1.7; color: var(--muted);
+    }
+
+    .dishes-drag-hint {
+      padding: 2rem 3rem 0;
+      font-size: .62rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--dim); display: flex; align-items: center; gap: .75rem;
+    }
+    .dishes-drag-hint svg { width: 18px; height: 18px; stroke: var(--dim); }
+
+    /* ══════════════════════════════
+       REVIEWS
+    ══════════════════════════════ */
+    .reviews {
+      padding: 9rem 3rem;
+      background: var(--wood-mid);
+      border-top: 1px solid var(--gold-line);
+    }
+    .reviews-head { text-align: center; margin-bottom: 5rem; }
+    .reviews-heading {
+      font-family: var(--fd);
+      font-size: clamp(2.2rem,4.5vw,3.8rem);
+      font-weight: 300; color: var(--cream); margin-top: 1rem; line-height: 1.1;
+    }
+    .reviews-heading em { font-style: italic; color: var(--gold-light); }
+    .reviews-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 2px; max-width: 1300px; margin: 0 auto;
+    }
+    .review-card {
+      padding: 3rem 2.75rem;
+      background: var(--wood-dark);
+      position: relative; overflow: hidden;
+      transition: background .4s;
+    }
+    .review-card:hover { background: rgba(46,26,10,.9); }
+    .review-card::before {
+      content: '"';
+      font-family: var(--fd); font-size: 9rem; font-style: italic;
+      color: rgba(184,96,18,.15);
+      position: absolute; top: .5rem; right: 1.5rem;
+      line-height: 1; pointer-events: none;
+    }
+    .review-stars { display: flex; gap: 3px; margin-bottom: 1.5rem; }
+    .review-stars svg { width: 13px; height: 13px; fill: var(--gold); }
+    .review-quote {
+      font-family: var(--fd); font-size: 1.2rem; font-style: italic;
+      font-weight: 300; color: var(--cream); line-height: 1.65;
+      margin-bottom: 2rem;
+    }
+    .review-author {
+      font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+    }
+    .review-source { font-size: .6rem; color: var(--dim); margin-top: .3rem; letter-spacing: .1em; }
+
+    /* ══════════════════════════════
+       TIMELINE
+    ══════════════════════════════ */
     .timeline {
-      padding: 10rem 0;
-      background: var(--bg2);
-      overflow: hidden;
-      border-top: 1px solid var(--gold-border);
+      padding: 9rem 3rem;
+      background: var(--wood-dark);
+      border-top: 1px solid var(--gold-line);
     }
-    .timeline-header {
-      padding: 0 3rem;
-      margin-bottom: 6rem;
-      max-width: 700px;
-    }
+    .timeline-head { max-width: 640px; margin-bottom: 6rem; }
     .timeline-heading {
-      font-family: var(--font-display);
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      font-weight: 300;
-      color: var(--cream);
-      line-height: 1.1;
+      font-family: var(--fd);
+      font-size: clamp(2.2rem,4.5vw,4rem);
+      font-weight: 300; color: var(--cream); line-height: 1.1;
     }
     .timeline-heading em { font-style: italic; color: var(--gold-light); }
-    .timeline-track {
-      display: flex;
-      padding: 0 3rem;
-      gap: 0;
-      position: relative;
-    }
-    .timeline-track::before {
+    .timeline-items { position: relative; }
+    .timeline-items::before {
       content: '';
-      position: absolute;
-      top: 2.1rem;
-      left: 3rem;
-      right: 3rem;
-      height: 1px;
-      background: var(--gold-border);
+      position: absolute; top: 0; bottom: 0; left: 1.5rem;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold-line), transparent);
     }
-    .timeline-item {
-      flex: 1;
-      padding-top: 4.5rem;
-      position: relative;
-      padding-right: 3rem;
+    .tl-item {
+      display: grid; grid-template-columns: 5rem 1fr;
+      gap: 2.5rem; padding: 2.5rem 0;
+      border-bottom: 1px solid rgba(200,148,63,.07);
     }
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      top: 1.6rem;
-      left: 0;
-      width: 10px;
-      height: 10px;
+    .tl-item:last-child { border-bottom: none; }
+    .tl-year-wrap { display: flex; align-items: flex-start; padding-top: .15rem; }
+    .tl-dot {
+      width: 10px; height: 10px; flex-shrink: 0;
       border: 1px solid var(--gold);
-      background: var(--bg2);
+      background: var(--wood-dark);
       transform: rotate(45deg);
-      transition: background 0.3s;
+      margin-top: .6rem; margin-left: -5px;
+      margin-right: auto;
+      transition: background .35s;
     }
-    .timeline-item:hover::before { background: var(--gold); }
-    .timeline-year {
-      font-family: var(--font-display);
-      font-size: 2.2rem;
-      font-weight: 300;
-      color: var(--gold);
-      line-height: 1;
-      margin-bottom: 0.75rem;
+    .tl-item:hover .tl-dot { background: var(--gold); }
+    .tl-body {}
+    .tl-year {
+      font-family: var(--fd); font-size: 1.6rem; font-weight: 300;
+      color: var(--gold); line-height: 1; margin-bottom: .5rem;
     }
-    .timeline-title {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--cream);
-      margin-bottom: 0.5rem;
+    .tl-title {
+      font-size: .88rem; font-weight: 500; color: var(--cream);
+      margin-bottom: .5rem; letter-spacing: .02em;
     }
-    .timeline-text {
-      font-size: 0.8rem;
-      line-height: 1.7;
-      color: var(--text-muted);
-    }
+    .tl-text { font-size: .82rem; line-height: 1.8; color: var(--muted); max-width: 600px; }
 
-    /* ─── GALLERY ─── */
+    /* ══════════════════════════════
+       GALLERY
+    ══════════════════════════════ */
     .gallery {
-      padding: 10rem 3rem;
-      max-width: 1400px;
-      margin: 0 auto;
+      padding: 9rem 3rem;
+      background: var(--wood-mid);
+      border-top: 1px solid var(--gold-line);
     }
-    .gallery-header {
-      margin-bottom: 4rem;
-    }
+    .gallery-head { margin-bottom: 4rem; }
     .gallery-heading {
-      font-family: var(--font-display);
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      font-weight: 300;
-      color: var(--cream);
+      font-family: var(--fd);
+      font-size: clamp(2.2rem,4.5vw,4rem);
+      font-weight: 300; color: var(--cream); line-height: 1.1;
     }
     .gallery-heading em { font-style: italic; color: var(--gold-light); }
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      grid-template-rows: auto;
-      gap: 4px;
+      grid-template-columns: repeat(12,1fr);
+      gap: 3px;
     }
-    .gallery-item {
-      overflow: hidden;
-      position: relative;
+    .g-item {
+      overflow: hidden; position: relative;
+      background: var(--wood-dark);
     }
-    .gallery-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    .g-item img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 1.1s cubic-bezier(.16,1,.3,1), filter .8s;
+      filter: saturate(.75) brightness(.88);
     }
-    .gallery-item:hover img { transform: scale(1.05); }
-    .gallery-item:nth-child(1) { grid-column: 1/8; grid-row: 1/3; aspect-ratio: auto; min-height: 500px; }
-    .gallery-item:nth-child(2) { grid-column: 8/13; grid-row: 1/2; aspect-ratio: 16/9; }
-    .gallery-item:nth-child(3) { grid-column: 8/13; grid-row: 2/3; aspect-ratio: 16/9; }
-    .gallery-item:nth-child(4) { grid-column: 1/5; grid-row: 3/4; aspect-ratio: 4/3; }
-    .gallery-item:nth-child(5) { grid-column: 5/9; grid-row: 3/4; aspect-ratio: 4/3; }
-    .gallery-item:nth-child(6) { grid-column: 9/13; grid-row: 3/4; aspect-ratio: 4/3; }
+    .g-item:hover img { transform: scale(1.06); filter: saturate(1) brightness(.95); }
+    .g-item:nth-child(1) { grid-column: 1/8; min-height: 480px; }
+    .g-item:nth-child(2) { grid-column: 8/13; }
+    .g-item:nth-child(3) { grid-column: 8/13; }
+    .g-item:nth-child(4) { grid-column: 1/5; min-height: 300px; }
+    .g-item:nth-child(5) { grid-column: 5/9; }
+    .g-item:nth-child(6) { grid-column: 9/13; }
 
-    /* ─── WINE SECTION (SPECIAL SECTION 2) ─── */
-    .wine {
-      position: relative;
-      min-height: 90vh;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      border-top: 1px solid var(--gold-border);
+    /* ══════════════════════════════
+       FAMILY LETTER
+    ══════════════════════════════ */
+    .letter {
+      background: var(--wood-dark);
+      border-top: 1px solid var(--gold-line);
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 80vh;
     }
-    .wine-bg {
-      position: absolute;
-      inset: 0;
+    .letter-img-wrap {
+      position: relative; overflow: hidden;
+    }
+    .letter-img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      filter: saturate(.65) brightness(.7);
+      transition: filter 1.2s, transform 1.2s;
+    }
+    .letter-img-wrap:hover .letter-img { filter: saturate(.85) brightness(.78); transform: scale(1.03); }
+    .letter-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, transparent 50%, var(--wood-dark) 100%);
+    }
+    .letter-content {
+      padding: 7rem 5rem 7rem 4rem;
+      display: flex; flex-direction: column; justify-content: center;
+      background: var(--wood-dark);
+    }
+    .letter-heading {
+      font-family: var(--fd);
+      font-size: clamp(2.8rem,5vw,4.5rem);
+      font-weight: 300; font-style: italic;
+      color: var(--cream); margin-bottom: 3rem; line-height: 1.1;
+    }
+    .letter-p {
+      font-size: 1rem; line-height: 2.1;
+      color: var(--muted); margin-bottom: 1.5rem;
+      max-width: 460px;
+    }
+    .letter-sig {
+      font-family: var(--fd);
+      font-size: 1.8rem; font-style: italic;
+      color: var(--gold-light);
+      margin-top: 2rem;
+    }
+
+    /* ══════════════════════════════
+       WINE
+    ══════════════════════════════ */
+    .wine {
+      position: relative; overflow: hidden;
+      border-top: 1px solid var(--gold-line);
+      min-height: 85vh; display: flex; align-items: center;
+    }
+    .wine-bg-img {
+      position: absolute; inset: 0;
       background-image: url('https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521590253946-8QZ8B5431830R96A9XLQ/DSC_9018.JPG?format=2500w');
-      background-size: cover;
-      background-position: center;
-      filter: saturate(0.3) brightness(0.25);
+      background-size: cover; background-position: center;
+      filter: saturate(.25) brightness(.2);
+      will-change: transform;
     }
     .wine-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        135deg,
-        rgba(7, 5, 10, 0.97) 0%,
-        rgba(7, 5, 10, 0.85) 50%,
-        rgba(139, 26, 42, 0.15) 100%
-      );
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(8,5,2,.97) 0%, rgba(8,5,2,.88) 50%, rgba(122,21,32,.12) 100%);
     }
     .wine-content {
-      position: relative;
-      z-index: 2;
+      position: relative; z-index: 2;
       padding: 8rem 3rem;
-      max-width: 1300px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8rem;
-      align-items: center;
-      width: 100%;
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8rem;
+      align-items: center; width: 100%;
     }
-    .wine-left {}
     .wine-eyebrow {
-      font-size: 0.65rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--red);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+      font-size: .62rem; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--saffron); margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: .8rem;
     }
-    .wine-eyebrow::before {
-      content: '';
-      display: block;
-      width: 30px;
-      height: 1px;
-      background: var(--red);
-    }
+    .wine-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--saffron); }
     .wine-heading {
-      font-family: var(--font-display);
-      font-size: clamp(2.8rem, 5vw, 5rem);
-      font-weight: 300;
-      line-height: 1.05;
-      color: var(--cream);
-      margin-bottom: 2rem;
+      font-family: var(--fd);
+      font-size: clamp(2.8rem,5vw,5rem);
+      font-weight: 300; color: var(--cream); line-height: 1.05; margin-bottom: 2rem;
     }
     .wine-heading em { font-style: italic; color: var(--gold-light); }
-    .wine-text {
-      font-size: 0.95rem;
-      line-height: 1.9;
-      color: var(--text-muted);
-      margin-bottom: 2.5rem;
+    .wine-text { font-size: .92rem; line-height: 2; color: var(--muted); margin-bottom: 2.5rem; }
+    .wine-link {
+      display: inline-flex; align-items: center; gap: .75rem;
+      font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      border-bottom: 1px solid var(--gold-line); padding-bottom: .5rem;
+      transition: all .3s; cursor: none;
     }
-    .wine-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-decoration: none;
-      border-bottom: 1px solid var(--gold-border);
-      padding-bottom: 0.5rem;
-      transition: all 0.3s;
+    .wine-link:hover { color: var(--gold-light); border-color: var(--gold); gap: 1.2rem; }
+    .wine-link svg { width: 15px; height: 15px; stroke: currentColor; }
+    .wine-features { display: flex; flex-direction: column; gap: 2px; }
+    .wine-feat {
+      padding: 1.75rem 2.25rem;
+      background: rgba(19,11,5,.75);
+      border-left: 2px solid rgba(200,148,63,.12);
+      transition: border-color .35s, background .35s;
     }
-    .wine-cta:hover {
-      color: var(--gold-light);
-      border-color: var(--gold);
-      gap: 1.25rem;
+    .wine-feat:hover { border-color: var(--gold); background: rgba(30,16,8,.9); }
+    .wine-feat-name {
+      font-family: var(--fd); font-size: 1.1rem; color: var(--cream); margin-bottom: .35rem;
     }
-    .wine-cta svg { width: 16px; height: 16px; stroke: currentColor; }
-    .wine-right {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-    .wine-feature {
-      padding: 2rem 2.5rem;
-      background: rgba(13, 10, 18, 0.8);
-      border-left: 1px solid var(--gold-border);
-      transition: border-color 0.3s, background 0.3s;
-    }
-    .wine-feature:hover {
-      border-color: var(--gold);
-      background: rgba(18, 14, 24, 0.9);
-    }
-    .wine-feature-name {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 400;
-      color: var(--cream);
-      margin-bottom: 0.4rem;
-    }
-    .wine-feature-desc {
-      font-size: 0.78rem;
-      line-height: 1.7;
-      color: var(--text-muted);
-    }
+    .wine-feat-desc { font-size: .76rem; line-height: 1.7; color: var(--muted); }
     .wine-drc {
-      padding: 2rem 2.5rem;
-      background: rgba(201, 168, 76, 0.06);
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      margin-top: 1px;
+      padding: 1.75rem 2.25rem; margin-top: 2px;
+      background: rgba(200,148,63,.06);
+      border: 1px solid rgba(200,148,63,.22);
     }
-    .wine-drc-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.5rem;
-    }
-    .wine-drc-name {
-      font-family: var(--font-display);
-      font-size: 1.4rem;
-      font-style: italic;
-      color: var(--gold-light);
-    }
+    .wine-drc-label { font-size: .58rem; letter-spacing: .25em; text-transform: uppercase; color: var(--gold); margin-bottom: .4rem; }
+    .wine-drc-name { font-family: var(--fd); font-size: 1.35rem; font-style: italic; color: var(--gold-light); }
 
-    /* ─── RESERVATION ─── */
+    /* ══════════════════════════════
+       RESERVATION
+    ══════════════════════════════ */
     .reservation {
       padding: 10rem 3rem;
-      max-width: 900px;
-      margin: 0 auto;
+      background: var(--wood-mid);
+      border-top: 1px solid var(--gold-line);
       text-align: center;
-      border-top: 1px solid var(--gold-border);
+      position: relative; overflow: hidden;
     }
-    .reservation-heading {
-      font-family: var(--font-display);
-      font-size: clamp(3rem, 8vw, 7rem);
-      font-weight: 300;
-      line-height: 0.95;
-      color: var(--cream);
-      margin-bottom: 2rem;
+    .reservation::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(200,148,63,.05) 0%, transparent 65%);
+      pointer-events: none;
     }
-    .reservation-heading em { font-style: italic; color: var(--gold-light); }
-    .reservation-text {
-      font-size: 0.9rem;
-      line-height: 1.8;
-      color: var(--text-muted);
-      max-width: 500px;
-      margin: 0 auto 4rem;
+    .res-heading {
+      font-family: var(--fd);
+      font-size: clamp(3rem,8vw,7.5rem);
+      font-weight: 300; line-height: .92; color: var(--cream);
+      margin-bottom: 2.5rem;
     }
-    .reservation-actions {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
+    .res-heading em { font-style: italic; color: var(--gold-light); }
+    .res-sub {
+      font-size: .9rem; line-height: 1.9; color: var(--muted);
+      max-width: 480px; margin: 0 auto 4rem;
     }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
+    .res-btns { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 6rem; }
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: .75rem;
       padding: 1.1rem 2.5rem;
-      background: var(--gold);
-      color: var(--bg);
-      font-family: var(--font-body);
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      cursor: pointer;
+      background: var(--gold); color: var(--wood-deep);
+      font-family: var(--fb); font-size: .68rem; font-weight: 500;
+      letter-spacing: .2em; text-transform: uppercase;
+      text-decoration: none; transition: all .35s; cursor: none;
     }
-    .btn-primary:hover {
-      background: var(--gold-light);
-      transform: translateY(-2px);
-    }
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: .75rem;
       padding: 1.1rem 2.5rem;
-      border: 1px solid var(--gold-border);
-      color: var(--gold);
-      font-family: var(--font-body);
-      font-size: 0.7rem;
-      font-weight: 400;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: all 0.35s;
+      border: 1px solid var(--gold-line); color: var(--gold);
+      font-family: var(--fb); font-size: .68rem; font-weight: 300;
+      letter-spacing: .2em; text-transform: uppercase;
+      text-decoration: none; transition: all .35s; cursor: none;
     }
-    .btn-secondary:hover {
-      background: var(--gold-dim);
-      border-color: var(--gold);
-      transform: translateY(-2px);
-    }
-    .btn-primary svg, .btn-secondary svg {
-      width: 16px;
-      height: 16px;
-      stroke: currentColor;
-    }
-    .reservation-info {
-      margin-top: 5rem;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
+    .btn-outline:hover { background: var(--gold-dim); border-color: var(--gold); transform: translateY(-2px); }
+    .btn-gold svg, .btn-outline svg { width: 15px; height: 15px; stroke: currentColor; }
+
+    .res-info {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 2px; max-width: 900px; margin: 0 auto;
       text-align: left;
     }
-    .res-info-block {
-      padding: 2rem;
-      background: var(--bg2);
+    .res-info-block { padding: 2.25rem 2rem; background: var(--wood-dark); }
+    .res-info-label { font-size: .58rem; letter-spacing: .25em; text-transform: uppercase; color: var(--gold); margin-bottom: .75rem; }
+    .res-info-val {
+      font-family: var(--fd); font-size: 1rem; color: var(--cream); line-height: 1.7;
     }
-    .res-info-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.75rem;
-    }
-    .res-info-value {
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      color: var(--cream);
-      line-height: 1.6;
-    }
-    .res-info-value a {
-      color: var(--cream);
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    .res-info-value a:hover { color: var(--gold); }
+    .res-info-val a { color: var(--cream); text-decoration: none; transition: color .3s; cursor: none; }
+    .res-info-val a:hover { color: var(--gold); }
 
-    /* ─── FOOTER ─── */
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
     footer {
-      border-top: 1px solid var(--gold-border);
+      border-top: 1px solid var(--gold-line);
+      background: var(--wood-dark);
       padding: 4rem 3rem;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 3rem;
-      align-items: center;
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 2rem; align-items: center;
     }
-    .footer-left {
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      line-height: 1.8;
-    }
-    .footer-center {
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
+    .foot-left { font-size: .68rem; color: var(--dim); line-height: 1.9; }
+    .foot-center {
+      font-family: var(--fd); font-size: 1rem;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
       text-align: center;
     }
-    .footer-right {
-      display: flex;
-      justify-content: flex-end;
-      gap: 2rem;
+    .foot-right { display: flex; justify-content: flex-end; gap: 2rem; }
+    .foot-link {
+      font-size: .62rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      transition: color .3s; cursor: none;
     }
-    .footer-social {
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    .footer-social:hover { color: var(--gold); }
-    .footer-bottom {
-      border-top: 1px solid var(--gold-border);
+    .foot-link:hover { color: var(--gold); }
+    .foot-bottom {
+      border-top: 1px solid var(--gold-line);
       padding: 1.5rem 3rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--wood-dark);
     }
-    .footer-copy {
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
+    .foot-copy { font-size: .58rem; letter-spacing: .1em; color: var(--dim); }
+    .foot-wa {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .62rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color .3s; cursor: none;
     }
-    .footer-whatsapp {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    .footer-whatsapp:hover { color: #25D366; }
-    .footer-whatsapp svg { width: 14px; height: 14px; fill: currentColor; }
+    .foot-wa:hover { color: #25D366; }
+    .foot-wa svg { width: 14px; height: 14px; fill: currentColor; }
 
-    /* ─── MOBILE MENU ─── */
-    .mobile-menu {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 99;
-      background: rgba(7, 5, 10, 0.98);
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 2.5rem;
-      padding: 2rem;
-    }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a {
-      font-family: var(--font-display);
-      font-size: 2.5rem;
-      font-weight: 300;
-      color: var(--cream);
-      text-decoration: none;
-      letter-spacing: 0.05em;
-      transition: color 0.3s;
-    }
-    .mobile-menu a:hover { color: var(--gold); }
-    .mobile-menu-close {
-      position: absolute;
-      top: 1.75rem;
-      right: 2rem;
-      font-size: 1.5rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      background: none;
-      border: none;
-      line-height: 1;
-    }
-
-    /* ─── RESPONSIVE ─── */
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
     @media (max-width: 1024px) {
-      .story { grid-template-columns: 1fr; gap: 4rem; }
-      .story-number { font-size: clamp(5rem, 22vw, 10rem); }
-      .dishes-grid { grid-template-columns: repeat(2, 1fr); }
-      .dishes-grid .dish-card:first-child { grid-column: span 2; }
-      .reviews-grid { grid-template-columns: 1fr; gap: 2px; }
-      .timeline-track { overflow-x: auto; gap: 0; padding-bottom: 2rem; }
-      .timeline-item { min-width: 220px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left {
+        justify-content: flex-end;
+        background-image: url('https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/92fdb414-5aa9-4845-8eec-1f4b7812c922/MG_2806-HDR-scaled.jpg?format=2500w');
+        background-size: cover; background-position: center;
+      }
+      .hero-left::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(to bottom, rgba(8,5,2,.3) 0%, rgba(8,5,2,.85) 70%, rgba(8,5,2,.97) 100%);
+      }
+      .hero-left > * { position: relative; z-index: 1; }
+      .hero-left::after { display: none; }
+      .story { grid-template-columns: 1fr; }
+      .story-img-wrap { height: 55vw; }
+      .story-content { padding: 5rem 2rem; }
+      .reviews-grid { grid-template-columns: 1fr; }
       .wine-content { grid-template-columns: 1fr; gap: 4rem; }
-      .gallery-item:nth-child(1) { grid-column: 1/13; min-height: 350px; }
-      .gallery-item:nth-child(2) { grid-column: 1/7; grid-row: 2/3; }
-      .gallery-item:nth-child(3) { grid-column: 7/13; grid-row: 2/3; }
-      .gallery-item:nth-child(4) { grid-column: 1/5; grid-row: 3/4; }
-      .gallery-item:nth-child(5) { grid-column: 5/9; grid-row: 3/4; }
-      .gallery-item:nth-child(6) { grid-column: 9/13; grid-row: 3/4; }
-      .reservation-info { grid-template-columns: 1fr; }
+      .letter { grid-template-columns: 1fr; }
+      .letter-img-wrap { height: 55vw; }
+      .letter-content { padding: 4rem 2rem; }
+      .g-item:nth-child(1) { grid-column: 1/13; }
+      .g-item:nth-child(2) { grid-column: 1/7; }
+      .g-item:nth-child(3) { grid-column: 7/13; }
+      .g-item:nth-child(4) { grid-column: 1/5; }
+      .g-item:nth-child(5) { grid-column: 5/9; }
+      .g-item:nth-child(6) { grid-column: 9/13; }
       footer { grid-template-columns: 1fr; text-align: center; }
-      .footer-right { justify-content: center; }
+      .foot-right { justify-content: center; }
+      .res-info { grid-template-columns: 1fr; }
     }
-
     @media (max-width: 768px) {
       nav { padding: 1.25rem 1.5rem; }
-      nav.scrolled { padding: 0.9rem 1.5rem; }
+      nav.scrolled { padding: .9rem 1.5rem; }
       .nav-links, .nav-cta { display: none; }
-      .nav-mobile-toggle { display: flex; }
-      .hero { padding: 0 1.5rem 4rem; }
-      .hero-scroll { display: none; }
-      .story { padding: 6rem 1.5rem; }
-      .story-detail { flex-direction: column; gap: 1.5rem; }
-      .reviews { padding: 6rem 1.5rem; }
-      .dishes { padding: 6rem 1.5rem; }
-      .dishes-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
-      .dishes-grid { grid-template-columns: 1fr; }
-      .dishes-grid .dish-card:first-child { grid-column: span 1; }
-      .timeline { padding: 6rem 0; }
-      .timeline-header { padding: 0 1.5rem; }
-      .timeline-track { padding: 0 1.5rem; padding-bottom: 2rem; }
-      .gallery { padding: 6rem 1.5rem; }
-      .gallery-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
-      .gallery-item:nth-child(1) { grid-column: 1/3; min-height: 280px; }
-      .gallery-item:nth-child(2) { grid-column: 1/2; grid-row: auto; }
-      .gallery-item:nth-child(3) { grid-column: 2/3; grid-row: auto; }
-      .gallery-item:nth-child(4) { grid-column: 1/2; grid-row: auto; }
-      .gallery-item:nth-child(5) { grid-column: 2/3; grid-row: auto; }
-      .gallery-item:nth-child(6) { grid-column: 1/3; grid-row: auto; }
-      .wine-content { padding: 6rem 1.5rem; }
+      .nav-burger { display: flex; }
+      .hero-left { padding: 0 1.5rem 4rem; }
+      .stats { grid-template-columns: 1fr; }
+      .stat-block { border-right: none; border-bottom: 1px solid var(--gold-line); }
+      .stat-block:last-child { border-bottom: none; }
+      .dishes-section { padding: 5rem 0 4rem; }
+      .dishes-header { padding: 0 1.5rem; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+      .dishes-scroll { padding-left: 1.5rem; }
+      .dish-card { flex: 0 0 300px; height: 420px; }
+      .dish-card.large { flex: 0 0 340px; }
+      .dish-card:last-child { margin-right: 1.5rem; }
+      .dishes-drag-hint { padding: 1.5rem 1.5rem 0; }
+      .reviews { padding: 5rem 1.5rem; }
+      .timeline { padding: 5rem 1.5rem; }
+      .gallery { padding: 5rem 1.5rem; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; gap: 3px; }
+      .g-item:nth-child(1) { grid-column: 1/3; min-height: 250px; }
+      .g-item:nth-child(2) { grid-column: 1/2; }
+      .g-item:nth-child(3) { grid-column: 2/3; }
+      .g-item:nth-child(4) { grid-column: 1/2; }
+      .g-item:nth-child(5) { grid-column: 2/3; }
+      .g-item:nth-child(6) { grid-column: 1/3; }
+      .wine-content { padding: 5rem 1.5rem; }
       .reservation { padding: 6rem 1.5rem; }
-      .reservation-actions { flex-direction: column; align-items: center; }
+      .res-btns { flex-direction: column; align-items: center; }
+      .pquote { padding: 5rem 1.5rem; }
       footer { padding: 3rem 1.5rem; }
-      .footer-bottom { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
-    }
-
-    /* ─── REVEAL ANIMATIONS ─── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    .reveal-left {
-      opacity: 0;
-      transform: translateX(-30px);
-    }
-    .reveal-right {
-      opacity: 0;
-      transform: translateX(30px);
+      .foot-bottom { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .reveal, .reveal-left, .reveal-right {
-        opacity: 1;
-        transform: none;
-      }
+      .clip-reveal { clip-path: none !important; }
+      .fade-up, .fade-left, .fade-right { opacity: 1 !important; transform: none !important; }
       .ticker-track { animation: none; }
-      .hero-scroll-line { animation: none; }
+      .scroll-line { animation: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ─── MOBILE MENU ─── -->
-  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Navigation">
-    <button class="mobile-menu-close" id="mobileClose" aria-label="Menü schließen">✕</button>
-    <a href="#geschichte" onclick="closeMobile()">Geschichte</a>
-    <a href="#speisekarte" onclick="closeMobile()">Speisekarte</a>
-    <a href="#atmosphaere" onclick="closeMobile()">Atmosphäre</a>
-    <a href="#reservierung" onclick="closeMobile()">Reservieren</a>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <!-- ── MOBILE MENU ── -->
+  <div class="mmenu" id="mmenu" role="dialog" aria-label="Navigation">
+    <button class="mmenu-close" id="mmclose" aria-label="Menü schließen">✕</button>
+    <a href="#geschichte" onclick="closeMM()">Geschichte</a>
+    <a href="#speisekarte" onclick="closeMM()">Speisekarte</a>
+    <a href="#atmosphaere" onclick="closeMM()">Atmosphäre</a>
+    <a href="#reservierung" onclick="closeMM()">Reservieren</a>
   </div>
 
-  <!-- ─── NAV ─── -->
-  <nav id="mainNav" role="navigation" aria-label="Hauptnavigation">
-    <a href="/" class="nav-logo" aria-label="Bangkok Restaurant">Bangkok 1974</a>
+  <!-- ── NAV ── -->
+  <nav id="nav" aria-label="Hauptnavigation">
+    <a href="/" class="nav-logo">Bangkok 1974</a>
     <ul class="nav-links">
       <li><a href="#geschichte">Geschichte</a></li>
       <li><a href="#speisekarte">Speisekarte</a></li>
@@ -1217,99 +1034,229 @@
       <li><a href="#wein">Wein</a></li>
     </ul>
     <a href="#reservierung" class="nav-cta">Reservieren</a>
-    <div class="nav-mobile-toggle" id="mobileToggle" role="button" tabindex="0" aria-label="Menü öffnen">
+    <div class="nav-burger" id="burger" role="button" tabindex="0" aria-label="Menü">
       <span></span><span></span><span></span>
     </div>
   </nav>
 
-  <!-- ─── HERO ─── -->
-  <section class="hero" aria-label="Hero">
-    <div class="hero-bg" id="heroBg" role="img" aria-label="Bangkok Restaurant Frankfurt Interieur"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-glow" aria-hidden="true"></div>
-    <div class="hero-year" aria-hidden="true">1974</div>
-    <div class="hero-content">
-      <p class="hero-eyebrow">Frankfurt · Seit 1974</p>
+  <!-- ── HERO ── -->
+  <section class="hero" aria-label="Willkommen">
+    <div class="hero-left">
+      <div class="hero-ghost-year" aria-hidden="true">1974</div>
+
+      <p class="hero-eyebrow">
+        <span class="hero-eyebrow-line"></span>
+        <span>Frankfurt · Seit 1974</span>
+      </p>
+
       <h1 class="hero-title">
-        Manche Orte<br>
-        bleiben für<br>
-        <em>immer.</em>
+        <span class="hero-title-line"><span>Manche</span></span>
+        <span class="hero-title-line"><span>Orte</span></span>
+        <span class="hero-title-line"><span><em>bleiben.</em></span></span>
       </h1>
-      <p class="hero-sub">Wo man zum ersten Mal isst — und nie aufhört, zurückzukehren.</p>
+
+      <p class="hero-sub">
+        Wo man zum ersten Mal isst — und nie aufhört, zurückzukehren.<br>
+        Das erste Thai Restaurant Frankfurts.
+      </p>
     </div>
-    <div class="hero-scroll" aria-hidden="true">
+
+    <div class="hero-right">
+      <img
+        src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/92fdb414-5aa9-4845-8eec-1f4b7812c922/MG_2806-HDR-scaled.jpg?format=2500w"
+        alt="Bangkok Restaurant Frankfurt — Atmosphäre"
+        class="hero-img"
+        id="heroImg"
+        loading="eager"
+      >
+      <div class="hero-right-overlay"></div>
+      <div class="hero-badge" id="heroBadge">
+        <span class="hero-badge-num" data-count="50">0</span>
+        <span class="hero-badge-label">Jahre Tradition</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint" id="scrollHint" aria-hidden="true">
       <span>Entdecken</span>
-      <div class="hero-scroll-line"></div>
+      <div class="scroll-line"></div>
     </div>
   </section>
 
-  <!-- ─── TICKER ─── -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span class="ticker-item">Authentisch seit 1974<span class="dot">·</span></span>
-      <span class="ticker-item">Das erste Thai Restaurant Frankfurts<span class="dot">·</span></span>
-      <span class="ticker-item">Familienbetrieb in zweiter Generation<span class="dot">·</span></span>
-      <span class="ticker-item">Sandweg 17, Frankfurt Nordend<span class="dot">·</span></span>
-      <span class="ticker-item">Frische Zutaten · Traditionelle Rezepte<span class="dot">·</span></span>
-      <span class="ticker-item">Authentisch seit 1974<span class="dot">·</span></span>
-      <span class="ticker-item">Das erste Thai Restaurant Frankfurts<span class="dot">·</span></span>
-      <span class="ticker-item">Familienbetrieb in zweiter Generation<span class="dot">·</span></span>
-      <span class="ticker-item">Sandweg 17, Frankfurt Nordend<span class="dot">·</span></span>
-      <span class="ticker-item">Frische Zutaten · Traditionelle Rezepte<span class="dot">·</span></span>
+  <!-- ── STATS ── -->
+  <div class="stats" aria-label="Kennzahlen">
+    <div class="stat-block fade-up">
+      <div class="stat-num" data-count-to="1974" data-count-from="1960">1974</div>
+      <div class="stat-label">Gegründet<br>in Frankfurt</div>
+    </div>
+    <div class="stat-block fade-up" style="transition-delay:.12s">
+      <div class="stat-num">Das Erste</div>
+      <div class="stat-label">Thai Restaurant<br>der Stadt</div>
+    </div>
+    <div class="stat-block fade-up" style="transition-delay:.24s">
+      <div class="stat-num">2.</div>
+      <div class="stat-label">Generation<br>Familienbetrieb</div>
     </div>
   </div>
 
-  <!-- ─── PULL QUOTE ─── -->
-  <section class="pullquote" aria-label="Zitat">
-    <div class="pullquote-inner reveal">
-      <span class="pullquote-mark" aria-hidden="true">„</span>
-      <p class="pullquote-text">Es gibt Abende, die man nicht vergisst.<br>Seit über 50 Jahren sind wir der Grund dafür.</p>
-      <span class="pullquote-attr">— Bangkok Restaurant, Frankfurt</span>
+  <!-- ── TICKER ── -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack">
+      <span class="ticker-item">Authentisch seit 1974<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Das erste Thai Restaurant Frankfurts<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Familienbetrieb in zweiter Generation<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Sandweg 17 · Frankfurt Nordend<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Frische Zutaten · Traditionelle Rezepte<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Mango Sticky Rice · Die Einzigen in Frankfurt<span class="ticker-dot">◆</span></span>
     </div>
-  </section>
+  </div>
 
-  <!-- ─── STORY ─── -->
-  <section class="story" id="geschichte">
-    <div class="story-left reveal-left">
-      <div class="story-number" aria-hidden="true">50+</div>
-      <div class="story-detail">
-        <div class="story-stat">
-          <div class="story-stat-num">1974</div>
-          <div class="story-stat-label">Gegründet</div>
-        </div>
-        <div class="story-stat">
-          <div class="story-stat-num">2.</div>
-          <div class="story-stat-label">Generation</div>
-        </div>
-        <div class="story-stat">
-          <div class="story-stat-num">∞</div>
-          <div class="story-stat-label">Stammgäste</div>
-        </div>
-      </div>
+  <!-- ── STORY ── -->
+  <section class="story" id="geschichte" aria-label="Unsere Geschichte">
+    <div class="story-img-wrap clip-reveal">
+      <img
+        src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/bf3e8015-68a5-4d8e-b909-4ebe954c1b9c/3DC49029-E389-4BB6-9530-F8E23AF3F4F0.JPG?format=2500w"
+        alt="Bangkok Restaurant Frankfurt — Interieur"
+        class="story-img"
+        loading="lazy"
+      >
+      <div class="story-img-overlay"></div>
     </div>
-    <div class="story-content reveal-right">
-      <p class="section-label">Unsere Geschichte</p>
-      <h2 class="story-heading">
+    <div class="story-content">
+      <p class="section-tag fade-up">Unsere Geschichte</p>
+      <h2 class="story-heading fade-up" style="transition-delay:.1s">
         Eine Küche,<br>
         <em>die Frankfurt<br>veränderte</em>
       </h2>
-      <p class="story-text">
-        1974 brachte ein Familienvater Thai-Küche nach Frankfurt — in einer Zeit, als das Land noch unbekannt war und die Gewürze fremd. Heute ist das Bangkok mehr als ein Restaurant. Es ist ein Ort, an dem dieselben Familien seit Jahrzehnten ihren Geburtstag feiern, ihre erste Verabredung hatten, ihren Kindern die Welt erklärten.
+      <p class="story-text fade-up" style="transition-delay:.2s">
+        1974 brachte ein Familienvater Thai-Küche nach Frankfurt — in einer Zeit, als das Land noch unbekannt war und die Gewürze fremd. Was als Pionier begann, ist heute ein Stück Stadtgeschichte.
       </p>
-      <p class="story-text">
-        Die zweite Generation führt weiter, was die erste begann: Keine Kompromisse bei den Zutaten. Kein Anpassen der Rezepte für westliche Gaumen. Nur Respekt — vor der Küche Thailands und den Menschen, die kommen um sie zu erleben.
+      <p class="story-text fade-up" style="transition-delay:.28s">
+        Heute führt die zweite Generation das Restaurant mit derselben Leidenschaft weiter. Kein Anpassen der Rezepte für westliche Gaumen. Nur Respekt vor der Küche Thailands — und den Menschen, die kommen um sie zu erleben.
       </p>
+      <div class="story-nums fade-up" style="transition-delay:.36s">
+        <div class="story-num-item">
+          <div class="story-num-val">1974</div>
+          <div class="story-num-label">Gegründet</div>
+        </div>
+        <div class="story-num-item">
+          <div class="story-num-val">50+</div>
+          <div class="story-num-label">Jahre</div>
+        </div>
+        <div class="story-num-item">
+          <div class="story-num-val">∞</div>
+          <div class="story-num-label">Stammgäste</div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ─── REVIEWS ─── -->
-  <section class="reviews" aria-label="Gäste­stimmen">
-    <div class="reviews-header reveal">
-      <p class="section-label" style="justify-content:center">Was unsere Gäste sagen</p>
-      <h2 class="reviews-heading">Über 50 Jahre<br><em>Vertrauen</em></h2>
+  <!-- ── PULL QUOTE ── -->
+  <section class="pquote" aria-label="Zitat">
+    <div class="fade-up">
+      <span class="pquote-mark" aria-hidden="true">„</span>
+      <p class="pquote-text">
+        Es gibt Abende, die man nicht vergisst.<br>
+        Seit über 50 Jahren sind wir der Grund dafür.
+      </p>
+      <span class="pquote-attr">— Bangkok Restaurant · Frankfurt · Seit 1974</span>
+    </div>
+  </section>
+
+  <!-- ── DISHES ── -->
+  <section class="dishes-section" id="speisekarte" aria-label="Gerichte">
+    <div class="dishes-header">
+      <div class="fade-up">
+        <p class="section-tag">Aus unserer Küche</p>
+        <h2 class="dishes-heading">
+          Traditio­nelle<br><em>Geschmacks­welten</em>
+        </h2>
+      </div>
+      <a href="https://www.bangkok1974.com/s/Bangkok-Menu-Karte-Mai-2024_converted.pdf"
+         target="_blank" rel="noopener" class="dishes-menu-link fade-up"
+         aria-label="Vollständige Speisekarte als PDF">
+        Zur Speisekarte
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    <div class="dishes-scroll" id="dishScroll" aria-label="Gerichte-Galerie, horizontal scrollbar">
+      <article class="dish-card large">
+        <img src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521548805856-2QWF5WO0BWWIN7PBKXFJ/_MG_6358.jpg?format=2500w"
+             alt="Bangkok Restaurant Spezialität" class="dish-card-img" loading="lazy">
+        <div class="dish-card-overlay"></div>
+        <div class="dish-card-body">
+          <p class="dish-card-num">01</p>
+          <h3 class="dish-card-name">Aus Großmutters Küche</h3>
+          <p class="dish-card-desc">Rezepte, die seit 1974 unverändert sind. Frisch zubereitet, täglich neu.</p>
+        </div>
+      </article>
+      <article class="dish-card">
+        <img src="https://s3-media0.fl.yelpcdn.com/bphoto/zUGwPji9ahegIXRYyw8ygw/o.jpg"
+             alt="Chicken Satay mit Erdnusssoße" class="dish-card-img" loading="lazy">
+        <div class="dish-card-overlay"></div>
+        <div class="dish-card-body">
+          <p class="dish-card-num">02</p>
+          <h3 class="dish-card-name">Chicken Satay</h3>
+          <p class="dish-card-desc">Zartes Hähnchen, mariniert in Lemongrass — serviert mit der Erdnusssoße unserer Mutter.</p>
+        </div>
+      </article>
+      <article class="dish-card">
+        <img src="https://s3-media0.fl.yelpcdn.com/bphoto/82QUz9ti1Pu4mxfZo8_XDQ/o.jpg"
+             alt="Rotes Thai-Curry mit Hühnchen" class="dish-card-img" loading="lazy">
+        <div class="dish-card-overlay"></div>
+        <div class="dish-card-body">
+          <p class="dish-card-num">03</p>
+          <h3 class="dish-card-name">Rotes Thai-Curry</h3>
+          <p class="dish-card-desc">Kokosmilch, Galangal, Kaffir-Limette — jede Schüssel eine Reise nach Bangkok.</p>
+        </div>
+      </article>
+      <article class="dish-card">
+        <img src="https://s3-media0.fl.yelpcdn.com/bphoto/X6A40cbLk28_nmd6Fj-yQQ/o.jpg"
+             alt="Knusprige Frühlingsrollen" class="dish-card-img" loading="lazy">
+        <div class="dish-card-overlay"></div>
+        <div class="dish-card-body">
+          <p class="dish-card-num">04</p>
+          <h3 class="dish-card-name">Frühlingsrollen</h3>
+          <p class="dish-card-desc">So knusprig, dass man sie hört. Ein klassischer Anfang zu jedem Abend.</p>
+        </div>
+      </article>
+      <article class="dish-card">
+        <img src="https://s3-media0.fl.yelpcdn.com/bphoto/_pOGNr0GQvDLg3B7b_FXUw/o.jpg"
+             alt="Drunken Noodles" class="dish-card-img" loading="lazy">
+        <div class="dish-card-overlay"></div>
+        <div class="dish-card-body">
+          <p class="dish-card-num">05</p>
+          <h3 class="dish-card-name">Drunken Noodles</h3>
+          <p class="dish-card-desc">Scharf, süß, tief — Straßenküche Bangkoks auf ihrem höchsten Niveau.</p>
+        </div>
+      </article>
+      <article class="dish-card">
+        <img src="https://s3-media0.fl.yelpcdn.com/bphoto/6xYEkvTrs87ISCVLstlbrw/o.jpg"
+             alt="Morning Glory" class="dish-card-img" loading="lazy">
+        <div class="dish-card-overlay"></div>
+        <div class="dish-card-body">
+          <p class="dish-card-num">06</p>
+          <h3 class="dish-card-name">Morning Glory</h3>
+          <p class="dish-card-desc">Wok-frisch, mit Knoblauch und Chilischoten — ein Thai-Klassiker der Extraklasse.</p>
+        </div>
+      </article>
+    </div>
+    <p class="dishes-drag-hint" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Ziehen zum Erkunden
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </p>
+  </section>
+
+  <!-- ── REVIEWS ── -->
+  <section class="reviews" aria-label="Gästestimmen">
+    <div class="reviews-head">
+      <p class="section-tag fade-up" style="justify-content:center">Was unsere Gäste sagen</p>
+      <h2 class="reviews-heading fade-up" style="transition-delay:.1s">
+        Über 50 Jahre<br><em>Vertrauen</em>
+      </h2>
     </div>
     <div class="reviews-grid">
-      <article class="review-card reveal">
+      <article class="review-card fade-up">
         <div class="review-stars">
           <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -1321,7 +1268,7 @@
         <p class="review-author">Lissa B.</p>
         <p class="review-source">Yelp Elite · Washington, DC</p>
       </article>
-      <article class="review-card reveal" style="transition-delay: 0.1s">
+      <article class="review-card fade-up" style="transition-delay:.1s">
         <div class="review-stars">
           <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -1333,7 +1280,7 @@
         <p class="review-author">May C.</p>
         <p class="review-source">Yelp · Frankfurt</p>
       </article>
-      <article class="review-card reveal" style="transition-delay: 0.2s">
+      <article class="review-card fade-up" style="transition-delay:.2s">
         <div class="review-stars">
           <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -1348,293 +1295,175 @@
     </div>
   </section>
 
-  <!-- ─── DISHES ─── -->
-  <section class="dishes" id="speisekarte" aria-label="Signatur-Gerichte">
-    <div class="dishes-header reveal">
-      <div>
-        <p class="section-label">Aus unserer Küche</p>
-        <h2 class="dishes-heading">Traditio­nelle<br><em>Geschmacks­welten</em></h2>
-      </div>
-      <a href="https://www.bangkok1974.com/s/Bangkok-Menu-Karte-Mai-2024_converted.pdf" target="_blank" rel="noopener" class="dishes-link" aria-label="Vollständige Speisekarte als PDF">
-        Zur Speisekarte
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
-    <div class="dishes-grid">
-      <div class="dish-card reveal">
-        <img
-          src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521548805856-2QWF5WO0BWWIN7PBKXFJ/_MG_6358.jpg?format=2500w"
-          alt="Bangkok Restaurant Spezialität"
-          class="dish-img"
-          loading="lazy"
-        >
-        <div class="dish-overlay"></div>
-        <div class="dish-info">
-          <h3 class="dish-name">Aus unserer Küche</h3>
-          <p class="dish-desc">Frische Zutaten, täglich neu — Rezepte, die bleiben</p>
-        </div>
-      </div>
-      <div class="dish-card reveal" style="transition-delay:0.1s">
-        <img
-          src="https://s3-media0.fl.yelpcdn.com/bphoto/zUGwPji9ahegIXRYyw8ygw/o.jpg"
-          alt="Hühner-Spieße in Erdnuss-Soße"
-          class="dish-img"
-          loading="lazy"
-        >
-        <div class="dish-overlay"></div>
-        <div class="dish-info">
-          <h3 class="dish-name">Chicken Satay</h3>
-          <p class="dish-desc">Zartes Hähnchen, mariniert in Lemongrass — die Erdnusssoße unserer Mutter</p>
-        </div>
-      </div>
-      <div class="dish-card reveal" style="transition-delay:0.15s">
-        <img
-          src="https://s3-media0.fl.yelpcdn.com/bphoto/82QUz9ti1Pu4mxfZo8_XDQ/o.jpg"
-          alt="Rotes Thai Curry mit Hühnchen"
-          class="dish-img"
-          loading="lazy"
-        >
-        <div class="dish-overlay"></div>
-        <div class="dish-info">
-          <h3 class="dish-name">Rotes Thai-Curry</h3>
-          <p class="dish-desc">Kokosmilch, Galangal, Kaffir-Limette — jede Schüssel eine Reise nach Bangkok</p>
-        </div>
-      </div>
-      <div class="dish-card reveal" style="transition-delay:0.2s">
-        <img
-          src="https://s3-media0.fl.yelpcdn.com/bphoto/X6A40cbLk28_nmd6Fj-yQQ/o.jpg"
-          alt="Knusprige Frühlingsrollen"
-          class="dish-img"
-          loading="lazy"
-        >
-        <div class="dish-overlay"></div>
-        <div class="dish-info">
-          <h3 class="dish-name">Frühlingsrollen</h3>
-          <p class="dish-desc">So knusprig, dass man sie hört — ein klassischer Anfang</p>
-        </div>
-      </div>
-      <div class="dish-card reveal" style="transition-delay:0.25s">
-        <img
-          src="https://s3-media0.fl.yelpcdn.com/bphoto/_pOGNr0GQvDLg3B7b_FXUw/o.jpg"
-          alt="Drunken Noodles"
-          class="dish-img"
-          loading="lazy"
-        >
-        <div class="dish-overlay"></div>
-        <div class="dish-info">
-          <h3 class="dish-name">Drunken Noodles</h3>
-          <p class="dish-desc">Scharf, süß, tief — Straßenküche auf ihrem höchsten Niveau</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── TIMELINE (SPECIAL #1) ─── -->
+  <!-- ── TIMELINE ── -->
   <section class="timeline" id="Geschichte-timeline" aria-label="Unsere Geschichte">
-    <div class="timeline-header reveal">
-      <p class="section-label">Fünf Jahrzehnte</p>
-      <h2 class="timeline-heading">
-        Fünfzig Jahre,<br>
-        <em>die Frankfurt<br>nie vergisst</em>
+    <div class="timeline-head">
+      <p class="section-tag fade-up">Fünf Jahrzehnte</p>
+      <h2 class="timeline-heading fade-up" style="transition-delay:.1s">
+        Fünfzig Jahre,<br><em>die Frankfurt<br>nie vergisst</em>
       </h2>
     </div>
-    <div class="timeline-track" role="list">
-      <div class="timeline-item reveal" role="listitem" style="transition-delay:0.05s">
-        <div class="timeline-year">1974</div>
-        <h3 class="timeline-title">Das erste Mal</h3>
-        <p class="timeline-text">Frankfurt entdeckt Thai-Küche. Am Sandweg 17 öffnet das Bangkok als erstes Thai-Restaurant der Stadt seine Türen.</p>
+    <div class="timeline-items" role="list">
+      <div class="tl-item fade-up" role="listitem">
+        <div class="tl-year-wrap"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-year">1974</div>
+          <h3 class="tl-title">Das erste Mal</h3>
+          <p class="tl-text">Am Sandweg 17 öffnet das Bangkok als erstes Thai-Restaurant Frankfurts. Eine Stadt entdeckt eine Küche.</p>
+        </div>
       </div>
-      <div class="timeline-item reveal" role="listitem" style="transition-delay:0.15s">
-        <div class="timeline-year">80er</div>
-        <h3 class="timeline-title">Das Stammlokal</h3>
-        <p class="timeline-text">Das Bangkok wird zum festen Ritual. Gäste kommen Woche für Woche — und bringen ihre Kinder mit.</p>
+      <div class="tl-item fade-up" style="transition-delay:.1s" role="listitem">
+        <div class="tl-year-wrap"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-year">80er</div>
+          <h3 class="tl-title">Das Stammlokal</h3>
+          <p class="tl-text">Das Bangkok wird zum festen Ritual. Gäste kommen Woche für Woche — und bringen ihre Kinder mit.</p>
+        </div>
       </div>
-      <div class="timeline-item reveal" role="listitem" style="transition-delay:0.25s">
-        <div class="timeline-year">2000er</div>
-        <h3 class="timeline-title">Zweite Generation</h3>
-        <p class="timeline-text">Die nächste Generation übernimmt — mit dem­selben Respekt vor der Tradition und dem­selben Anspruch an Qualität.</p>
+      <div class="tl-item fade-up" style="transition-delay:.2s" role="listitem">
+        <div class="tl-year-wrap"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-year">2000er</div>
+          <h3 class="tl-title">Zweite Generation</h3>
+          <p class="tl-text">Die nächste Generation übernimmt — mit demselben Respekt vor der Tradition und demselben Anspruch an Qualität.</p>
+        </div>
       </div>
-      <div class="timeline-item reveal" role="listitem" style="transition-delay:0.35s">
-        <div class="timeline-year">2020</div>
-        <h3 class="timeline-title">Familienzuwachs</h3>
-        <p class="timeline-text">BKK Thai Street Food entsteht als Schwester­konzept — die lebendige Straßen­küche Bangkoks, neu interpretiert für Frankfurt.</p>
+      <div class="tl-item fade-up" style="transition-delay:.3s" role="listitem">
+        <div class="tl-year-wrap"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-year">2020</div>
+          <h3 class="tl-title">Familienzuwachs</h3>
+          <p class="tl-text">BKK Thai Street Food entsteht als Schwesterkonzept. Die lebendige Straßenküche Bangkoks, neu interpretiert für Frankfurt.</p>
+        </div>
       </div>
-      <div class="timeline-item reveal" role="listitem" style="transition-delay:0.45s">
-        <div class="timeline-year">Heute</div>
-        <h3 class="timeline-title">Das Original bleibt</h3>
-        <p class="timeline-text">Über 50 Jahre. Noch immer dieselbe Küche, noch immer dieselbe Wärme. Das Bangkok ist nicht nur ein Restaurant — es ist ein Stück Frankfurt.</p>
+      <div class="tl-item fade-up" style="transition-delay:.4s" role="listitem">
+        <div class="tl-year-wrap"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-year">Heute</div>
+          <h3 class="tl-title">Das Original bleibt</h3>
+          <p class="tl-text">Über 50 Jahre. Noch immer dieselbe Küche, noch immer dieselbe Wärme. Das Bangkok ist nicht nur ein Restaurant — es ist ein Stück Frankfurt.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── GALLERY ─── -->
-  <section class="gallery" id="atmosphaere" aria-label="Atmosphäre und Eindrücke">
-    <div class="gallery-header reveal">
-      <p class="section-label">Atmosphäre</p>
-      <h2 class="gallery-heading">Ein Abend hier<br><em>vergisst man nicht</em></h2>
+  <!-- ── GALLERY ── -->
+  <section class="gallery" id="atmosphaere" aria-label="Atmosphäre">
+    <div class="gallery-head">
+      <p class="section-tag fade-up">Atmosphäre</p>
+      <h2 class="gallery-heading fade-up" style="transition-delay:.1s">
+        Ein Abend hier<br><em>vergisst man nicht</em>
+      </h2>
     </div>
     <div class="gallery-grid">
-      <div class="gallery-item reveal">
-        <img
-          src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/bf3e8015-68a5-4d8e-b909-4ebe954c1b9c/3DC49029-E389-4BB6-9530-F8E23AF3F4F0.JPG?format=2500w"
-          alt="Bangkok Restaurant Frankfurt Innenraum"
-          loading="lazy"
-        >
-      </div>
-      <div class="gallery-item reveal" style="transition-delay:0.1s">
-        <img
-          src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521590665059-A82KE7NZLPFBNKL2QQD0/DSC_8904.JPG?format=2500w"
-          alt="Gericht aus der Bangkok Küche"
-          loading="lazy"
-        >
-      </div>
-      <div class="gallery-item reveal" style="transition-delay:0.15s">
-        <img
-          src="https://s3-media0.fl.yelpcdn.com/bphoto/aRXfTu_ekH416wohjn3DXw/o.jpg"
-          alt="Bangkok Restaurant Ambiente"
-          loading="lazy"
-        >
-      </div>
-      <div class="gallery-item reveal" style="transition-delay:0.2s">
-        <img
-          src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/68/aa/00/bangkok.jpg?w=1200&h=800&s=1"
-          alt="Bangkok Restaurant Frankfurt"
-          loading="lazy"
-        >
-      </div>
-      <div class="gallery-item reveal" style="transition-delay:0.25s">
-        <img
-          src="https://s3-media0.fl.yelpcdn.com/bphoto/3poE0Oi581qb6o5WoLnZxQ/o.jpg"
-          alt="Morning Glory Gemüse"
-          loading="lazy"
-        >
-      </div>
-      <div class="gallery-item reveal" style="transition-delay:0.3s">
-        <img
-          src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/68/a6/d0/bangkok.jpg?w=1200&h=800&s=1"
-          alt="Bangkok Restaurant Spezialität"
-          loading="lazy"
-        >
+      <div class="g-item clip-reveal"><img src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521590665059-A82KE7NZLPFBNKL2QQD0/DSC_8904.JPG?format=2500w" alt="Bangkok Restaurant Frankfurt" loading="lazy"></div>
+      <div class="g-item clip-reveal" style="transition-delay:.08s"><img src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521590253946-8QZ8B5431830R96A9XLQ/DSC_9018.JPG?format=2500w" alt="Gericht aus der Bangkok-Küche" loading="lazy"></div>
+      <div class="g-item clip-reveal" style="transition-delay:.16s"><img src="https://s3-media0.fl.yelpcdn.com/bphoto/aRXfTu_ekH416wohjn3DXw/o.jpg" alt="Bangkok Restaurant Ambiente" loading="lazy"></div>
+      <div class="g-item clip-reveal" style="transition-delay:.06s"><img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/68/aa/00/bangkok.jpg?w=1200&h=800&s=1" alt="Bangkok Restaurant" loading="lazy"></div>
+      <div class="g-item clip-reveal" style="transition-delay:.14s"><img src="https://s3-media0.fl.yelpcdn.com/bphoto/3poE0Oi581qb6o5WoLnZxQ/o.jpg" alt="Morning Glory" loading="lazy"></div>
+      <div class="g-item clip-reveal" style="transition-delay:.22s"><img src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/68/a6/d0/bangkok.jpg?w=1200&h=800&s=1" alt="Bangkok Restaurant Spezialität" loading="lazy"></div>
+    </div>
+  </section>
+
+  <!-- ── FAMILY LETTER ── -->
+  <section class="letter" aria-label="Ein Wort von uns">
+    <div class="letter-img-wrap clip-reveal">
+      <img
+        src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521548805856-2QWF5WO0BWWIN7PBKXFJ/_MG_6358.jpg?format=2500w"
+        alt="Bangkok Restaurant — Atmosphäre"
+        class="letter-img"
+        loading="lazy"
+      >
+      <div class="letter-img-overlay"></div>
+    </div>
+    <div class="letter-content">
+      <p class="section-tag fade-up">Ein Wort von uns</p>
+      <h2 class="letter-heading fade-up" style="transition-delay:.1s">Liebe Gäste</h2>
+      <div class="fade-up" style="transition-delay:.2s">
+        <p class="letter-p">Mein Vater öffnete diese Tür 1974 mit einer einfachen Idee: Frankfurt zeigen, wie Thailand wirklich schmeckt. Nicht abgemildert, nicht angepasst — echt.</p>
+        <p class="letter-p">Heute stehe ich in seiner Küche, mit seinen Rezepten, und sehe Gäste, die als Kinder hier saßen und jetzt ihre eigenen Kinder mitbringen. Das ist kein Restaurant mehr. Das ist ein Stück Lebensgeschichte.</p>
+        <p class="letter-p">Wir kochen nicht für Trends. Wir kochen, damit dieser Abend einer wird, den Sie nicht vergessen.</p>
+        <p class="letter-sig">— Die Familie</p>
       </div>
     </div>
   </section>
 
-  <!-- ─── WINE (SPECIAL #2) ─── -->
+  <!-- ── WINE ── -->
   <section class="wine" id="wein" aria-label="Unsere Weinkarte">
-    <div class="wine-bg" role="img" aria-hidden="true"></div>
+    <div class="wine-bg-img" id="wineBg" role="img" aria-hidden="true"></div>
     <div class="wine-overlay"></div>
     <div class="wine-content">
-      <div class="wine-left reveal-left">
+      <div class="fade-left">
         <p class="wine-eyebrow">Wein &amp; Küche</p>
-        <h2 class="wine-heading">
-          Wir lieben<br>
-          <em>guten Wein.</em>
-        </h2>
-        <p class="wine-text">
-          Thai-Küche und exzellenter Wein — eine Kombination, die überrascht und begeistert. Unsere sorgfältig zusammen­gestellte Weinkarte reicht von kleinen deutschen Winzern bis zu den großen Ikonen der Weinwelt.
-        </p>
-        <p class="wine-text">
-          Denn wir glauben: Authentisches Essen verdient einen Wein, der es ebenbürtig ist.
-        </p>
-        <a href="https://www.bangkok1974.com/s/weinkarte-mit-nummern-Bangkok-Oktober-2025-2-c75w.pdf" target="_blank" rel="noopener" class="wine-cta" aria-label="Weinkarte als PDF öffnen">
+        <h2 class="wine-heading">Wir lieben<br><em>guten Wein.</em></h2>
+        <p class="wine-text">Thai-Küche und exzellenter Wein — eine Kombination, die überrascht und begeistert. Unsere Weinkarte reicht von kleinen deutschen Winzern bis zu den großen Ikonen der Weinwelt.</p>
+        <p class="wine-text">Denn wir glauben: Authentisches Essen verdient einen Wein, der ihm ebenbürtig ist.</p>
+        <a href="https://www.bangkok1974.com/s/weinkarte-mit-nummern-Bangkok-Oktober-2025-2-c75w.pdf" target="_blank" rel="noopener" class="wine-link" aria-label="Weinkarte als PDF">
           Zur Weinkarte
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
-      <div class="wine-right reveal-right">
-        <div class="wine-feature">
-          <h3 class="wine-feature-name">Deutschland</h3>
-          <p class="wine-feature-desc">Riesling, Spätburgunder, Silvaner — ausgesuchte Lagen von engagierten Winzern.</p>
-        </div>
-        <div class="wine-feature">
-          <h3 class="wine-feature-name">Frankreich &amp; Italien</h3>
-          <p class="wine-feature-desc">Burgund, Bordeaux, Toskana — Klassiker und Entdeckungen aus den besten Appellationen.</p>
-        </div>
-        <div class="wine-feature">
-          <h3 class="wine-feature-name">Internationale Auswahl</h3>
-          <p class="wine-feature-desc">Spanien, Übersee und mehr — für jeden Gaumen die richtige Begleitung.</p>
+      <div class="fade-right">
+        <div class="wine-features">
+          <div class="wine-feat">
+            <h3 class="wine-feat-name">Deutschland</h3>
+            <p class="wine-feat-desc">Riesling, Spätburgunder, Silvaner — ausgesuchte Lagen von engagierten Winzern.</p>
+          </div>
+          <div class="wine-feat">
+            <h3 class="wine-feat-name">Frankreich &amp; Italien</h3>
+            <p class="wine-feat-desc">Burgund, Bordeaux, Toskana — Klassiker aus den besten Appellationen.</p>
+          </div>
+          <div class="wine-feat">
+            <h3 class="wine-feat-name">Internationale Auswahl</h3>
+            <p class="wine-feat-desc">Spanien, Übersee und mehr — für jeden Gaumen die richtige Begleitung.</p>
+          </div>
         </div>
         <div class="wine-drc">
-          <p class="wine-drc-label">Krone der Weinwelt</p>
+          <p class="wine-drc-label">Die Krone der Weinwelt</p>
           <p class="wine-drc-name">Domaine de la Romanée-Conti</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ─── BRIEF ─── -->
-  <section class="brief" aria-label="Ein Brief an unsere Gäste">
-    <div class="brief-inner">
-      <div class="brief-left reveal-left">
-        <img
-          src="https://images.squarespace-cdn.com/content/v1/5aa51cceda02bc883b8b548b/1521590253946-8QZ8B5431830R96A9XLQ/DSC_9018.JPG?format=2500w"
-          alt="Bangkok Restaurant Frankfurt — Atmosphäre"
-          loading="lazy"
-          class="brief-img"
-        >
-      </div>
-      <div class="brief-content reveal-right">
-        <p class="section-label">Ein Wort von uns</p>
-        <h2 class="brief-heading">Liebe Gäste</h2>
-        <div class="brief-text">
-          <p>
-            Mein Vater öffnete diese Tür 1974 mit einer einfachen Idee: Frankfurt zeigen, wie Thailand wirklich schmeckt. Nicht abgemildert, nicht angepasst — echt.
-          </p>
-          <p>
-            Heute stehe ich in seiner Küche, mit seinen Rezepten, und sehe Gäste, die als Kinder hier saßen und jetzt ihre eigenen Kinder mitbringen. Das ist kein Restaurant mehr. Das ist ein Stück Lebensgeschichte.
-          </p>
-          <p>
-            Wir kochen nicht für Sterne oder Trends. Wir kochen, damit dieser Abend einer wird, den Sie nicht vergessen.
-          </p>
-          <p class="brief-sign">— Die Familie</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── RESERVATION ─── -->
+  <!-- ── RESERVATION ── -->
   <section class="reservation" id="reservierung" aria-label="Tisch reservieren">
-    <div class="reveal">
-      <p class="section-label" style="justify-content:center">Tisch reservieren</p>
-      <h2 class="reservation-heading">
-        Ihr Abend<br>wartet<br>
-        <em>auf Sie.</em>
+    <div class="fade-up">
+      <p class="section-tag" style="justify-content:center">Tisch reservieren</p>
+      <h2 class="res-heading">
+        Ihr Abend<br>wartet<br><em>auf Sie.</em>
       </h2>
-      <p class="reservation-text">
-        Reservieren Sie Ihren Tisch — per Telefon oder online. Für besondere Abende, runde Geburtstage oder einfach weil Ihnen der Sinn nach einem guten Abend steht.
-      </p>
-      <div class="reservation-actions">
-        <a href="tel:+4969491360" class="btn-primary" aria-label="Jetzt anrufen">
+      <p class="res-sub">Reservieren Sie Ihren Tisch — per Telefon oder online. Für besondere Abende, runde Geburtstage oder einfach weil Ihnen der Sinn nach einem unvergesslichen Abend steht.</p>
+      <div class="res-btns">
+        <a href="tel:+4969491360" class="btn-gold" aria-label="Jetzt anrufen: +49 69 491 360">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
           +49 69 491 360
         </a>
-        <a href="https://www.bangkok1974.com/#reservierung" target="_blank" rel="noopener" class="btn-secondary" aria-label="Online reservieren">
+        <a href="https://www.bangkok1974.com/#reservierung" target="_blank" rel="noopener" class="btn-outline">
           Online reservieren
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
       </div>
-      <div class="reservation-info">
+      <div class="res-info">
         <div class="res-info-block">
           <p class="res-info-label">Adresse</p>
-          <p class="res-info-value">
+          <p class="res-info-val">
             <a href="https://maps.google.com/?q=Bangkok+Restaurant+Sandweg+17+Frankfurt" target="_blank" rel="noopener">
-              Sandweg 17<br>
-              60316 Frankfurt am Main<br>
-              Nordend-Ost
+              Sandweg 17<br>60316 Frankfurt am Main<br>Nordend-Ost
             </a>
           </p>
         </div>
         <div class="res-info-block">
           <p class="res-info-label">Öffnungszeiten</p>
-          <p class="res-info-value">
-            Mo, Mi–Fr: 12–15 &amp; 18–23 Uhr<br>
-            Sa–So: 12–15 &amp; 18–23 Uhr<br>
+          <p class="res-info-val">
+            Mo, Mi–Sa: 12–15 &amp; 18–23 Uhr<br>
+            Sonntag: 12–15 &amp; 18–23 Uhr<br>
             Dienstag: Ruhetag
           </p>
         </div>
         <div class="res-info-block">
           <p class="res-info-label">Kontakt</p>
-          <p class="res-info-value">
+          <p class="res-info-val">
             <a href="tel:+4969491360">+49 69 491 360</a><br>
             <a href="https://www.bangkok1974.com" target="_blank" rel="noopener">bangkok1974.com</a>
           </p>
@@ -1643,111 +1472,197 @@
     </div>
   </section>
 
-  <!-- ─── FOOTER ─── -->
+  <!-- ── FOOTER ── -->
   <footer>
-    <div class="footer-left">
+    <div class="foot-left">
       <p>Sandweg 17 · 60316 Frankfurt am Main</p>
       <p>+49 69 491 360</p>
     </div>
-    <div class="footer-center">Bangkok 1974</div>
-    <div class="footer-right">
-      <a href="https://www.instagram.com/bangkok1974/" target="_blank" rel="noopener" class="footer-social" aria-label="Instagram">Instagram</a>
-      <a href="https://www.facebook.com/bangkokrestaurant/" target="_blank" rel="noopener" class="footer-social" aria-label="Facebook">Facebook</a>
+    <div class="foot-center">Bangkok 1974</div>
+    <div class="foot-right">
+      <a href="https://www.instagram.com/bangkok1974/" target="_blank" rel="noopener" class="foot-link">Instagram</a>
+      <a href="https://www.facebook.com/bangkokrestaurant/" target="_blank" rel="noopener" class="foot-link">Facebook</a>
     </div>
   </footer>
-  <div class="footer-bottom">
-    <p class="footer-copy">© 2026 Bangkok Restaurant Frankfurt · Erstes Thai Restaurant Frankfurts seit 1974</p>
-    <a href="https://wa.me/4969491360" class="footer-whatsapp" aria-label="WhatsApp Kontakt">
+  <div class="foot-bottom">
+    <p class="foot-copy">© 2026 Bangkok Restaurant Frankfurt · Erstes Thai Restaurant der Stadt seit 1974</p>
+    <a href="https://wa.me/4969491360" class="foot-wa" aria-label="WhatsApp Kontakt">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp
     </a>
   </div>
 
   <script>
-    // ─── LENIS SMOOTH SCROLL ───
+  (() => {
+    // ── LENIS SMOOTH SCROLL ──
     const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.5,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
 
-    // ─── NAV SCROLL EFFECT ───
-    const nav = document.getElementById('mainNav');
+    // ── CUSTOM CURSOR ──
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function animCursor() {
+      cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+      rx += (mx - rx) * .12; ry += (my - ry) * .12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animCursor);
+    })();
+
+    // ── NAV SCROLL ──
+    const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
 
-    // ─── HERO PARALLAX ───
-    const heroBg = document.getElementById('heroBg');
-    lenis.on('scroll', ({ scroll }) => {
-      if (heroBg) {
-        heroBg.style.transform = `translateY(${scroll * 0.35}px)`;
-      }
+    // ── HERO ENTRANCE ANIMATION ──
+    window.addEventListener('load', () => {
+      const lines = document.querySelectorAll('.hero-title-line span');
+      lines.forEach((line, i) => {
+        setTimeout(() => {
+          Motion.animate(line, { transform: ['translateY(110%)', 'translateY(0%)'] },
+            { duration: 1, easing: [.16, 1, .3, 1] });
+        }, 200 + i * 140);
+      });
+
+      const eyebrow = document.querySelector('.hero-eyebrow');
+      setTimeout(() => {
+        Motion.animate(eyebrow, { opacity: [0, 1], transform: ['translateX(-20px)', 'translateX(0)'] },
+          { duration: .8, easing: [.16, 1, .3, 1] });
+      }, 150);
+
+      const sub = document.querySelector('.hero-sub');
+      setTimeout(() => {
+        Motion.animate(sub, { opacity: [0, 1], transform: ['translateX(-15px)', 'translateX(0)'] },
+          { duration: .8, easing: [.16, 1, .3, 1] });
+      }, 750);
+
+      const badge = document.getElementById('heroBadge');
+      if (badge) setTimeout(() => {
+        Motion.animate(badge, { opacity: [0, 1], transform: ['translateY(20px)', 'translateY(0)'] },
+          { duration: .9, easing: [.16, 1, .3, 1] });
+        // Count up in badge
+        countUp(badge.querySelector('[data-count]'), 0, 50, 1400, '+');
+      }, 900);
+
+      const hint = document.getElementById('scrollHint');
+      if (hint) setTimeout(() => {
+        Motion.animate(hint, { opacity: [0, 1] }, { duration: 1 });
+      }, 1600);
     });
 
-    // ─── SCROLL REVEALS ───
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-      revealEls.forEach(el => {
-        Motion.inView(el, () => {
-          Motion.animate(el,
-            { opacity: [0, 1], transform: ['translateY(30px)', 'translateY(0px)'] },
-            { duration: 0.8, easing: [0.25, 0.46, 0.45, 0.94] }
-          );
-        }, { margin: '-80px' });
-      });
+    // ── HERO IMAGE PARALLAX ──
+    const heroImg = document.getElementById('heroImg');
+    lenis.on('scroll', ({ scroll }) => {
+      if (heroImg) heroImg.style.transform = `scale(1.08) translateY(${scroll * .18}px)`;
+    });
 
-      const revealLeftEls = document.querySelectorAll('.reveal-left');
-      revealLeftEls.forEach(el => {
-        Motion.inView(el, () => {
-          Motion.animate(el,
-            { opacity: [0, 1], transform: ['translateX(-40px)', 'translateX(0px)'] },
-            { duration: 0.9, easing: [0.25, 0.46, 0.45, 0.94] }
-          );
-        }, { margin: '-80px' });
-      });
-
-      const revealRightEls = document.querySelectorAll('.reveal-right');
-      revealRightEls.forEach(el => {
-        Motion.inView(el, () => {
-          Motion.animate(el,
-            { opacity: [0, 1], transform: ['translateX(40px)', 'translateX(0px)'] },
-            { duration: 0.9, easing: [0.25, 0.46, 0.45, 0.94] }
-          );
-        }, { margin: '-80px' });
+    // ── WINE BG PARALLAX ──
+    const wineBg = document.getElementById('wineBg');
+    if (wineBg) {
+      lenis.on('scroll', ({ scroll }) => {
+        const rect = wineBg.parentElement.getBoundingClientRect();
+        const offset = (rect.top + rect.height / 2 - window.innerHeight / 2);
+        wineBg.style.transform = `translateY(${offset * .15}px)`;
       });
     }
 
-    // ─── MOBILE MENU ───
-    const mobileToggle = document.getElementById('mobileToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileClose = document.getElementById('mobileClose');
-
-    function openMobile() {
-      mobileMenu.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      lenis.stop();
-    }
-    function closeMobile() {
-      mobileMenu.classList.remove('open');
-      document.body.style.overflow = '';
-      lenis.start();
+    // ── COUNTUP ──
+    function countUp(el, from, to, duration, suffix = '') {
+      if (!el) return;
+      const start = performance.now();
+      function step(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - p, 4);
+        el.textContent = Math.round(from + (to - from) * ease) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
     }
 
-    mobileToggle.addEventListener('click', openMobile);
-    mobileToggle.addEventListener('keydown', e => e.key === 'Enter' && openMobile());
-    mobileClose.addEventListener('click', closeMobile);
+    // ── SCROLL REVEALS ──
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // ─── TICKER DUPLICATE FOR SEAMLESS LOOP ───
-    const ticker = document.querySelector('.ticker-track');
-    if (ticker) {
-      ticker.innerHTML += ticker.innerHTML;
+    if (!prefersReduced) {
+      // clip-path image reveals
+      document.querySelectorAll('.clip-reveal').forEach(el => {
+        Motion.inView(el, () => {
+          el.classList.add('revealed');
+        }, { margin: '-60px' });
+      });
+
+      // fade-up / left / right
+      document.querySelectorAll('.fade-up, .fade-left, .fade-right').forEach(el => {
+        Motion.inView(el, () => {
+          el.classList.add('revealed');
+        }, { margin: '-50px' });
+      });
+
+      // stat bar top lines
+      document.querySelectorAll('.stat-block').forEach(el => {
+        Motion.inView(el, () => { el.classList.add('in-view'); }, { margin: '-30px' });
+      });
+    } else {
+      document.querySelectorAll('.clip-reveal, .fade-up, .fade-left, .fade-right').forEach(el => {
+        el.classList.add('revealed');
+      });
+      document.querySelectorAll('.stat-block').forEach(el => el.classList.add('in-view'));
     }
+
+    // ── HORIZONTAL DISH SCROLL (DRAG) ──
+    const scroll = document.getElementById('dishScroll');
+    if (scroll) {
+      let isDown = false, startX, scrollLeft, velX = 0, lastX, lastT;
+      scroll.addEventListener('mousedown', e => {
+        isDown = true; scroll.style.cursor = 'grabbing';
+        startX = e.pageX - scroll.offsetLeft;
+        scrollLeft = scroll.scrollLeft;
+        lastX = e.pageX; lastT = Date.now(); velX = 0;
+      });
+      document.addEventListener('mouseup', () => {
+        if (!isDown) return;
+        isDown = false; scroll.style.cursor = 'grab';
+        // momentum
+        let v = velX;
+        (function momentum() {
+          if (Math.abs(v) < .5) return;
+          scroll.scrollLeft += v; v *= .92;
+          requestAnimationFrame(momentum);
+        })();
+      });
+      document.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - scroll.offsetLeft;
+        const walk = (x - startX) * 1.4;
+        scroll.scrollLeft = scrollLeft - walk;
+        velX = (e.pageX - lastX) / (Date.now() - lastT + 1) * 14;
+        lastX = e.pageX; lastT = Date.now();
+      });
+    }
+
+    // ── TICKER DUPLICATE ──
+    const track = document.getElementById('tickerTrack');
+    if (track) track.innerHTML += track.innerHTML;
+
+    // ── MOBILE MENU ──
+    const mm = document.getElementById('mmenu');
+    const burger = document.getElementById('burger');
+    const mmclose = document.getElementById('mmclose');
+    function openMM() { mm.classList.add('open'); document.body.style.overflow = 'hidden'; lenis.stop(); }
+    function closeMM() { mm.classList.remove('open'); document.body.style.overflow = ''; lenis.start(); }
+    window.closeMM = closeMM;
+    if (burger) { burger.addEventListener('click', openMM); burger.addEventListener('keydown', e => e.key === 'Enter' && openMM()); }
+    if (mmclose) mmclose.addEventListener('click', closeMM);
+
+  })();
   </script>
 </body>
 </html>
