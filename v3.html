@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100;300;400;700;900&family=Instrument+Serif:ital@0;1&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100;300;400;700;900&display=swap" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -28,13 +28,9 @@
       --dim:    rgba(240,237,230,.2);
       --dimmer: rgba(240,237,230,.08);
       --border: rgba(240,237,230,.07);
-      --acc:    #b8f23a;
-      --acc-dim: rgba(184,242,58,.15);
       --red:    #ff2200;
       --blue:   #1a3bff;
       --font:   'Geist', system-ui, sans-serif;
-      --display: 'Syne', system-ui, sans-serif;
-      --serif:  'Instrument Serif', Georgia, serif;
     }
 
     html { font-family: var(--font); -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--fg); }
@@ -43,7 +39,7 @@
     /* ── SCROLL PROGRESS ─────────────────────────────────── */
     #sp {
       position: fixed; top: 0; left: 0; height: 1px;
-      background: var(--acc); width: 0%;
+      background: rgba(240,237,230,.35); width: 0%;
       z-index: 300; pointer-events: none;
       transform-origin: left;
       transition: opacity .3s;
@@ -231,22 +227,13 @@
       opacity: 0; transform: translateY(14px);
     }
     .h-name {
-      font-family: var(--display);
-      font-size: clamp(64px, 12.5vw, 192px);
-      font-weight: 800; line-height: .86; letter-spacing: -.035em; color: #fff;
+      font-size: clamp(58px, 11.5vw, 172px);
+      font-weight: 900; line-height: .88; letter-spacing: -.03em; color: #fff;
       opacity: 0; transform: translateY(32px);
-    }
-    .h-name-serif {
-      font-family: var(--serif);
-      font-style: italic; font-weight: 400;
-      font-size: clamp(62px, 12vw, 186px);
-      letter-spacing: -.02em;
-      color: var(--acc);
-      display: block;
     }
     .h-name-outline {
       color: transparent;
-      -webkit-text-stroke: 2px rgba(255,255,255,.75);
+      -webkit-text-stroke: 2px rgba(255,255,255,.9);
     }
     .h-bottom {
       margin-top: 2.5rem; display: flex; flex-direction: column; gap: 2rem; align-items: flex-start;
@@ -273,7 +260,6 @@
     .mq-track { display: inline-flex; animation: mq 32s linear infinite; }
     .mq-track:hover { animation-play-state: paused; cursor: default; }
     .mq-t { font-size: 10px; letter-spacing: .35em; text-transform: uppercase; color: var(--dim); padding-right: 4rem; }
-    .mq-t .mq-gem { color: var(--acc); opacity: .7; font-size: 8px; }
     @keyframes mq { from{transform:translateX(0)}to{transform:translateX(-50%)} }
 
     /* ── MANIFESTO (SIRNIK EXPAND) ───────────────────────── */
@@ -310,8 +296,7 @@
     #usps { padding: 10rem 2.5rem; background: var(--bg); }
     .usps-inner { max-width: 1200px; margin: 0 auto; }
     .usps-eyebrow { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.5rem; }
-    .usps-title { font-size: clamp(38px, 7vw, 88px); font-weight: 900; line-height: .9; letter-spacing: -.03em; margin-bottom: 4rem; font-family: var(--display); }
-    .usps-title em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--acc); letter-spacing: -.02em; }
+    .usps-title { font-size: clamp(38px, 7vw, 88px); font-weight: 900; line-height: .9; letter-spacing: -.03em; margin-bottom: 4rem; }
     .usps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
 
     .award-card {
@@ -458,22 +443,16 @@
     .proc-inner { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
     .proc-left { position: sticky; top: 8rem; }
     .proc-eyebrow { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.5rem; }
-    .proc-title { font-size: clamp(40px, 6vw, 88px); font-weight: 800; line-height: .9; letter-spacing: -.03em; font-family: var(--display); }
-    .proc-title em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--acc); }
+    .proc-title { font-size: clamp(40px, 6vw, 88px); font-weight: 900; line-height: .9; letter-spacing: -.03em; }
     .proc-steps { display: flex; flex-direction: column; gap: 0; }
     .proc-step {
       padding: 2.5rem 0;
       border-bottom: 1px solid var(--border);
-      display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem;
+      display: grid; grid-template-columns: 56px 1fr; gap: 1.5rem;
       opacity: 0; transform: translateY(24px);
     }
-    .ps-num {
-      font-family: var(--display);
-      font-size: clamp(48px, 5vw, 72px); font-weight: 800;
-      color: var(--acc); line-height: 1; letter-spacing: -.04em;
-      opacity: .25;
-    }
-    .ps-title { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; padding-top: .5rem; }
+    .ps-num { font-size: 10px; color: var(--red); font-family: monospace; padding-top: 4px; }
+    .ps-title { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
     .ps-desc { font-size: 13px; color: var(--dim); line-height: 1.75; }
     @media (max-width: 768px) {
       #process{padding:6rem 1.25rem;}
@@ -511,9 +490,8 @@
     .w-card-tags { font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: rgba(240,237,230,.2); text-align: right; line-height: 1.8; }
     .w-card-year { font-size: 9px; color: rgba(240,237,230,.12); margin-top: .4rem; text-align: right; }
     .w-card-title {
-      font-family: var(--display);
       font-size: clamp(42px, 6vw, 96px);
-      font-weight: 800; line-height: .88; letter-spacing: -.04em;
+      font-weight: 900; line-height: .88; letter-spacing: -.03em;
       color: var(--fg);
     }
     .w-card-desc { font-size: 13px; color: var(--dim); line-height: 1.7; margin-top: 1rem; max-width: 340px; }
@@ -544,29 +522,17 @@
 
     /* ── TESTIMONIALS ────────────────────────────────────── */
     #testimonials { padding: 10rem 2.5rem; border-top: 1px solid var(--border); }
-    .t-inner { max-width: 960px; margin: 0 auto; }
-    .t-eyebrow { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim); margin-bottom: 5rem; display: block; }
-    .t-item { padding: 5rem 0; border-bottom: 1px solid var(--border); opacity: 0; transform: translateY(24px); position: relative; }
-    .t-item:first-of-type { border-top: 1px solid var(--border); }
-    .t-qmark {
-      font-family: var(--serif);
-      font-style: italic; font-weight: 400;
-      font-size: clamp(80px, 12vw, 160px);
-      line-height: .6; color: var(--acc); opacity: .18;
-      display: block; margin-bottom: 1rem;
-      pointer-events: none; user-select: none;
-    }
+    .t-inner { max-width: 900px; margin: 0 auto; }
+    .t-eyebrow { font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim); margin-bottom: 5rem; }
+    .t-item { padding: 4rem 0; border-bottom: 1px solid var(--border); opacity: 0; transform: translateY(24px); }
     .t-quote {
-      font-family: var(--serif);
-      font-style: italic; font-weight: 400;
-      font-size: clamp(26px, 3.8vw, 52px);
-      line-height: 1.28; letter-spacing: -.01em;
-      color: var(--fg); margin-bottom: 2.5rem;
-      max-width: 900px;
+      font-size: clamp(22px, 3.5vw, 46px);
+      font-weight: 700; line-height: 1.2; letter-spacing: -.02em;
+      color: var(--fg); margin-bottom: 2rem;
     }
-    .t-author { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--dim); }
-    .t-author span { color: var(--acc); opacity: .7; }
-    @media (max-width: 768px) { #testimonials{padding:6rem 1.25rem;} .t-item{padding:3.5rem 0;} }
+    .t-quote::before { content: '\201C'; color: var(--dimmer); }
+    .t-author { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+    @media (max-width: 768px) { #testimonials{padding:6rem 1.25rem;} }
 
     /* ── CONTACT ─────────────────────────────────────────── */
     #contact {
@@ -581,24 +547,19 @@
     .c-head {
       position: relative; z-index: 1;
       font-size: clamp(48px, 8.5vw, 130px);
-      font-weight: 800; line-height: .88; letter-spacing: -.035em;
-      font-family: var(--display);
+      font-weight: 900; line-height: .88; letter-spacing: -.035em;
       color: var(--fg); margin-bottom: 4.5rem;
     }
-    .c-head em {
-      font-family: var(--serif);
-      font-style: italic; font-weight: 400;
-      letter-spacing: -.02em; color: var(--acc);
-    }
+    .c-head em { font-style: italic; font-weight: 100; color: var(--dim); }
     .c-email {
       position: relative; z-index: 1;
       font-size: clamp(18px, 2.6vw, 42px); color: var(--fg);
       text-decoration: none; letter-spacing: -.01em;
       border-bottom: 1px solid rgba(240,237,230,.15); padding-bottom: 4px;
-      transition: letter-spacing .5s cubic-bezier(.16,1,.3,1), border-color .3s, color .3s;
+      transition: letter-spacing .5s cubic-bezier(.16,1,.3,1), border-color .3s;
       display: inline-block;
     }
-    .c-email:hover { letter-spacing: .04em; border-color: var(--acc); color: var(--acc); }
+    .c-email:hover { letter-spacing: .04em; border-color: rgba(240,237,230,.7); }
     @media (max-width: 768px) { #contact{padding:7rem 1.25rem;} }
 
     /* ── EASTER EGG ──────────────────────────────────────── */
@@ -684,7 +645,7 @@
         <h1 class="h-name">
           Advanced<br>
           <span class="h-name-outline">Websites.</span><br>
-          <span class="h-name-serif">Affordable.</span>
+          Affordable.
         </h1>
       </div>
       <div class="h-bottom">
@@ -708,9 +669,10 @@
   <!-- MARQUEE -->
   <div class="mq-wrap">
     <div class="mq-track">
-      <span class="mq-t">Web Design <span class="mq-gem">◆</span> Development <span class="mq-gem">◆</span> Motion Design <span class="mq-gem">◆</span> Interaction Design <span class="mq-gem">◆</span> Creative Technology <span class="mq-gem">◆</span> Brand Strategy <span class="mq-gem">◆</span> Digital Experience <span class="mq-gem">◆</span> </span>
-      <span class="mq-t">Web Design <span class="mq-gem">◆</span> Development <span class="mq-gem">◆</span> Motion Design <span class="mq-gem">◆</span> Interaction Design <span class="mq-gem">◆</span> Creative Technology <span class="mq-gem">◆</span> Brand Strategy <span class="mq-gem">◆</span> Digital Experience <span class="mq-gem">◆</span> </span>
-      <span class="mq-t">Web Design <span class="mq-gem">◆</span> Development <span class="mq-gem">◆</span> Motion Design <span class="mq-gem">◆</span> Interaction Design <span class="mq-gem">◆</span> Creative Technology <span class="mq-gem">◆</span> Brand Strategy <span class="mq-gem">◆</span> Digital Experience <span class="mq-gem">◆</span> </span>
+      <span class="mq-t">Web Design · Development · Motion Design · Interaction Design · Creative Technology · Brand Strategy · Digital Experience · </span>
+      <span class="mq-t">Web Design · Development · Motion Design · Interaction Design · Creative Technology · Brand Strategy · Digital Experience · </span>
+      <span class="mq-t">Web Design · Development · Motion Design · Interaction Design · Creative Technology · Brand Strategy · Digital Experience · </span>
+      <span class="mq-t">Web Design · Development · Motion Design · Interaction Design · Creative Technology · Brand Strategy · Digital Experience · </span>
     </div>
   </div>
 
@@ -727,7 +689,7 @@
   <section id="usps">
     <div class="usps-inner">
       <p class="usps-eyebrow">Warum SEMP STUDIOS</p>
-      <h2 class="usps-title">Unser<br><em>Versprechen</em></h2>
+      <h2 class="usps-title">Unser<br>Versprechen</h2>
       <div class="usps-grid">
 
         <div class="award-card">
@@ -775,7 +737,7 @@
     <div class="proc-inner">
       <div class="proc-left">
         <p class="proc-eyebrow">Unser Prozess</p>
-        <h2 class="proc-title">Wie wir<br><em>arbeiten</em></h2>
+        <h2 class="proc-title">Wie wir<br>arbeiten</h2>
       </div>
       <div class="proc-steps">
         <div class="proc-step">
@@ -885,21 +847,18 @@
   <!-- TESTIMONIALS -->
   <section id="testimonials">
     <div class="t-inner">
-      <span class="t-eyebrow">Was Kunden sagen</span>
+      <p class="t-eyebrow">Was Kunden sagen</p>
       <div class="t-item">
-        <span class="t-qmark">"</span>
         <p class="t-quote">Die beste Entscheidung des Jahres. Unsere neue Website hat unseren Umsatz in den ersten drei Monaten messbar gesteigert.</p>
-        <span class="t-author">Maximilian K. <span>— Kiwis Frankfurt</span></span>
+        <span class="t-author">— Maximilian K., Kiwis Frankfurt</span>
       </div>
       <div class="t-item">
-        <span class="t-qmark">"</span>
         <p class="t-quote">In 2 Wochen von Idee zu fertiger Website. Kein Template, kein Kompromiss. Genau so hatten wir es uns vorgestellt — nur besser.</p>
-        <span class="t-author">Jonas M. <span>— Studio Kollektiv</span></span>
+        <span class="t-author">— [Client Name], [Company]</span>
       </div>
       <div class="t-item">
-        <span class="t-qmark">"</span>
         <p class="t-quote">SEMP STUDIOS hat verstanden was wir brauchen bevor wir es selbst wussten. Das ist keine Agentur. Das ist ein Partner.</p>
-        <span class="t-author">Sarah L. <span>— Lumio Interiors</span></span>
+        <span class="t-author">— [Client Name], [Company]</span>
       </div>
     </div>
   </section>
