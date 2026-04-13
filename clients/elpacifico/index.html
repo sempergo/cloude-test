@@ -171,7 +171,6 @@
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 20px;
-      opacity: 0;
     }
 
     .hero-brand {
@@ -180,7 +179,6 @@
       color: var(--terra-deep);
       line-height: 0.95;
       margin-bottom: 16px;
-      opacity: 0;
     }
 
     .hero-tagline {
@@ -192,7 +190,6 @@
       letter-spacing: 0.04em;
       line-height: 1.4;
       margin-bottom: 40px;
-      opacity: 0;
     }
 
     .hero-desc {
@@ -202,7 +199,6 @@
       color: var(--muted);
       max-width: 340px;
       margin-bottom: 48px;
-      opacity: 0;
     }
 
     .hero-actions {
@@ -210,7 +206,6 @@
       gap: 16px;
       align-items: center;
       flex-wrap: wrap;
-      opacity: 0;
     }
 
     .btn-primary {
@@ -893,11 +888,7 @@
       footer { padding: 48px 24px 32px; }
     }
 
-    /* ── ANIMATIONS ── */
-    [data-reveal] { opacity: 0; transform: translateY(32px); }
-    [data-reveal-left] { opacity: 0; transform: translateX(-32px); }
-    [data-reveal-right] { opacity: 0; transform: translateX(32px); }
-    [data-reveal-scale] { opacity: 0; transform: scale(0.92); }
+    /* ── ANIMATIONS — initial states set by JS only, so page is always readable without JS ── */
   </style>
 </head>
 <body>
@@ -1220,153 +1211,141 @@
 </a>
 
 <script>
-// ── LENIS SMOOTH SCROLL ──
-const lenis = new Lenis({
-  duration: 1.3,
-  easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smooth: true,
-});
-
-function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
-}
-requestAnimationFrame(raf);
-
-// ── NAV SCROLL EFFECT ──
+// ── NAV SCROLL EFFECT (no deps needed) ──
 const nav = document.getElementById('main-nav');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 60);
 });
 
-// ── HERO ANIMATIONS ──
-const { animate, inView, scroll } = Motion;
+// ── LENIS SMOOTH SCROLL ──
+if (typeof Lenis !== 'undefined') {
+  const lenis = new Lenis({
+    duration: 1.3,
+    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  });
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+}
 
-animate('#h-kicker', { opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 0.3, easing: [0.25, 0.1, 0.25, 1] });
-animate('#h-brand',  { opacity: [0, 1], y: [30, 0] }, { duration: 0.9, delay: 0.5, easing: [0.25, 0.1, 0.25, 1] });
-animate('#h-tagline',{ opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 0.75, easing: [0.25, 0.1, 0.25, 1] });
-animate('#h-desc',   { opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 0.95, easing: [0.25, 0.1, 0.25, 1] });
-animate('#h-actions',{ opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 1.15, easing: [0.25, 0.1, 0.25, 1] });
+// ── ALL MOTION ANIMATIONS — only if library loaded ──
+if (typeof Motion !== 'undefined') {
+  const { animate, inView, scroll } = Motion;
 
-// ── HERO PARALLAX ──
-const heroImg = document.getElementById('hero-parallax');
-scroll(({ y }) => {
-  if (heroImg && y.current < window.innerHeight) {
-    const progress = y.current / window.innerHeight;
-    heroImg.style.transform = `scale(1.05) translateY(${progress * 40}px)`;
+  // Set initial hidden states in JS (not CSS) — ensures content is always visible without JS
+  ['#h-kicker','#h-brand','#h-tagline','#h-desc','#h-actions'].forEach(sel => {
+    const el = document.querySelector(sel);
+    if (el) { el.style.opacity = '0'; el.style.transform = 'translateY(20px)'; }
+  });
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(32px)';
+  });
+  document.querySelectorAll('[data-reveal-left]').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateX(-32px)';
+  });
+  document.querySelectorAll('[data-reveal-right]').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateX(32px)';
+  });
+  document.querySelectorAll('[data-reveal-scale]').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'scale(0.92)';
+  });
+  document.querySelectorAll('.menu-card').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(24px)';
+  });
+  document.querySelectorAll('.review-card').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(24px)';
+  });
+  document.querySelectorAll('.insta-item').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+  });
+
+  // ── HERO ENTRANCE ──
+  const ease = [0.25, 0.1, 0.25, 1];
+  animate('#h-kicker', { opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 0.3, easing: ease });
+  animate('#h-brand',  { opacity: [0, 1], y: [30, 0] }, { duration: 0.9, delay: 0.5, easing: ease });
+  animate('#h-tagline',{ opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 0.75, easing: ease });
+  animate('#h-desc',   { opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 0.95, easing: ease });
+  animate('#h-actions',{ opacity: [0, 1], y: [20, 0] }, { duration: 0.7, delay: 1.15, easing: ease });
+
+  // ── HERO PARALLAX ──
+  const heroImg = document.getElementById('hero-parallax');
+  if (heroImg && scroll) {
+    scroll(({ y }) => {
+      if (y.current < window.innerHeight) {
+        const p = y.current / window.innerHeight;
+        heroImg.style.transform = `scale(1.05) translateY(${p * 40}px)`;
+      }
+    });
   }
-});
 
-// ── SCROLL REVEALS ──
-document.querySelectorAll('[data-reveal]').forEach(el => {
-  inView(el, () => {
-    animate(el, { opacity: [0, 1], y: [32, 0] }, {
-      duration: 0.75,
-      easing: [0.25, 0.1, 0.25, 1]
+  // ── SCROLL REVEALS ──
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    inView(el, () => {
+      animate(el, { opacity: [0, 1], y: [32, 0] }, { duration: 0.75, easing: ease });
+    }, { margin: '-60px' });
+  });
+  document.querySelectorAll('[data-reveal-left]').forEach(el => {
+    inView(el, () => {
+      animate(el, { opacity: [0, 1], x: [-32, 0] }, { duration: 0.75, easing: ease });
+    }, { margin: '-60px' });
+  });
+  document.querySelectorAll('[data-reveal-right]').forEach(el => {
+    inView(el, () => {
+      animate(el, { opacity: [0, 1], x: [32, 0] }, { duration: 0.75, easing: ease });
+    }, { margin: '-60px' });
+  });
+  document.querySelectorAll('[data-reveal-scale]').forEach(el => {
+    inView(el, () => {
+      animate(el, { opacity: [0, 1], scale: [0.88, 1] }, { duration: 0.8, easing: ease });
+    }, { margin: '-60px' });
+  });
+
+  // ── STAGGERED MENU CARDS ──
+  inView('#menu', () => {
+    document.querySelectorAll('.menu-card').forEach((card, i) => {
+      animate(card, { opacity: [0, 1], y: [24, 0] }, { duration: 0.6, delay: i * 0.12, easing: ease });
     });
-  }, { margin: '-60px' });
-});
+  }, { margin: '-100px' });
 
-document.querySelectorAll('[data-reveal-left]').forEach(el => {
-  inView(el, () => {
-    animate(el, { opacity: [0, 1], x: [-32, 0] }, {
-      duration: 0.75,
-      easing: [0.25, 0.1, 0.25, 1]
+  // ── STAGGERED REVIEWS ──
+  inView('#reviews', () => {
+    document.querySelectorAll('.review-card').forEach((card, i) => {
+      animate(card, { opacity: [0, 1], y: [24, 0] }, { duration: 0.65, delay: i * 0.15, easing: ease });
     });
-  }, { margin: '-60px' });
-});
+  }, { margin: '-80px' });
 
-document.querySelectorAll('[data-reveal-right]').forEach(el => {
-  inView(el, () => {
-    animate(el, { opacity: [0, 1], x: [32, 0] }, {
-      duration: 0.75,
-      easing: [0.25, 0.1, 0.25, 1]
+  // ── STAGGERED INSTAGRAM ──
+  inView('#instagram', () => {
+    document.querySelectorAll('.insta-item').forEach((item, i) => {
+      animate(item, { opacity: [0, 1], y: [20, 0] }, { duration: 0.55, delay: i * 0.08, easing: ease });
     });
-  }, { margin: '-60px' });
-});
+  }, { margin: '-80px' });
 
-document.querySelectorAll('[data-reveal-scale]').forEach(el => {
-  inView(el, () => {
-    animate(el, { opacity: [0, 1], scale: [0.88, 1] }, {
-      duration: 0.8,
-      easing: [0.25, 0.1, 0.25, 1]
+  // ── HOURS ──
+  inView('#hours', () => {
+    animate('.hours-headline', { opacity: [0, 1], x: [-24, 0] }, { duration: 0.75, easing: ease });
+    document.querySelectorAll('.hours-list li').forEach((li, i) => {
+      animate(li, { opacity: [0, 1], x: [-16, 0] }, { duration: 0.5, delay: 0.2 + i * 0.08, easing: ease });
     });
-  }, { margin: '-60px' });
-});
+  }, { margin: '-80px' });
 
-// ── STAGGERED MENU CARDS ──
-inView('#menu', () => {
-  animate('.menu-card', { opacity: [0, 1], y: [24, 0] }, {
-    duration: 0.6,
-    delay: animate.stagger ? animate.stagger(0.12) : 0,
-    easing: [0.25, 0.1, 0.25, 1]
-  });
-}, { margin: '-100px' });
+  // ── MASCOT ──
+  inView('.mascot-svg', () => {
+    animate('.mascot-svg', { rotate: ['-5deg', '0deg'], opacity: [0, 1] }, { duration: 1, easing: ease });
+  }, { margin: '-80px' });
 
-// ── STAGGERED REVIEW CARDS ──
-inView('#reviews', () => {
-  const cards = document.querySelectorAll('.review-card');
-  cards.forEach((card, i) => {
-    animate(card, { opacity: [0, 1], y: [24, 0] }, {
-      duration: 0.65,
-      delay: i * 0.15,
-      easing: [0.25, 0.1, 0.25, 1]
-    });
+  // ── DIVIDERS ──
+  document.querySelectorAll('.divider').forEach(div => {
+    inView(div, () => {
+      animate(div, { scaleX: [0, 1], opacity: [0, 1] }, { duration: 0.8, easing: ease });
+    }, { margin: '-20px' });
   });
-}, { margin: '-80px' });
 
-// ── STAGGERED INSTAGRAM GRID ──
-inView('#instagram', () => {
-  const items = document.querySelectorAll('.insta-item');
-  items.forEach((item, i) => {
-    animate(item, { opacity: [0, 1], y: [20, 0] }, {
-      duration: 0.55,
-      delay: i * 0.08,
-      easing: [0.25, 0.1, 0.25, 1]
-    });
-  });
-}, { margin: '-80px' });
-
-// ── HOURS SECTION PARALLAX ──
-inView('#hours', () => {
-  animate('.hours-headline', { opacity: [0, 1], x: [-24, 0] }, {
-    duration: 0.75,
-    easing: [0.25, 0.1, 0.25, 1]
-  });
-  animate('.hours-list li', { opacity: [0, 1], x: [-16, 0] }, {
-    duration: 0.5,
-    delay: 0.2,
-    easing: [0.25, 0.1, 0.25, 1]
-  });
-}, { margin: '-80px' });
-
-// ── MASCOT SVG SPIN ──
-inView('.mascot-svg', () => {
-  animate('.mascot-svg', { rotate: ['-5deg', '0deg'], opacity: [0, 1] }, {
-    duration: 1,
-    easing: [0.25, 0.1, 0.25, 1]
-  });
-}, { margin: '-80px' });
-
-// ── DIVIDER ANIMATION ──
-document.querySelectorAll('.divider').forEach(div => {
-  inView(div, () => {
-    animate(div, { scaleX: [0, 1], opacity: [0, 1] }, {
-      duration: 0.8,
-      easing: [0.25, 0.1, 0.25, 1]
-    });
-  }, { margin: '-20px' });
-});
-
-// ── HOVER: STAMP BADGE ROTATE ──
-const stamp = document.querySelector('.stamp-badge');
-if (stamp) {
-  stamp.addEventListener('mouseenter', () => {
-    animate(stamp, { rotate: ['0deg', '8deg'] }, { duration: 0.3, easing: [0.25, 0.1, 0.25, 1] });
-  });
-  stamp.addEventListener('mouseleave', () => {
-    animate(stamp, { rotate: ['8deg', '0deg'] }, { duration: 0.3, easing: [0.25, 0.1, 0.25, 1] });
-  });
+  // ── STAMP HOVER ──
+  const stamp = document.querySelector('.stamp-badge');
+  if (stamp) {
+    stamp.addEventListener('mouseenter', () => animate(stamp, { rotate: ['0deg', '8deg'] }, { duration: 0.3 }));
+    stamp.addEventListener('mouseleave', () => animate(stamp, { rotate: ['8deg', '0deg'] }, { duration: 0.3 }));
+  }
 }
 </script>
 </body>
