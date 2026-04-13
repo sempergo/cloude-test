@@ -28,7 +28,7 @@
       --muted: #544338;
     }
 
-    html { scroll-behavior: auto; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 
     body {
       font-family: 'Work Sans', sans-serif;
@@ -103,6 +103,8 @@
       padding: 10px 20px;
       text-decoration: none;
       transition: background 0.3s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .nav-cta:hover { background: var(--terra-deep); }
@@ -831,8 +833,10 @@
 
     /* ── MOBILE ── */
     @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
+      nav { padding: 10px 20px; min-height: 60px; }
+      .nav-logo img { height: 38px; }
       .nav-links { display: none; }
+      #hero { padding-top: 60px; }
 
       #hero {
         grid-template-columns: 1fr;
