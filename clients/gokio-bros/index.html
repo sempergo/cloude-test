@@ -825,6 +825,7 @@
 
     .vibe-inner { max-width: 1200px; margin: 0 auto; }
 
+    /* Photo grid */
     .vibe-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -832,68 +833,27 @@
       margin-top: 2.5rem;
     }
 
-    @media (min-width: 768px) {
-      .vibe-grid {
-        grid-template-columns: 2fr 1fr 1fr;
-        grid-template-rows: 380px 180px;
-      }
-    }
+    /* Mobile: vi-1 volle Breite, vi-2+vi-3 nebeneinander, CTA full-width */
+    .vi-1 { grid-column: span 2; aspect-ratio: 16/9; }
+    .vi-2, .vi-3 { aspect-ratio: 1/1; }
 
     .vibe-img {
       border-radius: 1rem;
       overflow: hidden;
-      aspect-ratio: 4/3;
-    }
-
-    @media (min-width: 768px) {
-      .vibe-img { aspect-ratio: unset; }
-      .vi-1 { grid-row: span 2; }
-    }
-
-    .vi-2, .vi-3 { aspect-ratio: 1/1; }
-    @media (min-width: 768px) { .vi-2, .vi-3 { aspect-ratio: unset; } }
-
-    .vibe-quote-block {
-      background: var(--red);
-      color: var(--white);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      grid-column: span 2;
-    }
-
-    @media (min-width: 768px) {
-      .vibe-quote-block { grid-column: span 2; }
-    }
-
-    .vibe-quote-text {
-      font-family: var(--font-d);
-      font-size: clamp(20px, 4vw, 38px);
-      letter-spacing: 0.02em;
-      line-height: 1.1;
-    }
-
-    .vibe-quote-meta {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      opacity: 0.6;
-      margin-top: 1rem;
     }
 
     .vibe-cta-block {
+      grid-column: span 2;
       background: var(--black);
       color: var(--cream);
       border-radius: 1rem;
       padding: 1.5rem;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: space-between;
       cursor: pointer;
       transition: background 0.2s;
+      min-height: 80px;
     }
     .vibe-cta-block:hover { background: var(--red); }
 
@@ -908,15 +868,67 @@
     .vibe-cta-text {
       font-family: var(--font-d);
       font-size: clamp(22px, 4vw, 36px);
-      margin-top: 0.5rem;
+      margin-top: 0.2rem;
     }
 
     .vibe-cta-arrow {
       font-size: 1.8rem;
-      margin-top: 1rem;
+      flex-shrink: 0;
       transition: transform 0.25s var(--ease-spring);
     }
     .vibe-cta-block:hover .vibe-cta-arrow { transform: translate(4px, -4px); }
+
+    /* Desktop photo grid: vi-1 links tall, rest rechts */
+    @media (min-width: 768px) {
+      .vibe-grid {
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: 360px 140px;
+      }
+      .vi-1 { grid-column: span 1; grid-row: span 2; aspect-ratio: unset; }
+      .vi-2, .vi-3 { aspect-ratio: unset; }
+      .vibe-cta-block { grid-column: span 2; }
+    }
+
+    /* Reviews */
+    .vibe-reviews {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+      margin-top: 0.85rem;
+    }
+
+    @media (min-width: 768px) {
+      .vibe-reviews { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .review-card {
+      border-radius: 1rem;
+      padding: 1.6rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 160px;
+    }
+
+    .rc-1 { background: var(--red);   color: var(--white); }
+    .rc-2 { background: var(--black); color: var(--cream); }
+    .rc-3 { background: var(--blue);  color: var(--white); }
+
+    .review-text {
+      font-family: var(--font-d);
+      font-size: clamp(18px, 2.8vw, 28px);
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+    }
+
+    .review-meta {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-top: 1.2rem;
+    }
 
     /* ─── VISIT / HOURS ─── */
     #visit {
@@ -1397,13 +1409,6 @@
         <img src="img/restaurant.png" alt="GOKIO Bros Restaurant" loading="lazy">
       </div>
 
-      <div class="vibe-quote-block r">
-        <div class="vibe-quote-text">
-          "Das beste Fried Chicken in Frankfurt.<br>Punkt."
-        </div>
-        <div class="vibe-quote-meta">— Google Review · ★★★★★</div>
-      </div>
-
       <a href="https://instagram.com/gokiobros" target="_blank" rel="noopener"
          class="vibe-cta-block r">
         <div>
@@ -1412,6 +1417,25 @@
         </div>
         <div class="vibe-cta-arrow">↗</div>
       </a>
+
+    </div>
+
+    <div class="vibe-reviews">
+
+      <div class="review-card rc-1 r">
+        <div class="review-text">"Das beste Fried Chicken in Frankfurt. Punkt."</div>
+        <div class="review-meta">— Google Review · ★★★★★</div>
+      </div>
+
+      <div class="review-card rc-2 r">
+        <div class="review-text">"Endlich echtes Chi-Maek in Frankfurt. Genau so wie in Seoul."</div>
+        <div class="review-meta">— Google Review · ★★★★★</div>
+      </div>
+
+      <div class="review-card rc-3 r">
+        <div class="review-text">"Der Burger ist unfassbar. Ich komme jede Woche."</div>
+        <div class="review-meta">— Google Review · ★★★★★</div>
+      </div>
 
     </div>
   </div>
