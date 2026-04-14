@@ -901,7 +901,129 @@
       .newsletter-btn { margin-left: 0; }
 
       footer { padding: 48px 24px 32px; }
+
+      #margarita { grid-template-columns: 1fr; min-height: auto; }
+      .marg-image-wrap { height: 55vh; }
+      .marg-overlay { background: linear-gradient(to bottom, transparent 50%, var(--espresso) 100%); }
+      .marg-content { padding: 48px 24px 64px; }
+      .marg-title { font-size: 4.5rem; }
+      .marg-desc { max-width: 100%; }
     }
+
+    /* ── MARGARITA ── */
+    #margarita {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      min-height: 92vh;
+      background: var(--espresso);
+      overflow: hidden;
+    }
+
+    .marg-image-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .marg-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transform: scale(1.06);
+      transition: transform 0.1s linear;
+      filter: brightness(0.88) saturate(1.1);
+    }
+
+    .marg-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent 55%, var(--espresso) 100%);
+    }
+
+    .marg-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 72px 80px 48px;
+    }
+
+    .marg-kicker {
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--peach);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .marg-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 7rem;
+      color: var(--ivory);
+      line-height: 0.95;
+      margin-bottom: 10px;
+    }
+
+    .marg-since {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--peach);
+      opacity: 0.75;
+      margin-bottom: 36px;
+    }
+
+    .marg-divider {
+      width: 48px;
+      height: 1px;
+      background: var(--terra);
+      margin-bottom: 28px;
+    }
+
+    .marg-desc {
+      font-family: 'Newsreader', serif;
+      font-size: 1.05rem;
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(255, 248, 240, 0.72);
+      max-width: 380px;
+      margin-bottom: 36px;
+    }
+
+    .marg-ingredients {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 10px;
+      margin-bottom: 48px;
+    }
+
+    .marg-ingredients span {
+      font-size: 0.56rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--peach);
+    }
+
+    .marg-ingredients .dot { color: var(--terra); opacity: 0.6; }
+
+    .marg-cta {
+      align-self: flex-start;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      border: 1px solid rgba(255,248,240,0.3);
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .marg-cta:hover { background: var(--terra); border-color: var(--terra); }
 
     /* ── HAMBURGER ── */
     .nav-hamburger {
@@ -1131,6 +1253,38 @@
   </div>
 </section>
 
+<!-- MARGARITA -->
+<section id="margarita">
+  <div class="marg-image-wrap">
+    <img src="images/margarita.jpg" id="marg-parallax"
+      alt="La Margarita — El Pacífico Frankfurt" loading="lazy">
+    <div class="marg-overlay"></div>
+  </div>
+  <div class="marg-content" data-reveal-right>
+    <span class="marg-kicker">Signature Cocktail</span>
+    <h2 class="marg-title">La Margarita</h2>
+    <p class="marg-since">Hausgemacht. Seit 1983.</p>
+    <div class="marg-divider"></div>
+    <p class="marg-desc">
+      Frisch gepresste Limette, echter Reposado Tequila, hausgemachter Agavensirup.
+      Unsere Margarita ist kein Cocktail — sie ist der Grund,
+      warum Gäste immer wiederkommen.
+    </p>
+    <div class="marg-ingredients">
+      <span>Tequila Reposado</span>
+      <span class="dot">·</span>
+      <span>Frische Limette</span>
+      <span class="dot">·</span>
+      <span>Agavensirup</span>
+      <span class="dot">·</span>
+      <span>Meersalz</span>
+    </div>
+    <a href="https://wa.me/491704819991" class="marg-cta" target="_blank" rel="noopener">
+      Tisch reservieren →
+    </a>
+  </div>
+</section>
+
 <!-- DIVIDER -->
 <div class="divider"></div>
 
@@ -1344,14 +1498,20 @@ if (typeof Lenis !== 'undefined') {
   } catch(e) {}
 }
 
-// ── HERO PARALLAX (vanilla — no library needed) ──
+// ── PARALLAX (hero + margarita) ──
 const heroImg = document.getElementById('hero-parallax');
+const margImg = document.getElementById('marg-parallax');
 window.addEventListener('scroll', () => {
-  if (!heroImg) return;
   const scrollY = window.scrollY;
-  if (scrollY < window.innerHeight) {
-    const p = scrollY / window.innerHeight;
-    heroImg.style.transform = `scale(1.05) translateY(${p * 40}px)`;
+  if (heroImg && scrollY < window.innerHeight) {
+    heroImg.style.transform = `scale(1.05) translateY(${(scrollY / window.innerHeight) * 40}px)`;
+  }
+  if (margImg) {
+    const rect = margImg.closest('section').getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      const p = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+      margImg.style.transform = `scale(1.06) translateY(${(p - 0.5) * 40}px)`;
+    }
   }
 }, { passive: true });
 
