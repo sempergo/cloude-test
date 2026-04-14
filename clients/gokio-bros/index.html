@@ -524,6 +524,137 @@
       margin-top: 0.3rem;
     }
 
+    /* ─── SIGNATURES ─── */
+    #signatures { background: var(--black); }
+
+    .sig-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: clamp(420px, 72vh, 720px);
+      overflow: hidden;
+    }
+
+    .sig-panel.sig-flip { direction: rtl; }
+    .sig-panel.sig-flip > * { direction: ltr; }
+
+    .sig-photo { overflow: hidden; position: relative; }
+    .sig-photo img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 1.1s var(--ease-out);
+    }
+    .sig-panel:hover .sig-photo img { transform: scale(1.06); }
+
+    .sig-text {
+      background: var(--sig-color, var(--black));
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: clamp(2rem, 4.5vw, 5rem);
+    }
+
+    .sig-overline {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 1.2rem;
+    }
+
+    .sig-name {
+      font-family: var(--font-d);
+      font-size: clamp(54px, 8.5vw, 120px);
+      line-height: 0.87;
+      color: var(--cream);
+      letter-spacing: 0.01em;
+      margin-bottom: 1.5rem;
+    }
+
+    .sig-desc {
+      font-size: clamp(0.85rem, 1.4vw, 1rem);
+      line-height: 1.65;
+      color: rgba(245,237,214,0.5);
+      max-width: 340px;
+    }
+
+    @media (max-width: 640px) {
+      .sig-panel {
+        grid-template-columns: 1fr;
+        grid-template-rows: 58vw auto;
+        height: auto;
+        direction: ltr;
+      }
+      .sig-text { padding: 2rem 1.75rem; min-height: 180px; }
+      .sig-name { font-size: clamp(50px, 15vw, 80px); }
+    }
+
+    /* ─── MANIFESTO ─── */
+    #manifesto {
+      background: var(--black);
+      padding: clamp(5rem, 12vw, 12rem) 1.75rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #manifesto::after {
+      content: '치맥';
+      position: absolute;
+      font-family: var(--font-k);
+      font-weight: 900;
+      font-size: clamp(220px, 50vw, 680px);
+      color: rgba(255,212,0,0.03);
+      bottom: -8%;
+      right: -3%;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .mf-block { max-width: 1300px; margin: 0 auto; }
+
+    .mf-word {
+      display: block;
+      font-family: var(--font-d);
+      font-size: clamp(76px, 17vw, 210px);
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+    }
+
+    .mf-cream  { color: var(--cream); }
+    .mf-yellow { color: var(--yellow); }
+    .mf-ghost  {
+      -webkit-text-stroke: clamp(1.5px, 0.22vw, 3px) rgba(245,237,214,0.18);
+      color: transparent;
+    }
+    .mf-gradient {
+      font-family: var(--font-k);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--red) 20%, var(--yellow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .mf-sub {
+      font-size: clamp(0.7rem, 1.4vw, 0.88rem);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245,237,214,0.28);
+      margin-top: 3.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .mf-sub::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 1px;
+      background: rgba(245,237,214,0.28);
+      flex-shrink: 0;
+    }
+
     /* ─── MENU ─── */
     #menu {
       background: var(--cream);
@@ -1120,6 +1251,44 @@
   </div>
 </section>
 
+<!-- SIGNATURES -->
+<section id="signatures">
+
+  <div class="sig-panel r">
+    <div class="sig-photo">
+      <img src="img/drip.png" alt="GOKIO Burger" loading="lazy">
+    </div>
+    <div class="sig-text" style="--sig-color: #0C0C0C">
+      <div class="sig-overline">Signature No. 01</div>
+      <div class="sig-name">THE<br>DRIP.</div>
+      <div class="sig-desc">Unser Original. Double-fried, Cheese Sauce, Pickled Red Onions, Sesam. Kein Besteck vorgesehen — und kein Bedauern danach.</div>
+    </div>
+  </div>
+
+  <div class="sig-panel sig-flip r">
+    <div class="sig-photo">
+      <img src="img/spread1.png" alt="Chi-Maek Spread" loading="lazy">
+    </div>
+    <div class="sig-text" style="--sig-color: #FF2828">
+      <div class="sig-overline">Signature No. 02</div>
+      <div class="sig-name">THE<br>TABLE.</div>
+      <div class="sig-desc">Alles auf goldenem Tablett. Chicken, Waffle Fries, Rice Bowl, Sauces. Für zwei oder für viele. Chi-Maek wie in Seoul.</div>
+    </div>
+  </div>
+
+  <div class="sig-panel r">
+    <div class="sig-photo">
+      <img src="img/hero.png" alt="The Craft" loading="lazy">
+    </div>
+    <div class="sig-text" style="--sig-color: #1448FF">
+      <div class="sig-overline">Signature No. 03</div>
+      <div class="sig-name">THE<br>CRAFT.</div>
+      <div class="sig-desc">Jedes Stück von Hand. Täglich frisch. Kein Convenience, kein Tiefkühl. Das schmeckst du.</div>
+    </div>
+  </div>
+
+</section>
+
 <!-- MENU HIGHLIGHTS -->
 <section id="menu">
   <div class="section-label r">Das Menu</div>
@@ -1220,6 +1389,17 @@
   </div>
 
 </div>
+
+<!-- MANIFESTO -->
+<section id="manifesto">
+  <div class="mf-block">
+    <span class="mf-word mf-cream r">CHICKEN.</span>
+    <span class="mf-word mf-yellow r">BEER.</span>
+    <span class="mf-word mf-ghost r">FRIENDS.</span>
+    <span class="mf-word mf-gradient r">치맥.</span>
+    <div class="mf-sub r">Seoul Street Culture · Frankfurt Nordend · Oeder Weg 26</div>
+  </div>
+</section>
 
 <!-- THE VIBE -->
 <section id="vibe">
