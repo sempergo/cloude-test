@@ -470,6 +470,20 @@
       flex-shrink: 0;
     }
 
+    @media (max-width: 640px) {
+      #chimaek .rl {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 1.25rem;
+      }
+      .chimaek-owner {
+        margin-top: 0;
+        width: clamp(80px, 20vw, 110px);
+        height: clamp(100px, 26vw, 135px);
+      }
+    }
+
     .cm-label {
       font-size: 0.72rem;
       font-weight: 600;
