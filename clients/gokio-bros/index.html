@@ -460,6 +460,16 @@
       background-clip: text;
     }
 
+    .chimaek-owner {
+      width: clamp(90px, 14vw, 160px);
+      height: clamp(110px, 18vw, 200px);
+      border-radius: 100px;
+      overflow: hidden;
+      border: 3px solid var(--yellow);
+      margin-top: 1.5rem;
+      flex-shrink: 0;
+    }
+
     .cm-label {
       font-size: 0.72rem;
       font-weight: 600;
@@ -617,6 +627,49 @@
       pointer-events: none;
     }
     .menu-card:hover .mc-emoji { transform: scale(1.35) rotate(-15deg); }
+
+    /* ─── PHOTO STRIP ─── */
+    .photo-strip {
+      background: var(--black);
+      padding: 2rem 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .photo-row {
+      display: flex;
+      gap: 0.75rem;
+      width: max-content;
+    }
+
+    .photo-row-1 { animation: ps-left  35s linear infinite; }
+    .photo-row-2 { animation: ps-right 28s linear infinite; }
+
+    .photo-strip:hover .photo-row-1,
+    .photo-strip:hover .photo-row-2 { animation-play-state: paused; }
+
+    @keyframes ps-left  { to   { transform: translateX(-50%); } }
+    @keyframes ps-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+    .photo-item {
+      flex-shrink: 0;
+      width: clamp(160px, 22vw, 260px);
+      height: clamp(200px, 27vw, 320px);
+      border-radius: 0.85rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .photo-strip:hover .photo-item:hover img { transform: scale(1.06); }
 
     /* ─── VIBE / GALLERY ─── */
     #vibe {
@@ -951,8 +1004,7 @@
 
   <!-- Chicken image -->
   <div class="hero-img" id="heroImg">
-    <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=900&q=80"
-         alt="Korean Fried Chicken" loading="eager">
+    <img src="img/hero.png" alt="GOKIO Bros Burger" loading="eager">
   </div>
 
   <!-- Spinning stamp -->
@@ -1032,6 +1084,9 @@
   <div class="chimaek-inner">
     <div class="rl">
       <div class="chimaek-kor" aria-label="Chi-Maek">치<br>맥</div>
+      <div class="chimaek-owner rs">
+        <img src="img/owner.png" alt="GOKIO Bros Team" loading="lazy">
+      </div>
     </div>
     <div>
       <div class="cm-label r">Was ist Chi-Maek?</div>
@@ -1129,6 +1184,43 @@
   </div>
 </section>
 
+<!-- PHOTO STRIP -->
+<div class="photo-strip" aria-hidden="true">
+
+  <div class="photo-row photo-row-1">
+    <div class="photo-item"><img src="img/burger-top.png"   alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/box.png"          alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/glove.png"        alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/spread1.png"      alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/chili.png"        alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/table.png"        alt="" loading="lazy"></div>
+    <!-- duplicate for seamless loop -->
+    <div class="photo-item"><img src="img/burger-top.png"   alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/box.png"          alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/glove.png"        alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/spread1.png"      alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/chili.png"        alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/table.png"        alt="" loading="lazy"></div>
+  </div>
+
+  <div class="photo-row photo-row-2">
+    <div class="photo-item"><img src="img/burger-close.png" alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/hands2.png"       alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/drip.png"         alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/burger-drink.png" alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/hero.png"         alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/hands-burger.png" alt="" loading="lazy"></div>
+    <!-- duplicate for seamless loop -->
+    <div class="photo-item"><img src="img/burger-close.png" alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/hands2.png"       alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/drip.png"         alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/burger-drink.png" alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/hero.png"         alt="" loading="lazy"></div>
+    <div class="photo-item"><img src="img/hands-burger.png" alt="" loading="lazy"></div>
+  </div>
+
+</div>
+
 <!-- THE VIBE -->
 <section id="vibe">
   <div class="vibe-inner">
@@ -1138,18 +1230,15 @@
     <div class="vibe-grid">
 
       <div class="vibe-img vi-1 rs">
-        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=900&q=80"
-             alt="Korean Food Spread" loading="lazy">
+        <img src="img/spread2.png" alt="GOKIO Bros Food Spread" loading="lazy">
       </div>
 
       <div class="vibe-img vi-2 rs">
-        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
-             alt="Cold Beer" loading="lazy">
+        <img src="img/hands-burger.png" alt="GOKIO Bros Burger" loading="lazy">
       </div>
 
       <div class="vibe-img vi-3 rs">
-        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80"
-             alt="Restaurant Atmosphere" loading="lazy">
+        <img src="img/restaurant.png" alt="GOKIO Bros Restaurant" loading="lazy">
       </div>
 
       <div class="vibe-quote-block r">
