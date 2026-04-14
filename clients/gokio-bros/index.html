@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GOKIO Bros — Korean Fried Chicken & Beer · Frankfurt Nordend</title>
+  <meta name="description" content="Chi-Maek im Herzen von Frankfurt Nordend. Korean Fried Chicken & ice-cold Beer. Oeder Weg 26. Jeden Abend geöffnet.">
+  <meta property="og:title" content="GOKIO Bros — Korean Fried Chicken & Beer Frankfurt">
+  <meta property="og:description" content="Chi-Maek in Frankfurt Nordend. Korean Fried Chicken & ice-cold Beer. Seoul Street Culture.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=1200&q=80">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍗</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
+  <script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
+
+  <style>
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+
+    /* ─── DESIGN TOKENS ─── */
+    :root {
+      --cream:   #F5EDD6;
+      --cream2:  #EDE3C4;
+      --red:     #FF2828;
+      --yellow:  #FFD400;
+      --blue:    #1448FF;
+      --green:   #00CC88;
+      --pink:    #FF7AB3;
+      --black:   #0C0C0C;
+      --white:   #FEFEFE;
+      --gray:    #3D3D3D;
+
+      --font-d: 'Bebas Neue', sans-serif;
+      --font-b: 'Space Grotesk', sans-serif;
+      --font-k: 'Noto Sans KR', sans-serif;
+
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--cream);
+      color: var(--black);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a   { text-decoration: none; color: inherit; }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 1.1rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-d);
+      font-size: 1.35rem;
+      letter-spacing: 0.06em;
+      color: var(--black);
+      mix-blend-mode: multiply;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.55;
+      transition: opacity 0.2s;
+    }
+    .nav-link:hover { opacity: 1; }
+
+    .nav-cta {
+      background: var(--red);
+      color: var(--white);
+      padding: 0.55rem 1.2rem;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: transform 0.2s var(--ease-spring), background 0.2s;
+    }
+    .nav-cta:hover { transform: scale(1.06); background: var(--black); }
+
+    @media (max-width: 600px) {
+      .nav-right .nav-link { display: none; }
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      min-height: 100svh;
+      background: var(--cream);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Dot grid */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(0,0,0,0.09) 1.5px, transparent 1.5px);
+      background-size: 26px 26px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* top strip */
+    .hero-strip {
+      background: var(--red);
+      padding: 0.6rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-strip-text {
+      font-family: var(--font-d);
+      font-size: clamp(13px, 2.2vw, 18px);
+      color: var(--yellow);
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      animation: strip-slide 28s linear infinite;
+    }
+
+    @keyframes strip-slide {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* BIG shapes */
+    .hero-shape-circle {
+      position: absolute;
+      width: clamp(280px, 52vw, 680px);
+      height: clamp(280px, 52vw, 680px);
+      background: var(--yellow);
+      border-radius: 50%;
+      top: 2%;
+      right: -12%;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    .hero-shape-blob {
+      position: absolute;
+      width: clamp(100px, 18vw, 240px);
+      height: clamp(100px, 18vw, 240px);
+      background: var(--red);
+      border-radius: 50%;
+      bottom: 18%;
+      left: -4%;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    .hero-shape-pill {
+      position: absolute;
+      width: clamp(60px, 10vw, 140px);
+      height: clamp(24px, 4vw, 50px);
+      background: var(--blue);
+      border-radius: 100px;
+      top: 42%;
+      right: 6%;
+      z-index: 1;
+      transform: rotate(-18deg);
+      will-change: transform;
+    }
+
+    .hero-shape-sm {
+      position: absolute;
+      width: clamp(50px, 7vw, 90px);
+      height: clamp(50px, 7vw, 90px);
+      background: var(--pink);
+      border-radius: 50%;
+      top: 60%;
+      right: 30%;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    /* Chicken image */
+    .hero-img {
+      position: absolute;
+      top: 5%;
+      right: -6%;
+      width: clamp(220px, 44vw, 560px);
+      height: clamp(240px, 48vw, 600px);
+      z-index: 2;
+      border-radius: 0 0 0 50%;
+      overflow: hidden;
+    }
+
+    @media (max-width: 640px) {
+      .hero-img {
+        width: 72vw;
+        height: 58vw;
+        top: 10%;
+        right: -10%;
+        border-radius: 0 0 0 40%;
+      }
+    }
+
+    /* Stamp badge */
+    .stamp {
+      position: absolute;
+      width: clamp(72px, 11vw, 130px);
+      height: clamp(72px, 11vw, 130px);
+      bottom: 28%;
+      right: 3%;
+      z-index: 5;
+      animation: stamp-spin 22s linear infinite;
+    }
+
+    .stamp svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes stamp-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Korean deco text */
+    .hero-korean {
+      position: absolute;
+      font-family: var(--font-k);
+      font-weight: 900;
+      font-size: clamp(100px, 22vw, 280px);
+      color: var(--yellow);
+      opacity: 0.1;
+      top: -2%;
+      left: -2%;
+      z-index: 0;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Content */
+    .hero-content {
+      position: relative;
+      z-index: 4;
+      margin-top: auto;
+      padding: 0 1.75rem 3.5rem;
+    }
+
+    .hero-eyebrow {
+      font-size: clamp(10px, 2vw, 13px);
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      opacity: 0;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 2px;
+      background: var(--gray);
+      flex-shrink: 0;
+    }
+
+    .hero-title {
+      font-family: var(--font-d);
+      font-size: clamp(88px, 23vw, 270px);
+      line-height: 0.87;
+      color: var(--black);
+      opacity: 0;
+    }
+
+    .hero-title-outline {
+      display: block;
+      -webkit-text-stroke: clamp(2px, 0.4vw, 4px) var(--black);
+      color: transparent;
+    }
+
+    .hero-sub {
+      font-family: var(--font-d);
+      font-size: clamp(17px, 4.5vw, 48px);
+      letter-spacing: 0.04em;
+      color: var(--black);
+      margin-top: 0.8rem;
+      max-width: 640px;
+      opacity: 0;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.4rem;
+      opacity: 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.42rem 0.9rem;
+      border-radius: 100px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .tag-dark   { background: var(--black);  color: var(--cream); }
+    .tag-border { border: 2px solid rgba(0,0,0,0.3); color: var(--black); }
+    .tag-red    { background: var(--red);    color: var(--white); }
+
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 1.8rem;
+      opacity: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.95rem 2rem;
+      border-radius: 100px;
+      font-family: var(--font-b);
+      font-size: 0.875rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      transition: transform 0.22s var(--ease-spring), box-shadow 0.22s ease, background 0.2s;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.18); }
+
+    .btn-red    { background: var(--red);   color: var(--white); }
+    .btn-black  { background: var(--black); color: var(--cream); }
+    .btn-outline{ background: transparent; color: var(--black); border: 2.5px solid var(--black); }
+    .btn-red:hover   { background: #e01f1f; }
+    .btn-black:hover { background: #2a2a2a; }
+
+    /* ─── TICKER ─── */
+    .ticker {
+      background: var(--red);
+      padding: 0.85rem 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 22s linear infinite;
+    }
+
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      font-family: var(--font-d);
+      font-size: clamp(17px, 3vw, 30px);
+      color: var(--yellow);
+      letter-spacing: 0.05em;
+      padding: 0 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .ticker-dot { color: rgba(255,255,255,0.5); }
+
+    /* ─── CHI-MAEK SECTION ─── */
+    #chimaek {
+      background: var(--black);
+      color: var(--cream);
+      padding: clamp(5rem, 10vw, 10rem) 1.75rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* background accent */
+    #chimaek::before {
+      content: 'NO.1';
+      position: absolute;
+      font-family: var(--font-d);
+      font-size: clamp(140px, 30vw, 380px);
+      color: rgba(255,255,255,0.025);
+      bottom: -4%;
+      right: -3%;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .chimaek-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .chimaek-inner {
+        grid-template-columns: 1fr 1.1fr;
+        gap: 7rem;
+        align-items: center;
+      }
+    }
+
+    .chimaek-kor {
+      font-family: var(--font-k);
+      font-weight: 900;
+      font-size: clamp(110px, 26vw, 300px);
+      line-height: 0.88;
+      background: linear-gradient(145deg, var(--yellow) 30%, var(--red));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cm-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 1.4rem;
+    }
+
+    .cm-heading {
+      font-family: var(--font-d);
+      font-size: clamp(38px, 8vw, 80px);
+      line-height: 0.97;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.6rem;
+    }
+
+    .cm-heading em {
+      font-style: normal;
+      color: var(--yellow);
+    }
+
+    .cm-body {
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      line-height: 1.75;
+      color: rgba(245,237,214,0.65);
+      max-width: 460px;
+    }
+
+    .cm-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 2rem;
+    }
+
+    .cm-stat-num {
+      font-family: var(--font-d);
+      font-size: clamp(30px, 5.5vw, 56px);
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .cm-stat-lbl {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245,237,214,0.4);
+      margin-top: 0.3rem;
+    }
+
+    /* ─── MENU ─── */
+    #menu {
+      background: var(--cream);
+      padding: clamp(5rem, 10vw, 10rem) 1.75rem;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.6rem;
+    }
+    .section-label::before {
+      content: '';
+      width: 28px;
+      height: 2px;
+      background: var(--gray);
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: var(--font-d);
+      font-size: clamp(62px, 15vw, 160px);
+      line-height: 0.88;
+      letter-spacing: -0.01em;
+      margin-bottom: 2.5rem;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      max-width: 1200px;
+    }
+
+    @media (min-width: 768px) {
+      .menu-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .menu-card {
+      position: relative;
+      padding: 1.6rem;
+      border-radius: 1.25rem;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      transition: transform 0.3s var(--ease-spring);
+      cursor: pointer;
+    }
+    .menu-card:hover { transform: scale(1.04) rotate(1.2deg); }
+    .menu-card:nth-child(even):hover { transform: scale(1.04) rotate(-1.2deg); }
+
+    .mc-1 { background: var(--red);    color: var(--white); grid-column: span 2; }
+    .mc-2 { background: var(--yellow); color: var(--black); }
+    .mc-3 { background: var(--blue);   color: var(--white); }
+    .mc-4 { background: var(--pink);   color: var(--black); }
+    .mc-5 { background: var(--green);  color: var(--black); }
+    .mc-6 { background: var(--black);  color: var(--cream); }
+
+    @media (min-width: 768px) {
+      .mc-1 { grid-column: span 1; }
+    }
+
+    .mc-num {
+      font-family: var(--font-d);
+      font-size: 2.8rem;
+      line-height: 1;
+      opacity: 0.2;
+    }
+
+    .mc-name {
+      font-family: var(--font-d);
+      font-size: clamp(22px, 4vw, 32px);
+      letter-spacing: 0.02em;
+      line-height: 1.05;
+      margin-bottom: 0.45rem;
+    }
+
+    .mc-desc {
+      font-size: 0.77rem;
+      font-weight: 500;
+      opacity: 0.7;
+      line-height: 1.45;
+    }
+
+    .mc-emoji {
+      position: absolute;
+      bottom: 1.1rem;
+      right: 1.1rem;
+      font-size: 2.4rem;
+      transition: transform 0.3s var(--ease-spring);
+      pointer-events: none;
+    }
+    .menu-card:hover .mc-emoji { transform: scale(1.35) rotate(-15deg); }
+
+    /* ─── VIBE / GALLERY ─── */
+    #vibe {
+      background: var(--cream2);
+      padding: clamp(5rem, 10vw, 10rem) 1.75rem;
+      overflow: hidden;
+    }
+
+    .vibe-inner { max-width: 1200px; margin: 0 auto; }
+
+    .vibe-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 2.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .vibe-grid {
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: 380px 180px;
+      }
+    }
+
+    .vibe-img {
+      border-radius: 1rem;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+
+    @media (min-width: 768px) {
+      .vibe-img { aspect-ratio: unset; }
+      .vi-1 { grid-row: span 2; }
+    }
+
+    .vi-2, .vi-3 { aspect-ratio: 1/1; }
+    @media (min-width: 768px) { .vi-2, .vi-3 { aspect-ratio: unset; } }
+
+    .vibe-quote-block {
+      background: var(--red);
+      color: var(--white);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      grid-column: span 2;
+    }
+
+    @media (min-width: 768px) {
+      .vibe-quote-block { grid-column: span 2; }
+    }
+
+    .vibe-quote-text {
+      font-family: var(--font-d);
+      font-size: clamp(20px, 4vw, 38px);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+    }
+
+    .vibe-quote-meta {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-top: 1rem;
+    }
+
+    .vibe-cta-block {
+      background: var(--black);
+      color: var(--cream);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .vibe-cta-block:hover { background: var(--red); }
+
+    .vibe-cta-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.45;
+    }
+
+    .vibe-cta-text {
+      font-family: var(--font-d);
+      font-size: clamp(22px, 4vw, 36px);
+      margin-top: 0.5rem;
+    }
+
+    .vibe-cta-arrow {
+      font-size: 1.8rem;
+      margin-top: 1rem;
+      transition: transform 0.25s var(--ease-spring);
+    }
+    .vibe-cta-block:hover .vibe-cta-arrow { transform: translate(4px, -4px); }
+
+    /* ─── VISIT / HOURS ─── */
+    #visit {
+      background: var(--yellow);
+      padding: clamp(5rem, 10vw, 10rem) 1.75rem;
+    }
+
+    .visit-inner { max-width: 1200px; margin: 0 auto; }
+
+    .visit-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .visit-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 7rem;
+        align-items: start;
+      }
+    }
+
+    .hours-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 1rem 0;
+      border-bottom: 2px solid rgba(0,0,0,0.1);
+    }
+
+    .hours-day {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hours-time {
+      font-family: var(--font-d);
+      font-size: clamp(22px, 4vw, 38px);
+      letter-spacing: 0.04em;
+    }
+
+    .info-block { margin-bottom: 2rem; }
+
+    .info-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-bottom: 0.4rem;
+    }
+
+    .info-value {
+      font-family: var(--font-d);
+      font-size: clamp(22px, 4vw, 36px);
+      letter-spacing: 0.03em;
+      line-height: 1.2;
+    }
+
+    .action-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin-top: 0.5rem;
+    }
+
+    .action-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.4rem;
+      background: var(--black);
+      color: var(--cream);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: transform 0.22s var(--ease-out), background 0.2s;
+    }
+    .action-link:hover { transform: translateX(7px); background: var(--red); }
+
+    .action-link-icon { font-size: 1.15rem; flex-shrink: 0; }
+    .action-link-arrow { margin-left: auto; font-size: 1.1rem; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--black);
+      color: var(--cream);
+      padding: clamp(5rem, 10vw, 9rem) 1.75rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255,212,0,0.06) 0%, transparent 70%);
+      top: -10%;
+      left: -5%;
+      pointer-events: none;
+    }
+
+    .footer-big {
+      font-family: var(--font-d);
+      font-size: clamp(60px, 17vw, 220px);
+      line-height: 0.87;
+      letter-spacing: -0.01em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-big .filled  { color: var(--cream); }
+    .footer-big .outline {
+      -webkit-text-stroke: 2px rgba(245,237,214,0.25);
+      color: transparent;
+    }
+
+    .footer-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 4rem 0 2.5rem;
+    }
+
+    .footer-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (min-width: 768px) {
+      .footer-cols { grid-template-columns: 2fr 1fr 1fr 1fr; }
+    }
+
+    .fc-title {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      margin-bottom: 0.9rem;
+    }
+
+    .fc-links { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+
+    .fc-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      opacity: 0.6;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .fc-links a:hover { opacity: 1; color: var(--yellow); }
+
+    .fc-desc {
+      font-size: 0.875rem;
+      line-height: 1.65;
+      opacity: 0.5;
+      max-width: 260px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      opacity: 0.3;
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── SCROLL REVEAL BASE ─── */
+    .r  { opacity: 0; transform: translateY(38px); }
+    .rl { opacity: 0; transform: translateX(-50px); }
+    .rs { opacity: 0; transform: scale(0.88); }
+
+    /* ─── SELECTION COLOR ─── */
+    ::selection { background: var(--yellow); color: var(--black); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">GOKIO BROS</div>
+  <div class="nav-right">
+    <a href="#menu"  class="nav-link">Menu</a>
+    <a href="#visit" class="nav-link">Besuch uns</a>
+    <a href="https://wolt.com" target="_blank" rel="noopener" class="nav-cta">🛵 Bestellen</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+
+  <!-- top strip -->
+  <div class="hero-strip">
+    <div class="hero-strip-text">
+      GOKIO BROS · 치킨 &amp; 맥주 · FRANKFURT NORDEND · OEDER WEG 26 ·&nbsp;
+      GOKIO BROS · 치킨 &amp; 맥주 · FRANKFURT NORDEND · OEDER WEG 26 ·&nbsp;
+      GOKIO BROS · 치킨 &amp; 맥주 · FRANKFURT NORDEND · OEDER WEG 26 ·&nbsp;
+      GOKIO BROS · 치킨 &amp; 맥주 · FRANKFURT NORDEND · OEDER WEG 26 ·&nbsp;
+    </div>
+  </div>
+
+  <!-- shapes -->
+  <div class="hero-shape-circle" id="s1"></div>
+  <div class="hero-shape-blob"   id="s2"></div>
+  <div class="hero-shape-pill"   id="s3"></div>
+  <div class="hero-shape-sm"     id="s4"></div>
+
+  <!-- Korean deco -->
+  <div class="hero-korean" aria-hidden="true">치맥</div>
+
+  <!-- Chicken image -->
+  <div class="hero-img" id="heroImg">
+    <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=900&q=80"
+         alt="Korean Fried Chicken" loading="eager">
+  </div>
+
+  <!-- Spinning stamp -->
+  <div class="stamp" aria-hidden="true">
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="60" r="56" fill="#FF2828"/>
+      <path id="stCircle" d="M60,60 m-42,0 a42,42 0 1,1 84,0 a42,42 0 1,1 -84,0" fill="none"/>
+      <text fill="#FFD400" font-family="'Bebas Neue',sans-serif" font-size="13" letter-spacing="3">
+        <textPath href="#stCircle" startOffset="5%">치맥 NO.1 · FRANKFURT · GOKIO BROS ·</textPath>
+      </text>
+      <text x="60" y="55" text-anchor="middle" fill="#FFD400"
+            font-family="'Noto Sans KR',sans-serif" font-weight="900" font-size="22">치맥</text>
+      <text x="60" y="74" text-anchor="middle" fill="rgba(255,212,0,0.6)"
+            font-family="'Bebas Neue',sans-serif" font-size="12" letter-spacing="2">SINCE 2024</text>
+    </svg>
+  </div>
+
+  <!-- Content -->
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="hEyebrow">Seoul Street Culture · Frankfurt Nordend</div>
+    <h1 class="hero-title" id="hTitle">
+      GOKIO
+      <span class="hero-title-outline">BROS.</span>
+    </h1>
+    <div class="hero-sub" id="hSub">KOREAN FRIED CHICKEN&nbsp;&amp;&nbsp;BEER</div>
+    <div class="hero-meta" id="hMeta">
+      <span class="tag tag-dark">🍗 Chi-Maek</span>
+      <span class="tag tag-border">🍺 Cold Beer</span>
+      <span class="tag tag-border">📍 Oeder Weg 26</span>
+      <span class="tag tag-red">인스타그래머블</span>
+    </div>
+    <div class="hero-ctas" id="hCtas">
+      <a href="https://wolt.com" target="_blank" rel="noopener" class="btn btn-red">🛵 Jetzt bestellen</a>
+      <a href="https://instagram.com/gokiobros" target="_blank" rel="noopener" class="btn btn-black">📸 @gokiobros</a>
+      <a href="tel:+496915346911" class="btn btn-outline">📞 Reservieren</a>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item">치맥</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">CHICKEN & BEER</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">FRANKFURT NORDEND</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">GOLDEN TRAY SERVICE</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">OEDER WEG 26</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">치킨과 맥주</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">EVERY NIGHT</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <!-- duplicate for seamless -->
+    <span class="ticker-item">치맥</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">CHICKEN & BEER</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">FRANKFURT NORDEND</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">GOLDEN TRAY SERVICE</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">OEDER WEG 26</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">치킨과 맥주</span>
+    <span class="ticker-item ticker-dot">✦</span>
+    <span class="ticker-item">EVERY NIGHT</span>
+    <span class="ticker-item ticker-dot">✦</span>
+  </div>
+</div>
+
+<!-- CHI-MAEK STORY -->
+<section id="chimaek">
+  <div class="chimaek-inner">
+    <div class="rl">
+      <div class="chimaek-kor" aria-label="Chi-Maek">치<br>맥</div>
+    </div>
+    <div>
+      <div class="cm-label r">Was ist Chi-Maek?</div>
+      <h2 class="cm-heading r">
+        CHICKEN<br>
+        <em>&</em> BEER —<br>
+        DAS RITUAL.
+      </h2>
+      <p class="cm-body r">
+        In Korea gibt es ein heiliges Ritual: 치맥 (Chi-Maek). Crispy Fried Chicken,
+        ice-cold Beer, Freunde, Nacht. Bei GOKIO Bros bringen wir Seoul Street Culture
+        direkt nach Frankfurt Nordend — serviert auf goldenen Tabletts, mit Sauce-Auswahl
+        und dem Bier, das du dir verdient hast. Kein Bullshit, kein Besteck, keine Konventionen.
+        Nur das Beste.
+      </p>
+      <div class="cm-stats">
+        <div class="rs">
+          <div class="cm-stat-num">6+</div>
+          <div class="cm-stat-lbl">Chicken Styles</div>
+        </div>
+        <div class="rs">
+          <div class="cm-stat-num">5★</div>
+          <div class="cm-stat-lbl">Google Rating</div>
+        </div>
+        <div class="rs">
+          <div class="cm-stat-num">치맥</div>
+          <div class="cm-stat-lbl">Pure Joy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU HIGHLIGHTS -->
+<section id="menu">
+  <div class="section-label r">Das Menu</div>
+  <h2 class="section-title r">THE<br>CHICKEN.</h2>
+
+  <div class="menu-grid">
+
+    <div class="menu-card mc-1 rs">
+      <div class="mc-num">01</div>
+      <div>
+        <div class="mc-name">OG GOKIO</div>
+        <div class="mc-desc">Classic Korean Double-Fried · Extra Crispy · Signature Sauce</div>
+      </div>
+      <span class="mc-emoji">🍗</span>
+    </div>
+
+    <div class="menu-card mc-2 rs">
+      <div class="mc-num">02</div>
+      <div>
+        <div class="mc-name">YANGNYEOM</div>
+        <div class="mc-desc">Sweet Chili Glaze · Seoul Style · Absolute Fan Favourite</div>
+      </div>
+      <span class="mc-emoji">🌶️</span>
+    </div>
+
+    <div class="menu-card mc-3 rs">
+      <div class="mc-num">03</div>
+      <div>
+        <div class="mc-name">HONEY BUTTER</div>
+        <div class="mc-desc">Sweet & Salty · Japanese Inspired · Dangerously Addictive</div>
+      </div>
+      <span class="mc-emoji">🍯</span>
+    </div>
+
+    <div class="menu-card mc-4 rs">
+      <div class="mc-num">04</div>
+      <div>
+        <div class="mc-name">CHEESE BOMB</div>
+        <div class="mc-desc">Molten Cheese Core · Instagram Moment · Handle With Care</div>
+      </div>
+      <span class="mc-emoji">🧀</span>
+    </div>
+
+    <div class="menu-card mc-5 rs">
+      <div class="mc-num">05</div>
+      <div>
+        <div class="mc-name">GANJANG</div>
+        <div class="mc-desc">Soy Garlic Umami · Korean Classic · The Purist's Choice</div>
+      </div>
+      <span class="mc-emoji">🧄</span>
+    </div>
+
+    <div class="menu-card mc-6 rs">
+      <div class="mc-num">🍺</div>
+      <div>
+        <div class="mc-name">ICE COLD BEER</div>
+        <div class="mc-desc">Korean Draft · Craft Selection · Always Below 4°C</div>
+      </div>
+      <span class="mc-emoji">🥂</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- THE VIBE -->
+<section id="vibe">
+  <div class="vibe-inner">
+    <div class="section-label r">The Vibe</div>
+    <h2 class="section-title r">THE<br>EXPERIENCE.</h2>
+
+    <div class="vibe-grid">
+
+      <div class="vibe-img vi-1 rs">
+        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=900&q=80"
+             alt="Korean Food Spread" loading="lazy">
+      </div>
+
+      <div class="vibe-img vi-2 rs">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+             alt="Cold Beer" loading="lazy">
+      </div>
+
+      <div class="vibe-img vi-3 rs">
+        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80"
+             alt="Restaurant Atmosphere" loading="lazy">
+      </div>
+
+      <div class="vibe-quote-block r">
+        <div class="vibe-quote-text">
+          "Das beste Fried Chicken in Frankfurt.<br>Punkt."
+        </div>
+        <div class="vibe-quote-meta">— Google Review · ★★★★★</div>
+      </div>
+
+      <a href="https://instagram.com/gokiobros" target="_blank" rel="noopener"
+         class="vibe-cta-block r">
+        <div>
+          <div class="vibe-cta-label">Folg uns auf</div>
+          <div class="vibe-cta-text">@gokiobros</div>
+        </div>
+        <div class="vibe-cta-arrow">↗</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- VISIT / HOURS -->
+<section id="visit">
+  <div class="visit-inner">
+    <div class="section-label r">Besuch uns</div>
+    <h2 class="section-title r">COME<br>THRU.</h2>
+
+    <div class="visit-grid">
+
+      <div>
+        <div class="hours-row r">
+          <span class="hours-day">Mo – Do</span>
+          <span class="hours-time">17:00 – 23:00</span>
+        </div>
+        <div class="hours-row r">
+          <span class="hours-day">Freitag</span>
+          <span class="hours-time">17:00 – 00:00</span>
+        </div>
+        <div class="hours-row r">
+          <span class="hours-day">Samstag</span>
+          <span class="hours-time">12:00 – 00:00</span>
+        </div>
+        <div class="hours-row r">
+          <span class="hours-day">Sonntag</span>
+          <span class="hours-time">12:00 – 23:00</span>
+        </div>
+      </div>
+
+      <div class="r">
+        <div class="info-block">
+          <div class="info-label">Adresse</div>
+          <div class="info-value">Oeder Weg 26<br>60318 Frankfurt</div>
+        </div>
+        <div class="info-block">
+          <div class="info-label">Telefon</div>
+          <div class="info-value">+49 69 15346911</div>
+        </div>
+        <div class="action-links">
+          <a href="https://wolt.com" target="_blank" rel="noopener" class="action-link">
+            <span class="action-link-icon">🛵</span>
+            <span>Bestellen auf Wolt</span>
+            <span class="action-link-arrow">→</span>
+          </a>
+          <a href="https://instagram.com/gokiobros" target="_blank" rel="noopener" class="action-link">
+            <span class="action-link-icon">📸</span>
+            <span>@gokiobros</span>
+            <span class="action-link-arrow">→</span>
+          </a>
+          <a href="https://wa.me/496915346911" target="_blank" rel="noopener" class="action-link">
+            <span class="action-link-icon">💬</span>
+            <span>WhatsApp</span>
+            <span class="action-link-arrow">→</span>
+          </a>
+          <a href="https://maps.google.com/?q=Oeder+Weg+26+Frankfurt" target="_blank" rel="noopener" class="action-link">
+            <span class="action-link-icon">📍</span>
+            <span>Google Maps</span>
+            <span class="action-link-arrow">→</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-glow"></div>
+
+  <div class="footer-big">
+    <div class="filled">GOKIO</div>
+    <div class="outline">BROS.</div>
+  </div>
+
+  <div class="footer-divider"></div>
+
+  <div class="footer-cols">
+    <div>
+      <div class="fc-title">GOKIO Bros</div>
+      <p class="fc-desc">
+        Korean Fried Chicken & Beer. Chi-Maek in Frankfurt Nordend.
+        Seoul Street Culture — jeden Abend auf goldenen Tabletts.
+      </p>
+    </div>
+    <div>
+      <div class="fc-title">Links</div>
+      <ul class="fc-links">
+        <li><a href="https://wolt.com" target="_blank" rel="noopener">Wolt Delivery</a></li>
+        <li><a href="https://instagram.com/gokiobros" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="tel:+496915346911">Telefon</a></li>
+        <li><a href="https://wa.me/496915346911" target="_blank" rel="noopener">WhatsApp</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fc-title">Adresse</div>
+      <ul class="fc-links">
+        <li><a>Oeder Weg 26</a></li>
+        <li><a>60318 Frankfurt</a></li>
+        <li><a>Nordend-West</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fc-title">Öffnungszeiten</div>
+      <ul class="fc-links">
+        <li><a>Mo–Do: 17–23 Uhr</a></li>
+        <li><a>Fr: 17–00 Uhr</a></li>
+        <li><a>Sa–So: 12–00 Uhr</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 GOKIO Bros Frankfurt. All rights reserved.</div>
+    <div class="footer-copy">치맥 ✦ Chi-Maek ✦ Korean Fried Chicken & Beer</div>
+  </div>
+</footer>
+
+<script>
+/* ─── LENIS SMOOTH SCROLL ─── */
+const lenis = new Lenis({
+  duration: 1.15,
+  easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+});
+lenis.on('scroll', Motion.scroll);
+function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+requestAnimationFrame(raf);
+
+/* ─── HERO ENTRY ANIMATION ─── */
+const ease = [0.22, 1, 0.36, 1];
+const spring = [0.34, 1.56, 0.64, 1];
+
+Motion.animate('#hEyebrow', { opacity: [0, 1], y: [16, 0] },        { duration: 0.6, delay: 0.25, easing: ease });
+Motion.animate('#hTitle',   { opacity: [0, 1], y: [70, 0] },        { duration: 0.85, delay: 0.4, easing: ease });
+Motion.animate('#hSub',     { opacity: [0, 1], y: [30, 0] },        { duration: 0.6, delay: 0.72, easing: ease });
+Motion.animate('#hMeta',    { opacity: [0, 1], y: [20, 0] },        { duration: 0.5, delay: 0.9,  easing: ease });
+Motion.animate('#hCtas',    { opacity: [0, 1], y: [20, 0] },        { duration: 0.5, delay: 1.05, easing: ease });
+Motion.animate('.stamp',    { opacity: [0, 1], scale: [0.2, 1] },   { duration: 0.7, delay: 0.9,  easing: spring });
+Motion.animate('#heroImg',  { opacity: [0, 1], x: [50, 0] },        { duration: 0.85, delay: 0.3, easing: ease });
+Motion.animate('.hero-shape-circle', { opacity: [0, 1], scale: [0.7, 1] }, { duration: 0.9, delay: 0.15, easing: ease });
+Motion.animate('.hero-shape-blob',   { opacity: [0, 1], scale: [0.5, 1] }, { duration: 0.7, delay: 0.55, easing: spring });
+Motion.animate('.hero-shape-pill',   { opacity: [0, 1], rotate: [-40, -18] }, { duration: 0.8, delay: 0.65, easing: spring });
+Motion.animate('.hero-shape-sm',     { opacity: [0, 1], scale: [0, 1] }, { duration: 0.6, delay: 0.75, easing: spring });
+
+/* ─── SCROLL PARALLAX ─── */
+const parallaxMap = {
+  '#s1': 0.12,
+  '#s2': 0.22,
+  '#s3': 0.08,
+  '#s4': 0.18,
+};
+const onScroll = () => {
+  const sy = window.scrollY;
+  Object.entries(parallaxMap).forEach(([sel, speed]) => {
+    const el = document.querySelector(sel);
+    if (el) el.style.transform = `translateY(${sy * speed}px)`;
+  });
+};
+window.addEventListener('scroll', onScroll, { passive: true });
+
+/* ─── MOUSE PARALLAX ON HERO ─── */
+document.getElementById('hero').addEventListener('mousemove', e => {
+  const cx = (e.clientX / window.innerWidth  - 0.5) * 2;
+  const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+  Motion.animate('#s1', { x: cx * 14, y: cy * 10 }, { duration: 0.8, easing: ease });
+  Motion.animate('#s2', { x: cx * 22, y: cy * 18 }, { duration: 0.8, easing: ease });
+  Motion.animate('#s3', { x: cx * 10, y: cy *  8 }, { duration: 0.8, easing: ease });
+  Motion.animate('#s4', { x: cx * 18, y: cy * 14 }, { duration: 0.8, easing: ease });
+});
+
+/* ─── SCROLL REVEALS ─── */
+const revealEls  = document.querySelectorAll('.r');
+const revealLEls = document.querySelectorAll('.rl');
+const revealSEls = document.querySelectorAll('.rs');
+
+revealEls.forEach((el, i) => {
+  Motion.inView(el, () => {
+    Motion.animate(el, { opacity: [0, 1], y: [38, 0] },
+      { duration: 0.65, delay: (i % 5) * 0.07, easing: ease });
+  }, { margin: '-4%' });
+});
+
+revealLEls.forEach(el => {
+  Motion.inView(el, () => {
+    Motion.animate(el, { opacity: [0, 1], x: [-55, 0] },
+      { duration: 0.85, easing: ease });
+  }, { margin: '-4%' });
+});
+
+revealSEls.forEach((el, i) => {
+  Motion.inView(el, () => {
+    Motion.animate(el, { opacity: [0, 1], scale: [0.84, 1] },
+      { duration: 0.55, delay: i * 0.07, easing: spring });
+  }, { margin: '-4%' });
+});
+
+/* ─── MENU CARD HOVER TILT ─── */
+document.querySelectorAll('.menu-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width  - 0.5) * 12;
+    const y = ((e.clientY - rect.top)  / rect.height - 0.5) * 12;
+    card.style.transform = `perspective(600px) rotateX(${-y}deg) rotateY(${x}deg) scale(1.03)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+</script>
+
+</body>
+</html>
