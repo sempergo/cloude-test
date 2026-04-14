@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@900&display=swap" rel="stylesheet">
 
   <script src="https://cdn.jsdelivr.net/npm/motion@latest/dist/motion.js"></script>
-  <script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 
   <style>
     /* ─── RESET ─── */
@@ -1294,7 +1294,6 @@ const lenis = new Lenis({
   duration: 1.15,
   easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
 });
-lenis.on('scroll', Motion.scroll);
 function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
 requestAnimationFrame(raf);
 
