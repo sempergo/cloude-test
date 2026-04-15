@@ -235,12 +235,35 @@
     }
 
     @media (max-width: 640px) {
+      /* Bild größer, bündig mit Banner */
       .hero-img {
         top: 2.1rem;
-        right: -10%;
-        width: 72vw;
-        height: 58vw;
+        right: -6%;
+        width: 78vw;
+        height: 68vw;
         border-radius: 0 0 0 40%;
+      }
+
+      /* Stamp als Badge unten rechts auf dem Bild */
+      .stamp {
+        bottom: auto;
+        top: calc(2.1rem + 68vw - 44px);
+        right: calc(6% - 8px);
+        width: 80px;
+        height: 80px;
+      }
+
+      /* CTAs nebeneinander */
+      .hero-ctas {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+      .hero-ctas .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 0.9rem 0.75rem;
+        font-size: 0.78rem;
       }
     }
 
@@ -1204,7 +1227,6 @@
     <div class="hero-ctas" id="hCtas">
       <a href="https://wolt.com" target="_blank" rel="noopener" class="btn btn-red">🛵 Jetzt bestellen</a>
       <a href="https://instagram.com/gokiobros" target="_blank" rel="noopener" class="btn btn-black">📸 @gokiobros</a>
-      <a href="tel:+496915346911" class="btn btn-outline">📞 Reservieren</a>
     </div>
   </div>
 </section>
