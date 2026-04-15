@@ -278,25 +278,9 @@
         font-size: 1.2rem;
       }
 
-      /* Gradient-Fläche hinter dem gesamten Content-Bereich */
-      .hero-content {
-        padding-top: 2.5rem;
-      }
-      .hero-content::before {
-        content: '';
-        position: absolute;
-        left: -2rem; right: -2rem;
-        bottom: -1rem; top: -5rem;
-        background: linear-gradient(to top, var(--cream) 72%, transparent);
-        z-index: -1;
-        pointer-events: none;
-      }
-
-      /* Eyebrow: größer, fetter, klar lesbar */
+      /* Eyebrow: größer und dunkler */
       .hero-eyebrow {
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.16em;
+        font-size: 11px;
         opacity: 1;
         color: var(--black);
       }
