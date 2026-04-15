@@ -278,11 +278,19 @@
         font-size: 1.2rem;
       }
 
-      /* Eyebrow: größer und dunkler */
-      .hero-eyebrow {
-        font-size: 11px;
-        opacity: 1;
-        color: var(--black);
+      /* Reihenfolge auf Mobile: Titel → Sub → Eyebrow → Meta → CTAs */
+      .hero-content { display: flex; flex-direction: column; }
+      #hTitle   { order: 1; }
+      #hSub     { order: 2; }
+      #hEyebrow { order: 3; margin-top: 0.5rem; margin-bottom: 0; font-size: 11px; opacity: 1; color: var(--gray); }
+      #hMeta    { order: 4; }
+      #hCtas    { order: 5; }
+
+      /* Titel: minimalster Cream-Glow — Bild bleibt sichtbar */
+      #hTitle {
+        text-shadow:
+          0 0 20px rgba(245,237,214,0.55),
+          0 0 40px rgba(245,237,214,0.3);
       }
 
       /* CTAs nebeneinander */
