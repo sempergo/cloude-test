@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontakt &amp; Anfahrt — La Cevi Frankfurt | Weberstrasse 84, Nordend</title>
+  <meta name="description" content="La Cevi in Frankfurt Nordend. Adresse: Weberstrasse 84, 60318 Frankfurt. Öffnungszeiten, Anfahrt, Reservierung und Kontakt.">
+  <meta property="og:title" content="Kontakt &amp; Anfahrt — La Cevi Frankfurt">
+  <meta property="og:description" content="Weberstrasse 84, 60318 Frankfurt am Main. Dienstag–Donnerstag ab 18 Uhr, Freitag ab 17 Uhr, Wochenende ab 12 Uhr.">
+  <meta property="og:image" content="https://la-cevi.de/wp-content/uploads/la-cevi-ceviche-frankfurt-peru-aussen-1024x831.jpg">
+  <link rel="icon" href="https://la-cevi.de/wp-content/uploads/cropped-la-Cevi-favicon-32x32.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --tc:   #C4622D;
+      --tc-d: #9E4A1E;
+      --tc-l: #E07845;
+      --sand: #F2E8D0;
+      --pac:  #1B4F7A;
+      --cream:#FAF7F0;
+      --dark: #1A0F08;
+      --text: #2D1A0A;
+      --muted:#7A5C40;
+      --ff-d: 'Playfair Display', Georgia, serif;
+      --ff-b: 'DM Sans', system-ui, sans-serif;
+      --ff-s: 'Dancing Script', cursive;
+    }
+    html { scroll-behavior: auto; }
+    body { font-family: var(--ff-b); background: var(--cream); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+
+    /* ─── NAV ─── */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 1.2rem 5vw; display: flex; align-items: center; justify-content: space-between; transition: background .45s, box-shadow .45s; }
+    nav.scrolled { background: rgba(26,15,8,.96); backdrop-filter: blur(16px); box-shadow: 0 1px 0 rgba(255,255,255,.05); }
+    .nav-logo { height: 38px; filter: brightness(0) invert(1); opacity: .92; display: block; }
+    .nav-center { display: flex; align-items: center; gap: 2.2rem; list-style: none; }
+    .nav-center a { color: rgba(255,255,255,.88); text-decoration: none; font-size: .72rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; transition: color .3s; }
+    .nav-center a:hover, .nav-center a.active { color: var(--tc-l); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-right a { color: rgba(255,255,255,.75); transition: color .3s; }
+    .nav-right a:hover { color: var(--tc-l); }
+    .nav-right svg { width: 18px; height: 18px; fill: currentColor; display: block; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; border: none; background: none; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: white; }
+    .mob-nav { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 300; flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; }
+    .mob-nav.open { display: flex; }
+    .mob-nav a { color: white; text-decoration: none; font-family: var(--ff-d); font-size: clamp(2rem,6vw,3rem); font-style: italic; opacity: 0; }
+    .mob-close { position: absolute; top: 1.5rem; right: 2rem; color: white; font-size: 1.8rem; cursor: pointer; background: none; border: none; }
+
+    /* ─── PAGE HERO ─── */
+    .page-hero {
+      position: relative; height: 55vh; min-height: 400px;
+      display: flex; align-items: flex-end; overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background: url('https://la-cevi.de/wp-content/uploads/la-cevi-ceviche-frankfurt-peru-aussen-1024x831.jpg') center 40% / cover no-repeat;
+      transform: scale(1.06); will-change: transform;
+    }
+    .page-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(20,10,4,.9) 0%, rgba(20,10,4,.3) 60%, rgba(20,10,4,.1) 100%);
+    }
+    .page-hero-content { position: relative; z-index: 2; padding: 0 7vw 5rem; }
+    .page-eyebrow { font-family: var(--ff-s); color: var(--tc-l); font-size: 1.3rem; display: block; margin-bottom: .5rem; opacity: 0; }
+    .page-title { font-family: var(--ff-d); font-weight: 900; color: white; font-size: clamp(3rem, 7vw, 6rem); line-height: .9; letter-spacing: -.02em; opacity: 0; }
+    .page-hero::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 80px;
+      background: var(--cream); clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    }
+
+    /* ─── MAIN GRID ─── */
+    .contact-main { max-width: 1400px; margin: 0 auto; padding: 6rem 5vw 0; }
+    .contact-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 4rem; align-items: start; }
+
+    /* ─── MAP ─── */
+    .map-wrap {
+      position: sticky; top: 100px;
+    }
+    .map-frame {
+      width: 100%; aspect-ratio: 4/3; border: none; display: block;
+      filter: grayscale(20%) contrast(1.05);
+    }
+    .map-caption {
+      padding: 1.5rem 0 0;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .map-caption a {
+      font-size: .8rem; color: var(--tc); text-decoration: none; font-weight: 500;
+      letter-spacing: .08em; display: flex; align-items: center; gap: .4rem;
+      transition: color .3s;
+    }
+    .map-caption a:hover { color: var(--tc-d); }
+    .map-caption svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+    /* ─── CONTACT INFO ─── */
+    .contact-info { display: flex; flex-direction: column; gap: 3rem; }
+
+    .info-block .script-label { font-family: var(--ff-s); color: var(--tc); font-size: 1.1rem; display: block; margin-bottom: .75rem; }
+    .info-block h3 { font-family: var(--ff-d); font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; }
+
+    .address-lines { display: flex; flex-direction: column; gap: .4rem; }
+    .address-lines span { font-size: .95rem; color: var(--muted); }
+    .address-lines a { color: var(--tc); text-decoration: none; font-weight: 500; transition: color .3s; }
+    .address-lines a:hover { color: var(--tc-d); }
+
+    /* ─── HOURS ─── */
+    .hours-table { width: 100%; border-collapse: collapse; }
+    .hours-table tr { border-bottom: 1px solid rgba(45,26,10,.1); }
+    .hours-table tr:last-child { border: none; }
+    .hours-table td { padding: .9rem 0; font-size: .9rem; }
+    .hours-table td:last-child { text-align: right; font-weight: 500; }
+    .hours-table .closed { color: var(--muted); font-style: italic; font-weight: 400; }
+
+    /* ─── CTA CARDS ─── */
+    .contact-ctas { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: .5rem; }
+    .contact-cta {
+      background: var(--dark); color: white; padding: 1.75rem;
+      display: flex; flex-direction: column; gap: .5rem;
+      text-decoration: none; transition: background .3s, transform .3s;
+    }
+    .contact-cta:hover { background: var(--tc); transform: translateY(-3px); }
+    .contact-cta .cta-icon { font-size: 1.4rem; }
+    .contact-cta strong { font-family: var(--ff-d); font-size: 1.05rem; }
+    .contact-cta span { font-size: .78rem; color: rgba(255,255,255,.55); }
+    .contact-cta:hover span { color: rgba(255,255,255,.75); }
+
+    /* ─── BOTTOM STRIP ─── */
+    .contact-strip {
+      background: var(--tc); margin-top: 6rem; padding: 5rem 7vw;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; text-align: center;
+    }
+    .strip-item { color: white; }
+    .strip-item .strip-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .strip-item h4 { font-family: var(--ff-d); font-size: 1.2rem; font-weight: 700; margin-bottom: .5rem; }
+    .strip-item p { font-size: .88rem; opacity: .75; line-height: 1.7; }
+    .strip-item a { color: white; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--dark); color: white;
+      clip-path: polygon(0 4%, 100% 0, 100% 100%, 0 100%);
+      padding: 9rem 7vw 3rem;
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 4rem; }
+    .footer-brand p { color: rgba(255,255,255,.42); font-size: .85rem; line-height: 1.9; margin-top: 1.2rem; }
+    .footer-col h4 { font-size: .7rem; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--tc-l); margin-bottom: 1.5rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .8rem; }
+    .footer-col a { color: rgba(255,255,255,.52); text-decoration: none; font-size: .85rem; transition: color .3s; }
+    .footer-col a:hover { color: white; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.07); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-bottom p { color: rgba(255,255,255,.25); font-size: .78rem; }
+    .footer-social { display: flex; gap: 1.2rem; }
+    .footer-social a { color: rgba(255,255,255,.4); transition: color .3s; }
+    .footer-social a:hover { color: var(--tc-l); }
+    .footer-social svg { width: 18px; height: 18px; fill: currentColor; display: block; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .nav-center, .nav-right { display: none; }
+      .hamburger { display: flex; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .map-wrap { position: static; }
+      .map-frame { aspect-ratio: 16/9; }
+      .contact-strip { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .page-hero-content { padding: 0 1.5rem 4rem; }
+      .contact-main { padding: 4rem 1.5rem 0; }
+      .contact-ctas { grid-template-columns: 1fr; }
+      .contact-strip { padding: 4rem 1.5rem; }
+      .footer-grid { grid-template-columns: 1fr; }
+      footer { clip-path: none; padding-top: 5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="index.html"><img src="https://firebasestorage.googleapis.com/v0/b/schillingroofbarhd.appspot.com/o/restaurants%2Flacevi%2Fimages%2Fgeneral%2Fla-Cevi-Logo-rgb-625x300_id_s2K6wVBCenUOjgcEg4MB.jpg?alt=media&token=58e969f9-0470-45ec-89af-1cdfe79e8ba6" class="nav-logo" alt="La Cevi"></a>
+    <ul class="nav-center">
+      <li><a href="index.html">Startseite</a></li>
+      <li><a href="ceviche.html">Ceviche</a></li>
+      <li><a href="ueber-uns.html">Geschichte</a></li>
+      <li><a href="kontakt.html" class="active">Kontakt</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="https://www.instagram.com/la_cevi" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
+      <a href="https://www.facebook.com/LaCeviFrankfurt" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menü"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="mob-nav" id="mobNav">
+    <button class="mob-close" id="mobClose">&#x2715;</button>
+    <a href="index.html">Startseite</a>
+    <a href="ceviche.html">Ceviche</a>
+    <a href="ueber-uns.html">Geschichte</a>
+    <a href="kontakt.html">Kontakt</a>
+  </div>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-bg" id="heroBg"></div>
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content">
+      <span class="page-eyebrow">Frankfurt Nordend</span>
+      <h1 class="page-title">Kontakt<br>&amp; Anfahrt</h1>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <div class="contact-main">
+    <div class="contact-grid">
+
+      <!-- MAP -->
+      <div class="map-wrap" data-reveal>
+        <iframe
+          class="map-frame"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2558.6!2d8.6876!3d50.1262!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bd096a3b5a9e33%3A0x6c8f13ee15e58b49!2sLa%20Cevi!5e0!3m2!1sde!2sde!4v1680000000000!5m2!1sde!2sde"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="La Cevi auf Google Maps">
+        </iframe>
+        <div class="map-caption">
+          <a href="https://maps.google.com/?q=La+Cevi+Weberstrasse+84+Frankfurt" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            In Google Maps öffnen
+          </a>
+        </div>
+      </div>
+
+      <!-- CONTACT INFO -->
+      <div class="contact-info">
+
+        <div class="info-block" data-reveal>
+          <span class="script-label">Ihr findet uns hier</span>
+          <h3>Adresse</h3>
+          <div class="address-lines">
+            <span>Weberstrasse 84</span>
+            <span>60318 Frankfurt am Main</span>
+            <span>Frankfurt Nordend</span>
+          </div>
+        </div>
+
+        <div class="info-block" data-reveal>
+          <span class="script-label">Schreibt oder ruft an</span>
+          <h3>Kontakt</h3>
+          <div class="address-lines">
+            <span><a href="tel:06966377778">069 / 66 37 77 78</a></span>
+            <span><a href="mailto:info@la-cevi.de">info@la-cevi.de</a></span>
+          </div>
+        </div>
+
+        <div class="info-block" data-reveal>
+          <span class="script-label">Wann sind wir da?</span>
+          <h3>Öffnungszeiten</h3>
+          <table class="hours-table">
+            <tr><td>Montag</td><td class="closed">Geschlossen</td></tr>
+            <tr><td>Dienstag</td><td>18:00 – 00:00</td></tr>
+            <tr><td>Mittwoch</td><td>18:00 – 00:00</td></tr>
+            <tr><td>Donnerstag</td><td>18:00 – 00:00</td></tr>
+            <tr><td>Freitag</td><td>17:00 – 00:00</td></tr>
+            <tr><td>Samstag</td><td>12:00 – 00:00</td></tr>
+            <tr><td>Sonntag</td><td>12:00 – 00:00</td></tr>
+          </table>
+        </div>
+
+        <div class="info-block" data-reveal>
+          <span class="script-label">Wie können wir helfen?</span>
+          <h3>Direkt handeln</h3>
+          <div class="contact-ctas">
+            <a href="https://www.gastronaut.com/la-cevi" target="_blank" rel="noopener" class="contact-cta">
+              <span class="cta-icon">🗓</span>
+              <strong>Online reservieren</strong>
+              <span>Rund um die Uhr verfügbar</span>
+            </a>
+            <a href="tel:06966377778" class="contact-cta">
+              <span class="cta-icon">📞</span>
+              <strong>Anrufen</strong>
+              <span>069 / 66 37 77 78</span>
+            </a>
+            <a href="https://wa.me/496966377778" target="_blank" rel="noopener" class="contact-cta">
+              <span class="cta-icon">💬</span>
+              <strong>WhatsApp</strong>
+              <span>Nachricht schreiben</span>
+            </a>
+            <a href="mailto:info@la-cevi.de" class="contact-cta">
+              <span class="cta-icon">✉️</span>
+              <strong>E-Mail</strong>
+              <span>info@la-cevi.de</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- STRIP -->
+  <div class="contact-strip" data-reveal>
+    <div class="strip-item">
+      <span class="strip-icon">🚇</span>
+      <h4>Mit der U-Bahn</h4>
+      <p>U4 / U5 bis Merianplatz oder<br>Bornheim Mitte — ca. 5 Min. zu Fuß</p>
+    </div>
+    <div class="strip-item">
+      <span class="strip-icon">🚗</span>
+      <h4>Mit dem Auto</h4>
+      <p>Parkmöglichkeiten in der<br>Weberstrasse und Umgebung</p>
+    </div>
+    <div class="strip-item">
+      <span class="strip-icon">🅿️</span>
+      <h4>Reservierung</h4>
+      <p>Bitte beachtet: Reservierungen sind<br>nur 15 Minuten gültig. <a href="https://www.gastronaut.com/la-cevi" target="_blank">Jetzt buchen.</a></p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="https://firebasestorage.googleapis.com/v0/b/schillingroofbarhd.appspot.com/o/restaurants%2Flacevi%2Fimages%2Fgeneral%2Fla-Cevi-Logo-rgb-625x300_id_s2K6wVBCenUOjgcEg4MB.jpg?alt=media&token=58e969f9-0470-45ec-89af-1cdfe79e8ba6" class="nav-logo" alt="La Cevi">
+        <p>Peruanische Küche mit Herz.<br>Eine Liebesgeschichte aus Lima,<br>jetzt in Frankfurt Nordend.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Startseite</a></li>
+          <li><a href="ceviche.html">Ceviche</a></li>
+          <li><a href="ueber-uns.html">Geschichte</a></li>
+          <li><a href="kontakt.html">Kontakt &amp; Anfahrt</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Schnellzugriff</h4>
+        <ul>
+          <li><a href="https://www.gastronaut.com/la-cevi" target="_blank">Tisch reservieren</a></li>
+          <li><a href="https://www.bon-bon.de/gutschein/la-cevi/" target="_blank">Gutschein kaufen</a></li>
+          <li><a href="https://la-cevi.de/wp-content/uploads/2025.07.03_La-Cevi-ceviche_Speisen-und-Getraenke.pdf" target="_blank">Speisekarte</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Kontakt</h4>
+        <ul>
+          <li><a href="tel:06966377778">069 / 66 37 77 78</a></li>
+          <li><a href="mailto:info@la-cevi.de">info@la-cevi.de</a></li>
+          <li><a href="#">Weberstrasse 84, Frankfurt</a></li>
+        </ul>
+        <h4 style="margin-top:1.8rem">Rechtliches</h4>
+        <ul>
+          <li><a href="#">Impressum</a></li>
+          <li><a href="#">Datenschutz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 La Cevi Frankfurt — Alle Rechte vorbehalten</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/la_cevi" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/LaCeviFrankfurt" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="https://www.yelp.de/biz/la-cevi-frankfurt-am-main" target="_blank" rel="noopener" aria-label="Yelp">
+          <svg viewBox="0 0 24 24"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.624 0 11.99-5.365 11.99-11.987C24.007 5.367 18.641.001 12.017.001z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const lenis = new Lenis({ lerp: 0.1 });
+    function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t => lenis.raf(t * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    // Hero entrance
+    gsap.set(['.page-eyebrow', '.page-title'], { opacity: 0, y: 28 });
+    gsap.timeline({ delay: 0.2 })
+      .to('#heroBg', { scale: 1, duration: 1.6, ease: 'power2.out' })
+      .to('.page-eyebrow', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=1.2')
+      .to('.page-title', { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.35');
+
+    gsap.to('#heroBg', {
+      yPercent: 18, ease: 'none',
+      scrollTrigger: { trigger: '.page-hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+
+    ScrollTrigger.create({
+      start: 'top -60',
+      onUpdate: self => document.getElementById('nav').classList.toggle('scrolled', self.scroll() > 60)
+    });
+
+    gsap.utils.toArray('[data-reveal]').forEach(el => {
+      gsap.from(el, {
+        y: 50, opacity: 0, duration: 0.85, ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 88%' }
+      });
+    });
+
+    gsap.from('.contact-cta', {
+      y: 30, opacity: 0, duration: 0.5, stagger: 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.contact-ctas', start: 'top 90%' }
+    });
+
+    gsap.from('.strip-item', {
+      y: 35, opacity: 0, duration: 0.65, stagger: 0.15, ease: 'power2.out',
+      scrollTrigger: { trigger: '.contact-strip', start: 'top 85%' }
+    });
+
+    // Mobile nav
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const mob = document.getElementById('mobNav');
+      mob.classList.add('open');
+      gsap.fromTo('.mob-nav a', { opacity: 0, y: 25 }, { opacity: 1, y: 0, stagger: 0.08, duration: 0.4 });
+    });
+    document.getElementById('mobClose').addEventListener('click', () => document.getElementById('mobNav').classList.remove('open'));
+  </script>
+</body>
+</html>
