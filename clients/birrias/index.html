@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIRRIAS Frankfurt — Zwei Tacos. Das reicht.</title>
+  <meta name="description" content="Birria Tacos aus Jalisco. Kein Kompromiss, kein langes Menü. Nur die zwei Gerichte, die alles sagen. Jetzt in Frankfurt.">
+  <meta property="og:title" content="BIRRIAS Frankfurt — Zwei Tacos. Das reicht.">
+  <meta property="og:description" content="Birria Tacos aus Jalisco. Kein Kompromiss, kein langes Menü. Nur die zwei Gerichte, die alles sagen. Jetzt in Frankfurt.">
+  <meta property="og:image" content="assets/logo.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@latest/dist/lenis.min.js"></script>
+  <style>
+    :root {
+      --green: #1B8A1B;
+      --cream: #F5EFE0;
+      --black: #0C0C0C;
+      --chili: #C42B1C;
+      --D: 'Dela Gothic One', sans-serif;
+      --B: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: auto; }
+    body {
+      background: var(--cream);
+      color: var(--black);
+      font-family: var(--B);
+      overflow-x: hidden;
+    }
+
+    /* ── PRELOADER ── */
+    #preloader {
+      position: fixed; inset: 0;
+      background: var(--cream);
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1.5rem;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #preloader.out { opacity: 0; visibility: hidden; pointer-events: none; }
+    .pre-logo { width: 140px; animation: dip 2s cubic-bezier(0.4,0,0.2,1) infinite; }
+    .pre-name {
+      font-family: var(--D);
+      font-size: 2.5rem;
+      letter-spacing: 0.08em;
+      color: var(--black);
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.4s forwards;
+    }
+    .pre-bar {
+      width: 120px; height: 2px; background: rgba(0,0,0,0.1); overflow: hidden;
+      opacity: 0; animation: fadeUp 0.4s ease 0.8s forwards;
+    }
+    .pre-bar-fill {
+      height: 100%; background: var(--green);
+      animation: load 1.8s ease forwards;
+    }
+    @keyframes dip {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      45%      { transform: translateY(22px) rotate(-6deg); }
+      55%      { transform: translateY(22px) rotate(-6deg); }
+      80%      { transform: translateY(-4px) rotate(2deg); }
+    }
+    @keyframes load { from { width: 0 } to { width: 100% } }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(12px) }
+      to   { opacity:1; transform:none }
+    }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.75rem 2.5rem;
+      transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    #nav.scrolled {
+      top: 12px; left: 12px; right: 12px;
+      background: var(--cream);
+      padding: 0.9rem 1.5rem;
+      border-radius: 100px;
+      border: 1.5px solid var(--black);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .nav-logo {
+      font-family: var(--D);
+      font-size: 1.25rem;
+      color: var(--black);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .nav-logo img { width: 28px; object-fit: contain; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      font-size: 0.8rem; font-weight: 500;
+      color: var(--black); text-decoration: none;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--chili); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 10rem 2.5rem 5rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-pattern {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0.045; pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--green);
+      font-weight: 500; margin-bottom: 1.5rem;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .hero-eyebrow.show { opacity: 1; transform: none; }
+    .hero-h1 {
+      font-family: var(--D);
+      font-size: clamp(4.5rem, 13vw, 12rem);
+      line-height: 0.88;
+      color: var(--black);
+      max-width: 12ch;
+      margin-bottom: 2.5rem;
+    }
+    .h1-line { display: block; overflow: hidden; }
+    .h1-letter {
+      display: inline-block;
+      opacity: 0; transform: translateY(110%) rotate(var(--r, 0deg));
+      transition: transform 0.75s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease;
+    }
+    .h1-letter.show { opacity: 1; transform: translateY(0) rotate(0deg); }
+    .underline-w { position: relative; display: inline-block; }
+    .underline-w svg {
+      position: absolute; bottom: -10px; left: -4px;
+      width: calc(100% + 8px); height: 16px;
+      pointer-events: none; overflow: visible;
+    }
+    .u-path {
+      stroke-dasharray: 600; stroke-dashoffset: 600;
+      transition: stroke-dashoffset 1.1s cubic-bezier(0.16,1,0.3,1);
+    }
+    .u-path.show { stroke-dashoffset: 0; }
+    .hero-sub {
+      max-width: 48ch; font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 300; line-height: 1.65; color: #505050;
+      margin-bottom: 0.75rem;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .hero-sub.show { opacity: 1; transform: none; }
+    .hero-origin {
+      font-size: 0.72rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--green);
+      font-weight: 500; margin-bottom: 2.5rem;
+      opacity: 0; transition: opacity 0.6s ease;
+    }
+    .hero-origin.show { opacity: 1; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      background: var(--green); color: var(--cream);
+      font-family: var(--D); font-size: 0.95rem;
+      padding: 1rem 2rem; text-decoration: none; border: none;
+      letter-spacing: 0.05em;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease, background 0.3s ease;
+    }
+    .btn.show { opacity: 1; transform: none; }
+    .btn:hover { background: var(--chili); }
+    .btn svg { transition: transform 0.3s ease; }
+    .btn:hover svg { transform: translateX(4px); }
+
+    /* ── MARQUEE ── */
+    .mq-wrap {
+      background: var(--black); color: var(--cream);
+      padding: 1rem 0; overflow: hidden;
+    }
+    .mq-track {
+      display: flex; align-items: center; white-space: nowrap;
+      will-change: transform;
+    }
+    .mq-item {
+      font-family: var(--D);
+      font-size: 1.35rem; letter-spacing: 0.1em;
+      padding: 0 1.5rem;
+      display: inline-flex; align-items: center; gap: 1.5rem;
+    }
+    .mq-dot { color: var(--chili); font-size: 0.7rem; }
+
+    /* ── SCROLL REVEAL ── */
+    .rv {
+      opacity: 0; transform: translateY(48px);
+      transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.16,1,0.3,1);
+    }
+    .rv.show { opacity: 1; transform: none; }
+    .rv-d1 { transition-delay: 0.1s; }
+    .rv-d2 { transition-delay: 0.2s; }
+    .rv-d3 { transition-delay: 0.3s; }
+
+    /* ── WAS IST BIRRIA ── */
+    #birria {
+      background: var(--black); color: var(--cream);
+      padding: 9rem 2.5rem 8rem;
+    }
+    .sec-label {
+      font-size: 0.72rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--green);
+      font-weight: 500; margin-bottom: 2rem;
+    }
+    .sec-heading {
+      font-family: var(--D);
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      line-height: 0.88; margin-bottom: 5rem;
+    }
+    .birria-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem 6rem;
+    }
+    .b-num {
+      font-family: var(--D); font-size: 3.5rem;
+      color: var(--chili); line-height: 1; margin-bottom: 0.75rem;
+    }
+    .b-title {
+      font-family: var(--D); font-size: 1.4rem;
+      color: var(--cream); margin-bottom: 1rem;
+    }
+    .b-text {
+      font-size: 1rem; line-height: 1.75; font-weight: 300;
+      color: rgba(245,239,224,0.65);
+    }
+
+    /* ── MENÜ ── */
+    #menu { padding: 9rem 2.5rem 8rem; }
+    .sec-heading-dark {
+      font-family: var(--D);
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      line-height: 0.88; margin-bottom: 5rem; color: var(--black);
+    }
+    .taco-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    .card-wrap {
+      perspective: 1200px; height: 580px;
+    }
+    .card-inner {
+      width: 100%; height: 100%;
+      position: relative; transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    .card-wrap:hover .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      overflow: hidden;
+    }
+    .card-back { transform: rotateY(180deg); }
+    .card-front { border: 2px solid var(--black); display: flex; flex-direction: column; }
+    .card-img {
+      flex: 1; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-img-bg {
+      position: absolute; inset: 0;
+      background: var(--green);
+      background-image: repeating-linear-gradient(
+        -45deg, transparent, transparent 12px,
+        rgba(0,0,0,0.06) 12px, rgba(0,0,0,0.06) 13px
+      );
+    }
+    .card-img-bg.dark { background-color: #0a5a0a; }
+    .card-ph {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 1rem; color: rgba(255,255,255,0.35);
+      font-family: monospace; font-size: 0.65rem;
+      letter-spacing: 0.08em; text-transform: uppercase; text-align: center;
+    }
+    .card-info {
+      background: var(--cream); padding: 1.5rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 2px solid var(--black);
+    }
+    .card-name { font-family: var(--D); font-size: 1.75rem; color: var(--black); }
+    .card-price {
+      font-family: var(--D); font-size: 1.5rem; color: var(--black);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pdot { width: 8px; height: 8px; border-radius: 50%; background: var(--chili); flex-shrink: 0; }
+    .card-back {
+      background: var(--black); color: var(--cream);
+      padding: 2.5rem; display: flex; flex-direction: column;
+      justify-content: space-between;
+      border: 2px solid var(--black);
+    }
+    .cb-name { font-family: var(--D); font-size: 2.25rem; line-height: 1; margin-bottom: 0.4rem; }
+    .cb-tag {
+      font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 2rem;
+    }
+    .ingr { list-style: none; display: flex; flex-direction: column; gap: 0; flex: 1; }
+    .ingr li {
+      font-size: 0.9rem; font-weight: 300;
+      color: rgba(245,239,224,0.75);
+      display: flex; align-items: center; gap: 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0.65rem 0;
+    }
+    .ingr li::before {
+      content: ''; display: inline-block;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--chili); flex-shrink: 0;
+    }
+    .cb-price {
+      font-family: var(--D); font-size: 3.5rem; color: var(--cream);
+      display: flex; align-items: center; gap: 8px; margin-top: 1.5rem;
+    }
+    .card-wrap:hover .card-front { box-shadow: 0 0 50px -10px var(--chili); }
+    .steam { position: absolute; top: 15%; left: 50%; transform: translateX(-50%); }
+    .sp {
+      position: absolute; width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      animation: steamrise 2.2s ease-in infinite;
+    }
+    .sp:nth-child(1){ left:-16px; animation-delay:0s; }
+    .sp:nth-child(2){ left:0; animation-delay:0.5s; }
+    .sp:nth-child(3){ left:16px; animation-delay:1s; }
+    .sp:nth-child(4){ left:-8px; animation-delay:1.5s; }
+    @keyframes steamrise {
+      0%  { transform:translateY(0) scale(1); opacity:0.7; }
+      100%{ transform:translateY(-90px) scale(0.2); opacity:0; }
+    }
+
+    /* ── SIDES ── */
+    .sides-block {
+      border: 2px solid var(--black); padding: 2.5rem;
+    }
+    .sides-title {
+      font-family: var(--D); font-size: 1.4rem;
+      border-bottom: 2px solid var(--black); padding-bottom: 1rem; margin-bottom: 2rem;
+    }
+    .sides-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 3rem; }
+    .s-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.6rem 0; border-bottom: 1px solid rgba(0,0,0,0.08);
+      font-size: 0.875rem;
+    }
+    .s-price {
+      font-family: var(--D); font-size: 0.85rem;
+      display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+    }
+
+    /* ── FOTO SECTION ── */
+    #fotos { background: var(--black); overflow: hidden; }
+    .foto-strip { overflow: hidden; position: relative; }
+    .foto-divider { height: 2px; background: var(--chili); }
+    .foto-track {
+      display: flex; gap: 10px; padding: 10px 5px;
+      will-change: transform; white-space: nowrap;
+    }
+    .foto-card {
+      flex-shrink: 0;
+      width: clamp(240px, 35vw, 480px);
+      height: clamp(150px, 26vh, 300px);
+      position: relative; overflow: hidden;
+    }
+    .foto-card-inner {
+      position: absolute; inset: 0;
+      transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .foto-card:hover .foto-card-inner { transform: scale(1.06); }
+    .foto-cap {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2.5rem 1.25rem 1rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      color: rgba(255,255,255,0.75);
+      font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .foto-card:hover .foto-cap { opacity: 1; transform: none; }
+    .fc1{background:#2a1510;background-image:repeating-linear-gradient(-38deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 16px)}
+    .fc2{background:#0d2a0d;background-image:repeating-linear-gradient( 52deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 16px)}
+    .fc3{background:#1e1008;background-image:repeating-linear-gradient(-60deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 16px)}
+    .fc4{background:#0c1e0c;background-image:repeating-linear-gradient( 30deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 16px)}
+    .fc5{background:#1a0c0c;background-image:repeating-linear-gradient(-22deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 16px)}
+    .fc6{background:#121a10;background-image:repeating-linear-gradient( 68deg,transparent,transparent 15px,rgba(255,255,255,0.03) 15px,rgba(255,255,255,0.03) 16px)}
+    .foto-ph {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.6rem; color: rgba(255,255,255,0.15);
+      font-family: monospace; font-size: 0.58rem;
+      letter-spacing: 0.1em; text-transform: uppercase; text-align: center;
+    }
+    @media (max-width: 768px) {
+      .foto-card { width: clamp(180px, 62vw, 280px); height: clamp(110px, 20vh, 180px); }
+    }
+
+    /* ── STILLE ── */
+    #stille {
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center;
+      background: var(--cream); padding: 4rem 2.5rem;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .stille-bg { position: absolute; inset: 0; opacity: 0.03; pointer-events: none; }
+    .stille-text {
+      font-family: var(--D);
+      font-size: clamp(3.5rem, 11vw, 10rem);
+      line-height: 0.95; color: var(--black); position: relative; z-index: 1;
+    }
+    .stille-text .red { color: var(--chili); }
+
+    /* ── TUNK ES. ── */
+    #tunk {
+      min-height: 100vh; background: var(--black);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 6rem 2rem 5rem;
+    }
+    .tunk-ghost {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; user-select: none;
+      font-family: var(--D);
+      font-size: clamp(5rem, 19vw, 19rem);
+      color: white; opacity: 0.04; letter-spacing: -0.02em;
+      white-space: nowrap; line-height: 1;
+    }
+    .tunk-label-top {
+      font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); font-weight: 500;
+      margin-bottom: 3rem; position: relative; z-index: 2;
+    }
+    .tunk-scene { position: relative; z-index: 2; cursor: pointer; }
+    #tunk-svg {
+      width: min(260px, 58vw); overflow: visible;
+      filter: drop-shadow(0 20px 60px rgba(196,43,28,0));
+      transition: filter 0.5s ease;
+    }
+    #tunk-svg.glowing { filter: drop-shadow(0 10px 90px rgba(196,43,28,0.85)); }
+    #taco-g { transition: transform 0.48s cubic-bezier(0.4,0,0.2,1); }
+    #taco-g.idle { animation: tacoIdle 2.8s ease-in-out infinite; }
+    #taco-g.dipping { animation: none; transform: translateY(93px); }
+    @keyframes tacoIdle {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-16px) rotate(-1.5deg); }
+    }
+    #tunk-svg.splashing .liq-surface { animation: liquidRise 0.55s cubic-bezier(0.16,1,0.3,1); }
+    #tunk-svg.splashing .liq-body    { animation: liquidBody 0.55s cubic-bezier(0.16,1,0.3,1); }
+    @keyframes liquidRise {
+      0%   { transform: scaleY(1) translateY(0); }
+      35%  { transform: scaleY(1.2) translateY(-10px); }
+      100% { transform: scaleY(1) translateY(0); }
+    }
+    @keyframes liquidBody {
+      0%   { transform: scaleY(1); }
+      35%  { transform: scaleY(1.07) translateY(-4px); }
+      100% { transform: scaleY(1) translateY(0); }
+    }
+    .tunk-counter {
+      margin-top: 2.5rem; text-align: center;
+      position: relative; z-index: 2; pointer-events: none;
+    }
+    #tunk-num {
+      font-family: var(--D);
+      font-size: clamp(5rem, 14vw, 11rem);
+      line-height: 1; color: var(--chili); display: inline-block;
+    }
+    #tunk-num.pop { animation: numPop 0.4s cubic-bezier(0.16,1,0.3,1); }
+    @keyframes numPop {
+      0%   { transform: scale(1); }
+      45%  { transform: scale(1.5) rotate(-3deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .tunk-sublabel {
+      font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.28); margin-top: 0.25rem;
+    }
+    .tunk-hint {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25); z-index: 2; white-space: nowrap;
+      animation: hintPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes hintPulse { 0%,100%{opacity:0.25} 50%{opacity:0.65} }
+    .tunk-hint.gone { opacity:0!important; transition:opacity 1.5s ease; animation:none; pointer-events:none; }
+    .amb { position:absolute; border-radius:50%; background:var(--chili); pointer-events:none; animation:ambDrift linear infinite; }
+    @keyframes ambDrift {
+      0%   { transform:translateY(110vh) rotate(0deg); opacity:0; }
+      8%   { opacity:var(--op); }
+      92%  { opacity:var(--op); }
+      100% { transform:translateY(-15vh) rotate(var(--spin,360deg)); opacity:0; }
+    }
+    .sp2 {
+      position:fixed; border-radius:50%; background:var(--chili);
+      pointer-events:none; z-index:9990;
+      animation:sp2out var(--d) cubic-bezier(0.2,0,0.8,1) forwards;
+    }
+    @keyframes sp2out {
+      0%  { transform:translate(0,0) scale(1); opacity:1; }
+      100%{ transform:translate(var(--tx),var(--ty)) scale(0.05); opacity:0; }
+    }
+    .pone {
+      position:fixed; font-family:var(--D); font-size:2.2rem;
+      color:var(--chili); pointer-events:none; z-index:9990;
+      animation:poneUp 1.1s ease forwards;
+    }
+    @keyframes poneUp {
+      0%  { opacity:1; transform:translateY(0) scale(1.2); }
+      100%{ opacity:0; transform:translateY(-100px) scale(0.5); }
+    }
+    #tunk.quake { animation:quake 0.45s cubic-bezier(0.36,0.07,0.19,0.97); }
+    @keyframes quake {
+      0%,100%{ transform:none; }
+      15%{ transform:translateX(-8px) rotate(-0.4deg); }
+      30%{ transform:translateX(8px)  rotate(0.4deg); }
+      45%{ transform:translateX(-5px); }
+      60%{ transform:translateX(5px); }
+      75%{ transform:translateX(-2px); }
+    }
+    .taco-drip { opacity:0; transition:opacity 0.3s 0.2s ease; }
+    #taco-g.dipping .taco-drip { opacity:1; }
+
+    /* ── BRAND (green) ── */
+    #brand {
+      background: var(--green); color: var(--cream);
+      padding: 9rem 2.5rem 8rem;
+    }
+    #brand .sec-label { color: rgba(245,239,224,0.5); }
+    .brand-h {
+      font-family: var(--D);
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      line-height: 0.95; margin-bottom: 3rem; color: var(--cream);
+    }
+    .brand-p {
+      font-size: 1.1rem; line-height: 1.75; font-weight: 300;
+      opacity: 0.85; max-width: 52ch; color: var(--cream);
+    }
+
+    /* ── STANDORT ── */
+    #standort { padding: 9rem 2.5rem 8rem; }
+    .standort-grid {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 5rem; align-items: start;
+    }
+    #standort .sec-label { color: var(--green); }
+    .s-heading {
+      font-family: var(--D);
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      line-height: 0.95; margin-bottom: 3rem; color: var(--black);
+    }
+    .hours { display: grid; gap: 0; margin-bottom: 2.5rem; }
+    .h-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.9rem; padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .h-time { color: var(--green); font-weight: 500; }
+    .address { font-size: 0.9rem; line-height: 1.9; color: #444; }
+    .address strong { font-family: var(--D); color: var(--black); font-size: 1.1rem; }
+    .map-embed {
+      height: 420px; border: 2px solid var(--black); overflow: hidden;
+    }
+    .map-embed iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--black); color: var(--cream); }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .f-logo {
+      font-family: var(--D); font-size: 1.6rem; color: var(--cream);
+      display: flex; align-items: center; gap: 0.6rem; text-decoration: none;
+    }
+    .f-logo img { width: 34px; filter: brightness(0) invert(1); }
+    .f-links { display: flex; gap: 1.5rem; }
+    .f-links a {
+      color: rgba(245,239,224,0.4); font-size: 0.75rem;
+      text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .f-links a:hover { color: var(--cream); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .birria-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .taco-cards { grid-template-columns: 1fr; }
+      .card-wrap { height: 520px; }
+      .sides-grid { grid-template-columns: 1fr; }
+      .standort-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      #hero { padding: 7rem 1.5rem 4rem; }
+      #birria, #menu, #brand, #standort { padding: 6rem 1.5rem; }
+      .footer-inner { flex-direction: column; gap: 1.5rem; text-align: center; }
+      .nav-links { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="preloader">
+  <img src="assets/logo.png" class="pre-logo" alt="BIRRIAS" loading="eager">
+  <div class="pre-name">BIRRIAS</div>
+  <div class="pre-bar"><div class="pre-bar-fill"></div></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <img src="assets/logo.png" alt="BIRRIAS" loading="eager">
+    BIRRIAS
+  </a>
+  <div class="nav-links">
+    <a href="#menu">Menü</a>
+    <a href="#standort">Standort</a>
+    <a href="https://www.instagram.com/birrias.frankfurt" target="_blank" rel="noopener">Instagram</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <svg class="hero-pattern" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="otomi" x="0" y="0" width="72" height="72" patternUnits="userSpaceOnUse">
+        <rect x="33" y="1" width="6" height="6" fill="#0C0C0C"/>
+        <rect x="33" y="65" width="6" height="6" fill="#0C0C0C"/>
+        <rect x="1" y="33" width="6" height="6" fill="#0C0C0C"/>
+        <rect x="65" y="33" width="6" height="6" fill="#0C0C0C"/>
+        <line x1="36" y1="7" x2="36" y2="33" stroke="#0C0C0C" stroke-width="1.5"/>
+        <line x1="36" y1="39" x2="36" y2="65" stroke="#0C0C0C" stroke-width="1.5"/>
+        <line x1="7" y1="36" x2="33" y2="36" stroke="#0C0C0C" stroke-width="1.5"/>
+        <line x1="39" y1="36" x2="65" y2="36" stroke="#0C0C0C" stroke-width="1.5"/>
+        <polygon points="36,13 40,22 36,18 32,22" fill="#0C0C0C"/>
+        <polygon points="36,59 40,50 36,54 32,50" fill="#0C0C0C"/>
+        <polygon points="13,36 22,32 18,36 22,40" fill="#0C0C0C"/>
+        <polygon points="59,36 50,32 54,36 50,40" fill="#0C0C0C"/>
+        <rect x="33" y="33" width="6" height="6" fill="none" stroke="#0C0C0C" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#otomi)"/>
+  </svg>
+
+  <div class="hero-eyebrow" id="e-eyebrow">Seit Jalisco. Jetzt in Frankfurt.</div>
+  <h1 class="hero-h1" id="e-h1"></h1>
+  <p class="hero-sub" id="e-sub">Kein Kompromiss. Kein langes Menü. Nur die zwei Gerichte, bei denen jeder Bissen nach dem Rezept schmeckt, das Generationen überlebt hat.</p>
+  <div class="hero-origin" id="e-origin">↓ &nbsp; Jalisco, México</div>
+  <a href="#menu" class="btn" id="e-cta">
+    Zum Menü
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M3 9h12M9 3l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+</section>
+
+<!-- MARQUEE 1 -->
+<div class="mq-wrap">
+  <div class="mq-track" id="mq1"></div>
+</div>
+
+<!-- WAS IST BIRRIA -->
+<section id="birria">
+  <div class="sec-label rv">— Was ist Birria?</div>
+  <h2 class="sec-heading rv rv-d1">Flüssiges<br>Gold.</h2>
+  <div class="birria-grid">
+    <div class="rv rv-d1">
+      <div class="b-num">01</div>
+      <div class="b-title">Das Schmoren</div>
+      <p class="b-text">Stunden im Adobo aus getrockneten Chilis, Lorbeer, Zimt, Kreuzkümmel, Nelken. Das Fleisch gibt alles auf. Das ist kein Kochen — das ist Geduld als Handwerk.</p>
+    </div>
+    <div class="rv rv-d2">
+      <div class="b-num">02</div>
+      <div class="b-title">Das Consommé</div>
+      <p class="b-text">Die Brühe, die entsteht, ist das Herz. Rot. Tief. Komplex. Man taucht die Tortilla hinein, bevor sie in die heiße Pfanne kommt. Das Consommé brennt sich in die Textur.</p>
+    </div>
+    <div class="rv rv-d2">
+      <div class="b-num">03</div>
+      <div class="b-title">Die Tortilla</div>
+      <p class="b-text">In der Consommé getränkt, scharf angebraten, bis die Ränder knistern. Eine Seite glänzend, die andere crispy. In dieser Tortilla steckt die ganze Geschichte.</p>
+    </div>
+    <div class="rv rv-d3">
+      <div class="b-num">04</div>
+      <div class="b-title">Der Tunk-Moment</div>
+      <p class="b-text">Koriander, Zwiebeln, Limette. Und dann: man tunkt. Jeder Bissen in die Brühe. Das ist Birria. Kein Fast Food. Streetfood, das Generationen überlebt hat.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MENÜ -->
+<section id="menu">
+  <div class="sec-label rv">— Das Menü</div>
+  <h2 class="sec-heading-dark rv rv-d1">Zwei<br>Gerichte.</h2>
+
+  <div class="taco-cards">
+    <!-- Birria Tacos -->
+    <div class="card-wrap rv">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-img">
+            <div class="card-img-bg"></div>
+            <div class="steam">
+              <div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div>
+            </div>
+            <div class="card-ph">
+              <svg width="72" height="60" viewBox="0 0 72 60" fill="none">
+                <path d="M8 42 Q36 18 64 42" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <ellipse cx="36" cy="48" rx="28" ry="10" stroke="white" stroke-width="2" fill="none"/>
+                <path d="M14 44 Q36 50 58 44" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+              </svg>
+              Produktfoto<br>Birria Taco
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-name">Birria Tacos</div>
+            <div class="card-price"><div class="pdot"></div>10,50€</div>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="cb-name">Birria<br>Tacos</div>
+            <div class="cb-tag">Beef · Das Original aus Jalisco</div>
+          </div>
+          <ul class="ingr">
+            <li>Stundenlang geschmortes Rindfleisch</li>
+            <li>Consommé-getränkte Tortilla, knusprig gebraten</li>
+            <li>Frischer Koriander</li>
+            <li>Weiße Zwiebeln</li>
+            <li>Limette</li>
+            <li>Brühe zum Tunken — inklusive</li>
+          </ul>
+          <div class="cb-price">
+            <div class="pdot" style="width:10px;height:10px;background:var(--chili)"></div>
+            10,50€
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Beyond Tacos -->
+    <div class="card-wrap rv rv-d1">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-img">
+            <div class="card-img-bg dark"></div>
+            <div class="steam">
+              <div class="sp"></div><div class="sp"></div><div class="sp"></div>
+            </div>
+            <div class="card-ph">
+              <svg width="72" height="60" viewBox="0 0 72 60" fill="none">
+                <path d="M8 42 Q36 18 64 42" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <ellipse cx="36" cy="48" rx="28" ry="10" stroke="white" stroke-width="2" fill="none"/>
+                <circle cx="36" cy="26" r="4" stroke="white" stroke-width="1.5" fill="none" opacity="0.7"/>
+              </svg>
+              Produktfoto<br>Beyond Taco
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="card-name">Beyond Tacos</div>
+            <div class="card-price"><div class="pdot" style="background:var(--green)"></div>10,50€</div>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="cb-name">Beyond<br>Tacos</div>
+            <div class="cb-tag">Vegan · Halal · Das Gleiche, anders</div>
+          </div>
+          <ul class="ingr">
+            <li>Beyond Meat im Adobo geschmort</li>
+            <li>Vegane Consommé-Tortilla, knusprig gebraten</li>
+            <li>Frischer Koriander</li>
+            <li>Weiße Zwiebeln</li>
+            <li>Limette</li>
+            <li>Vegane Brühe zum Tunken — inklusive</li>
+          </ul>
+          <div class="cb-price">
+            <div class="pdot" style="width:10px;height:10px;background:var(--green)"></div>
+            10,50€
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sides -->
+  <div class="sides-block rv">
+    <div class="sides-title">Dazu</div>
+    <div class="sides-grid">
+      <div>
+        <div class="s-item"><span>Skinny Fries</span><span class="s-price"><span class="pdot"></span>3,90€</span></div>
+        <div class="s-item"><span>Brühe Beef</span><span class="s-price"><span class="pdot"></span>1,50€</span></div>
+        <div class="s-item"><span>Brühe Vegan</span><span class="s-price"><span class="pdot"></span>1,50€</span></div>
+      </div>
+      <div>
+        <div class="s-item"><span>Ketchup</span><span class="s-price"><span class="pdot"></span>0,70€</span></div>
+        <div class="s-item"><span>Mayonnaise</span><span class="s-price"><span class="pdot"></span>0,70€</span></div>
+        <div class="s-item"><span>Joppie</span><span class="s-price"><span class="pdot"></span>0,80€</span></div>
+      </div>
+      <div>
+        <div class="s-item"><span>Kola · Kola Zero</span><span class="s-price"><span class="pdot"></span>3,50€</span></div>
+        <div class="s-item"><span>Limo</span><span class="s-price"><span class="pdot"></span>3,50€</span></div>
+        <div class="s-item"><span>Orangen Limo</span><span class="s-price"><span class="pdot"></span>3,50€</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOTO STRIPS -->
+<section id="fotos">
+  <div class="foto-strip" id="fs1">
+    <div class="foto-track" id="ft1"></div>
+  </div>
+  <div class="foto-divider"></div>
+  <div class="foto-strip" id="fs2">
+    <div class="foto-track" id="ft2"></div>
+  </div>
+</section>
+
+<!-- STILLE -->
+<section id="stille">
+  <svg class="stille-bg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="stille-p" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <circle cx="20" cy="20" r="1" fill="#0C0C0C"/>
+        <line x1="20" y1="0" x2="20" y2="8" stroke="#0C0C0C" stroke-width="1"/>
+        <line x1="20" y1="32" x2="20" y2="40" stroke="#0C0C0C" stroke-width="1"/>
+        <line x1="0" y1="20" x2="8" y2="20" stroke="#0C0C0C" stroke-width="1"/>
+        <line x1="32" y1="20" x2="40" y2="20" stroke="#0C0C0C" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#stille-p)"/>
+  </svg>
+  <div class="stille-text rv">
+    Nur&nbsp;<span class="red">Tacos</span>.<br>Seit immer.
+  </div>
+</section>
+
+<!-- TUNK ES. -->
+<section id="tunk">
+  <div class="tunk-ghost">TUNK&nbsp;ES.</div>
+  <div class="tunk-label-top">— Die Kunst des Tunkens</div>
+  <div class="tunk-scene">
+    <svg id="tunk-svg" viewBox="0 0 240 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g id="taco-g" class="idle">
+        <path d="M18,92 Q120,8 222,92" stroke="#F5EFE0" stroke-width="5" fill="rgba(245,239,224,0.1)" stroke-linecap="round"/>
+        <path d="M28,89 Q80,64 120,70 Q160,64 212,89 Q168,103 120,100 Q72,103 28,89Z" fill="#7A2C1A" opacity="0.95"/>
+        <circle cx="72"  cy="80" r="11" fill="#1B8A1B" opacity="0.9"/>
+        <circle cx="120" cy="73" r="9"  fill="#1B8A1B" opacity="0.85"/>
+        <circle cx="168" cy="80" r="11" fill="#1B8A1B" opacity="0.9"/>
+        <circle cx="95"  cy="90" r="5"  fill="#1B8A1B" opacity="0.6"/>
+        <circle cx="147" cy="90" r="5"  fill="#1B8A1B" opacity="0.6"/>
+        <path class="taco-drip" d="M102,95 Q104,106 102,115" stroke="#C42B1C" stroke-width="3.5" stroke-linecap="round"/>
+        <path class="taco-drip" d="M138,93 Q141,107 139,118" stroke="#C42B1C" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+        <path d="M18,92 Q60,110 120,106 Q180,110 222,92" stroke="#F5EFE0" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M38,94 Q80,88 120,90 Q160,88 202,94" stroke="#F5EFE0" stroke-width="1" opacity="0.15" fill="none"/>
+      </g>
+      <g id="cup-g">
+        <path class="liq-body" d="M54,224 L40,344 Q40,350 48,350 L192,350 Q200,350 200,344 L186,224 Q120,244 54,224Z" fill="#C42B1C" opacity="0.72"/>
+        <ellipse class="liq-surface" cx="120" cy="224" rx="66" ry="14" fill="#C42B1C" opacity="0.92"/>
+        <path d="M68,220 Q92,213 114,217" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M48,202 L36,348 Q36,354 44,354 L196,354 Q204,354 204,348 L192,202Z" fill="rgba(245,239,224,0.05)" stroke="#F5EFE0" stroke-width="3"/>
+        <ellipse cx="120" cy="202" rx="72" ry="15" fill="rgba(245,239,224,0.07)" stroke="#F5EFE0" stroke-width="3"/>
+        <path d="M54,214 L42,330" stroke="rgba(255,255,255,0.08)" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
+  <div class="tunk-counter">
+    <div><span id="tunk-num">0</span></div>
+    <div class="tunk-sublabel">× Tacos getunkt</div>
+  </div>
+  <div class="tunk-hint" id="tunk-hint">— Klick zum Tunken —</div>
+</section>
+
+<!-- MEXIKO IN FRANKFURT -->
+<section id="brand">
+  <div class="sec-label rv">— Mexiko in Frankfurt</div>
+  <h2 class="brand-h rv rv-d1">Zwei Sachen.<br>Beide perfekt.</h2>
+  <p class="brand-p rv rv-d2">Kein Menüboard mit 40 Positionen. Keine Fusion-Spielereien. Nur die Überzeugung, dass zwei Gerichte — richtig gemacht — mehr sagen als ein Dutzend mittelmäßige. Das Rezept kommt aus Jalisco. Der Laden ist in Frankfurt. Die Haltung ist überall gleich.</p>
+</section>
+
+<!-- STANDORT -->
+<section id="standort">
+  <div class="standort-grid">
+    <div>
+      <div class="sec-label rv">— Standort &amp; Zeiten</div>
+      <h2 class="s-heading rv rv-d1">Finde<br>uns.</h2>
+      <div class="hours rv rv-d2">
+        <div class="h-row"><span>Montag – Donnerstag</span><span class="h-time">11:00 – 22:00</span></div>
+        <div class="h-row"><span>Freitag – Samstag</span><span class="h-time">11:00 – 23:00</span></div>
+        <div class="h-row"><span>Sonntag</span><span class="h-time">12:00 – 21:00</span></div>
+      </div>
+      <div class="address rv rv-d3">
+        <strong>BIRRIAS Frankfurt</strong><br>
+        Kaiserstraße 39<br>
+        60329 Frankfurt am Main<br><br>
+        <a href="https://wa.me/4915123456789" target="_blank" rel="noopener" style="color:var(--green);font-weight:500;text-decoration:none;font-size:0.9rem;letter-spacing:0.05em;">→ WhatsApp reservieren</a>
+      </div>
+    </div>
+    <div class="map-embed rv rv-d1">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2558.7!2d8.6709!3d50.1055!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTDCsDA2JzE5LjgiTiA4wrA0MCcxNS4yIkU!5e0!3m2!1sde!2sde!4v1"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        title="BIRRIAS Frankfurt — Kaiserstraße 39"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="mq-wrap">
+    <div class="mq-track" id="mq2"></div>
+  </div>
+  <div class="footer-inner">
+    <a href="#" class="f-logo">
+      <img src="assets/logo.png" alt="BIRRIAS" loading="lazy">
+      BIRRIAS
+    </a>
+    <div class="f-links">
+      <a href="https://www.instagram.com/birrias.frankfurt" target="_blank" rel="noopener">Instagram</a>
+      <a href="#">Impressum</a>
+      <a href="#">Datenschutz</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Smooth scroll
+  const lenis = new Lenis();
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  // Custom chili cursor
+  (function() {
+    const size = 40;
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const ctx = c.getContext('2d');
+    ctx.font = `${size - 4}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🌶️', size / 2, size / 2 + 1);
+    const url = c.toDataURL();
+    const hot = Math.round(size * 0.15);
+    const st = document.createElement('style');
+    st.textContent = `*, *::before, *::after { cursor: url(${url}) ${hot} ${hot}, auto !important; }`;
+    document.head.appendChild(st);
+  })();
+
+  // Nav scroll pill
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60), {passive:true});
+
+  // Marquee
+  const MQ_ITEMS = ['BIRRIAS FRANKFURT','ZWEI TACOS','KEIN KOMPROMISS','SEIT JALISCO','DAS ORIGINAL','TUNK ES','SEIT JALISCO'];
+  function fillMarquee(id) {
+    const t = document.getElementById(id);
+    let h = '';
+    for (let i = 0; i < 5; i++)
+      MQ_ITEMS.forEach(txt => { h += `<span class="mq-item">${txt}<span class="mq-dot">●</span></span>`; });
+    t.innerHTML = h;
+  }
+  fillMarquee('mq1');
+  fillMarquee('mq2');
+
+  let mqOff = 0, lastY = scrollY, scrollVel = 0;
+  window.addEventListener('scroll', () => { scrollVel = scrollY - lastY; lastY = scrollY; }, {passive:true});
+
+  function runMarquee() {
+    scrollVel *= 0.9;
+    const speed = 1.2 + Math.abs(scrollVel) * 0.35;
+    mqOff -= speed;
+    ['mq1','mq2'].forEach(id => {
+      const t = document.getElementById(id);
+      if (!t) return;
+      const half = t.scrollWidth / 2;
+      if (Math.abs(mqOff) >= half) mqOff = 0;
+      t.style.transform = `translateX(${mqOff}px)`;
+    });
+    requestAnimationFrame(runMarquee);
+  }
+  runMarquee();
+
+  // Foto strips
+  (function() {
+    const CARDS = [
+      { cls:'fc1', label:'Das Fleisch · 48h' },
+      { cls:'fc2', label:'Koriander · Frisch' },
+      { cls:'fc3', label:'Die Tortilla · Crispy' },
+      { cls:'fc4', label:'Consommé · Jalisco' },
+      { cls:'fc5', label:'Der Tunk-Moment' },
+      { cls:'fc6', label:'Frankfurt · Mitte' },
+      { cls:'fc1', label:'Zwiebeln · Weiß' },
+      { cls:'fc3', label:'Adobo · Jalisco' },
+    ];
+    const CAM = `<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="7" width="24" height="17" rx="2" stroke="currentColor" stroke-width="1.1"/><circle cx="14" cy="15" r="4.5" stroke="currentColor" stroke-width="1.1"/><path d="M9 7V5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>`;
+
+    function build(id, items) {
+      const t = document.getElementById(id);
+      if (!t) return;
+      let h = '';
+      for (let r = 0; r < 4; r++) {
+        items.forEach(c => {
+          h += `<div class="foto-card"><div class="foto-card-inner ${c.cls}"><div class="foto-ph">${CAM}${c.label}</div></div><div class="foto-cap">${c.label}</div></div>`;
+        });
+      }
+      t.innerHTML = h;
+    }
+
+    build('ft1', CARDS);
+    build('ft2', [...CARDS].reverse());
+
+    const ft1 = document.getElementById('ft1');
+    const ft2 = document.getElementById('ft2');
+    const fs1 = document.getElementById('fs1');
+    const fs2 = document.getElementById('fs2');
+    if (!ft1 || !ft2) return;
+
+    let off1 = 0, off2 = 0, h1 = false, h2 = false;
+    requestAnimationFrame(() => { off2 = -(ft2.scrollWidth / 4); });
+
+    fs1.addEventListener('mouseenter', () => h1 = true);
+    fs1.addEventListener('mouseleave', () => h1 = false);
+    fs2.addEventListener('mouseenter', () => h2 = true);
+    fs2.addEventListener('mouseleave', () => h2 = false);
+
+    function animFoto() {
+      const boost = scrollVel * 0.18;
+      const unit = ft1.scrollWidth / 4;
+      if (!h1) {
+        off1 -= (1.4 + boost);
+        if (Math.abs(off1) >= unit) off1 = 0;
+        ft1.style.transform = `translateX(${off1}px)`;
+      }
+      if (!h2) {
+        off2 += (1.4 + boost);
+        if (off2 >= 0) off2 = -(ft2.scrollWidth / 4);
+        ft2.style.transform = `translateX(${off2}px)`;
+      }
+      requestAnimationFrame(animFoto);
+    }
+    animFoto();
+  })();
+
+  // Tunk section
+  (function() {
+    const section = document.getElementById('tunk');
+    const tacoG   = document.getElementById('taco-g');
+    const svgEl   = document.getElementById('tunk-svg');
+    const numEl   = document.getElementById('tunk-num');
+    const hint    = document.getElementById('tunk-hint');
+    let count = 0, dipping = false;
+
+    for (let i = 0; i < 22; i++) {
+      const a = document.createElement('div');
+      a.className = 'amb';
+      const sz = Math.random() * 7 + 3;
+      const spin = Math.random() * 720 - 360;
+      a.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;`+
+        `--op:${(Math.random()*0.25+0.08).toFixed(2)};--spin:${spin}deg;`+
+        `animation-duration:${(Math.random()*14+8).toFixed(1)}s;`+
+        `animation-delay:${(-Math.random()*20).toFixed(1)}s;`+
+        `border-radius:${Math.random()>0.5?'50%':'3px'};`;
+      section.appendChild(a);
+    }
+
+    section.addEventListener('click', e => {
+      if (dipping) return;
+      dipping = true;
+      count++;
+      tacoG.classList.remove('idle');
+      tacoG.classList.add('dipping');
+      svgEl.classList.add('glowing');
+
+      setTimeout(() => {
+        section.classList.add('quake');
+        svgEl.classList.add('splashing');
+        spawnSplash();
+        spawnPlusOne(e.clientX, e.clientY);
+        numEl.textContent = count;
+        numEl.classList.remove('pop');
+        void numEl.offsetWidth;
+        numEl.classList.add('pop');
+        if (count >= 3) hint.classList.add('gone');
+      }, 320);
+
+      setTimeout(() => {
+        tacoG.classList.remove('dipping');
+        svgEl.classList.remove('glowing', 'splashing');
+        section.classList.remove('quake');
+        setTimeout(() => { tacoG.classList.add('idle'); dipping = false; }, 500);
+      }, 960);
+    });
+
+    function spawnSplash() {
+      const rect = svgEl.getBoundingClientRect();
+      const cx = rect.left + rect.width * 0.5;
+      const cy = rect.top  + rect.height * 0.595;
+      for (let i = 0; i < 32; i++) {
+        const p = document.createElement('div');
+        p.className = 'sp2';
+        const sz  = Math.random() * 14 + 4;
+        const ang = (Math.random() * 360) * Math.PI / 180;
+        const r   = Math.random() * 110 + 40;
+        const tx  = (Math.cos(ang) * r).toFixed(0);
+        const ty  = (Math.sin(ang) * r - 30).toFixed(0);
+        const d   = (Math.random() * 0.45 + 0.4).toFixed(2);
+        p.style.cssText = `width:${sz}px;height:${sz}px;`+
+          `left:${(cx - sz/2).toFixed(0)}px;top:${(cy - sz/2).toFixed(0)}px;`+
+          `--tx:${tx}px;--ty:${ty}px;--d:${d}s;`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), parseFloat(d)*1000 + 150);
+      }
+    }
+
+    function spawnPlusOne(x, y) {
+      const el = document.createElement('div');
+      el.className = 'pone';
+      el.textContent = '+1';
+      el.style.cssText = `left:${x-16}px;top:${y-50}px;`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }
+  })();
+
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // Hero headline builder
+  function buildHero() {
+    const h1 = document.getElementById('e-h1');
+    const lines = ['Zwei Tacos.', 'Das '];
+    const lastWord = 'reicht.';
+    let html = '';
+    let baseDelay = 0;
+
+    lines.forEach((line, li) => {
+      html += `<span class="h1-line">`;
+      for (let i = 0; i < line.length; i++) {
+        const r = ((Math.random() * 14) - 7).toFixed(1);
+        const d = baseDelay + i * 38;
+        const ch = line[i] === ' ' ? '&nbsp;' : line[i];
+        html += `<span class="h1-letter" style="--r:${r}deg;transition-delay:${d}ms">${ch}</span>`;
+      }
+      if (li === lines.length - 1) {
+        html += `<span class="underline-w">`;
+        for (let i = 0; i < lastWord.length; i++) {
+          const r = ((Math.random() * 14) - 7).toFixed(1);
+          const d = baseDelay + line.length * 38 + i * 38;
+          html += `<span class="h1-letter" style="--r:${r}deg;transition-delay:${d}ms">${lastWord[i]}</span>`;
+        }
+        html += `<svg viewBox="0 0 280 20" preserveAspectRatio="none" style="height:20px;width:100%">
+          <path class="u-path" d="M2,14 C40,4 80,18 140,10 C200,2 240,16 278,8"
+            stroke="#C42B1C" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg></span>`;
+      }
+      html += `</span>`;
+      baseDelay += (line.length + (li === lines.length - 1 ? lastWord.length : 0)) * 38 + 80;
+    });
+
+    h1.innerHTML = html;
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.h1-letter').forEach(l => l.classList.add('show'));
+      setTimeout(() => {
+        const p = document.querySelector('.u-path');
+        if (p) p.classList.add('show');
+      }, 900);
+    });
+  }
+
+  // Preloader + hero init
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('preloader').classList.add('out');
+      buildHero();
+      setTimeout(() => {
+        document.getElementById('e-eyebrow').classList.add('show');
+        document.getElementById('e-sub').classList.add('show');
+        document.getElementById('e-origin').classList.add('show');
+        document.getElementById('e-cta').classList.add('show');
+      }, 600);
+    }, 2400);
+  });
+</script>
+</body>
+</html>
