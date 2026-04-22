@@ -10,6 +10,7 @@
   <meta property="og:image" content="assets/logo.png">
   <meta property="og:type" content="website">
   <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preload" href="assets/hero-tacos.webp" as="image" type="image/webp">
   <link rel="preload" href="assets/tacos-close.webp" as="image" type="image/webp">
   <link rel="preload" href="assets/tacos-cilantro.webp" as="image" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,6 +75,36 @@
     @keyframes fadeUp {
       from { opacity:0; transform:translateY(12px) }
       to   { opacity:1; transform:none }
+    }
+
+    /* ── HERO TACO ── */
+    .hero-taco {
+      position: absolute;
+      right: -4%;
+      top: -2%;
+      width: min(58vw, 720px);
+      pointer-events: none;
+      z-index: 1;
+      animation: tacoFloat 7s ease-in-out infinite;
+      filter:
+        drop-shadow(0 60px 120px rgba(196,43,28,0.35))
+        drop-shadow(0 20px 40px rgba(0,0,0,0.18));
+    }
+    @keyframes tacoFloat {
+      0%,100% { transform: translateY(0) rotate(-2deg); }
+      40%     { transform: translateY(-28px) rotate(0.5deg); }
+      70%     { transform: translateY(-14px) rotate(-3deg); }
+    }
+    .hero-eyebrow, .hero-h1, .hero-sub, .hero-origin, .btn {
+      position: relative; z-index: 2; max-width: 52%;
+    }
+    @media (max-width: 900px) {
+      .hero-taco { width: min(72vw, 440px); right: -6%; top: 8%; opacity: 0.85; }
+      .hero-eyebrow, .hero-h1, .hero-sub, .hero-origin, .btn { max-width: 70%; }
+    }
+    @media (max-width: 600px) {
+      .hero-taco { width: min(85vw, 340px); right: -8%; top: 5%; opacity: 0.7; }
+      .hero-eyebrow, .hero-h1, .hero-sub, .hero-origin, .btn { max-width: 100%; }
     }
 
     /* ── NAV ── */
@@ -644,6 +675,8 @@
     <rect width="100%" height="100%" fill="url(#otomi)"/>
   </svg>
 
+  <img class="hero-taco" src="assets/hero-tacos.webp" alt="" aria-hidden="true">
+
   <div class="hero-eyebrow" id="e-eyebrow">Seit Jalisco. Jetzt in Frankfurt.</div>
   <h1 class="hero-h1" id="e-h1"></h1>
   <p class="hero-sub" id="e-sub">Kein Kompromiss. Kein langes Menü. Nur die zwei Gerichte, bei denen jeder Bissen nach dem Rezept schmeckt, das Generationen überlebt hat.</p>
@@ -933,6 +966,18 @@
     st.textContent = `*, *::before, *::after { cursor: url(${url}) ${hot} ${hot}, auto !important; }`;
     document.head.appendChild(st);
   })();
+
+  // Hero taco parallax
+  gsap.to('.hero-taco', {
+    yPercent: -18,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1.2
+    }
+  });
 
   // Nav scroll pill
   const nav = document.getElementById('nav');
