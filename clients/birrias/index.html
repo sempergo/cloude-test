@@ -10,6 +10,8 @@
   <meta property="og:image" content="assets/logo.png">
   <meta property="og:type" content="website">
   <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="preload" href="assets/tacos-close.webp" as="image" type="image/webp">
+  <link rel="preload" href="assets/tacos-cilantro.webp" as="image" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
@@ -273,7 +275,8 @@
     .card-img img {
       position: absolute; inset: 0;
       width: 100%; height: 100%; object-fit: cover;
-      will-change: transform;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
     .card-info {
       background: var(--cream); padding: 1.5rem 2rem;
@@ -359,8 +362,8 @@
     }
     .foto-card {
       flex-shrink: 0;
-      width: clamp(240px, 35vw, 480px);
-      height: clamp(150px, 26vh, 300px);
+      width: clamp(300px, 44vw, 580px);
+      height: clamp(200px, 34vh, 400px);
       position: relative; overflow: hidden;
     }
     .foto-card-inner {
@@ -379,14 +382,14 @@
     }
     .foto-card:hover .foto-cap { opacity: 1; transform: none; }
     @media (max-width: 768px) {
-      .foto-card { width: clamp(180px, 62vw, 280px); height: clamp(110px, 20vh, 180px); }
+      .foto-card { width: clamp(220px, 68vw, 340px); height: clamp(140px, 24vh, 240px); }
     }
 
     /* ── STILLE ── */
     #stille {
-      min-height: 100vh; display: flex;
+      min-height: 60vh; display: flex;
       align-items: center; justify-content: center;
-      background: var(--cream); padding: 4rem 2.5rem;
+      background: var(--cream); padding: 5rem 2.5rem;
       text-align: center; position: relative; overflow: hidden;
     }
     .stille-bg { position: absolute; inset: 0; opacity: 0.03; pointer-events: none; }
@@ -697,7 +700,7 @@
       <div class="card-inner">
         <div class="card-front">
           <div class="card-img">
-            <img src="assets/tacos-close.png" alt="Birria Tacos" loading="lazy">
+            <img src="assets/tacos-close.webp" alt="Birria Tacos" loading="eager">
             <div class="steam">
               <div class="sp"></div><div class="sp"></div><div class="sp"></div><div class="sp"></div>
             </div>
@@ -733,7 +736,7 @@
       <div class="card-inner">
         <div class="card-front">
           <div class="card-img">
-            <img src="assets/tacos-cilantro.png" alt="Beyond Tacos" loading="lazy">
+            <img src="assets/tacos-cilantro.webp" alt="Beyond Tacos" loading="eager">
             <div class="steam">
               <div class="sp"></div><div class="sp"></div><div class="sp"></div>
             </div>
@@ -965,30 +968,30 @@
   // Foto strips
   (function() {
     const S1 = [
-      { src:'assets/tacos-close.png',      label:'Das Fleisch · Crispy' },
-      { src:'assets/tacos-neon.png',        label:'Frankfurt · Neon' },
-      { src:'assets/tacos-cilantro.png',    label:'Koriander · Frisch' },
-      { src:'assets/lifestyle-eating.png',  label:'Das Erlebnis' },
-      { src:'assets/tacos-wood.png',        label:'Zwiebeln · Weiß' },
-      { src:'assets/tacos-tray.png',        label:'Consommé · Jalisco' },
-      { src:'assets/tacos-autumn.png',      label:'Jalisco · Herbst' },
-      { src:'assets/tacos-fries.png',       label:'Skinny Fries · Dazu' },
-      { src:'assets/tacos-dark.png',        label:'Birria · Dunkel' },
-      { src:'assets/tacos-overhead.png',    label:'Der Tunk-Moment' },
-      { src:'assets/tacos-table.png',       label:'Frankfurt · Tisch' },
+      { src:'assets/tacos-close.webp',      label:'Das Fleisch · Crispy' },
+      { src:'assets/tacos-neon.webp',        label:'Frankfurt · Neon' },
+      { src:'assets/tacos-cilantro.webp',    label:'Koriander · Frisch' },
+      { src:'assets/lifestyle-eating.webp',  label:'Das Erlebnis' },
+      { src:'assets/tacos-wood.webp',        label:'Zwiebeln · Weiß' },
+      { src:'assets/tacos-tray.webp',        label:'Consommé · Jalisco' },
+      { src:'assets/tacos-autumn.webp',      label:'Jalisco · Herbst' },
+      { src:'assets/tacos-fries.webp',       label:'Skinny Fries · Dazu' },
+      { src:'assets/tacos-dark.webp',        label:'Birria · Dunkel' },
+      { src:'assets/tacos-overhead.webp',    label:'Der Tunk-Moment' },
+      { src:'assets/tacos-table.webp',       label:'Frankfurt · Tisch' },
     ];
     const S2 = [
-      { src:'assets/tacos-dark.png',        label:'Birria · Dunkel' },
-      { src:'assets/tacos-table.png',       label:'Frankfurt · Tisch' },
-      { src:'assets/tacos-autumn.png',      label:'Jalisco · Herbst' },
-      { src:'assets/tacos-close.png',       label:'Das Fleisch · Crispy' },
-      { src:'assets/tacos-overhead.png',    label:'Der Tunk-Moment' },
-      { src:'assets/tacos-neon.png',        label:'Frankfurt · Neon' },
-      { src:'assets/tacos-fries.png',       label:'Skinny Fries · Dazu' },
-      { src:'assets/lifestyle-eating.png',  label:'Das Erlebnis' },
-      { src:'assets/tacos-cilantro.png',    label:'Koriander · Frisch' },
-      { src:'assets/tacos-wood.png',        label:'Zwiebeln · Weiß' },
-      { src:'assets/tacos-tray.png',        label:'Consommé · Jalisco' },
+      { src:'assets/tacos-dark.webp',        label:'Birria · Dunkel' },
+      { src:'assets/tacos-table.webp',       label:'Frankfurt · Tisch' },
+      { src:'assets/tacos-autumn.webp',      label:'Jalisco · Herbst' },
+      { src:'assets/tacos-close.webp',       label:'Das Fleisch · Crispy' },
+      { src:'assets/tacos-overhead.webp',    label:'Der Tunk-Moment' },
+      { src:'assets/tacos-neon.webp',        label:'Frankfurt · Neon' },
+      { src:'assets/tacos-fries.webp',       label:'Skinny Fries · Dazu' },
+      { src:'assets/lifestyle-eating.webp',  label:'Das Erlebnis' },
+      { src:'assets/tacos-cilantro.webp',    label:'Koriander · Frisch' },
+      { src:'assets/tacos-wood.webp',        label:'Zwiebeln · Weiß' },
+      { src:'assets/tacos-tray.webp',        label:'Consommé · Jalisco' },
     ];
 
     function build(id, items) {
