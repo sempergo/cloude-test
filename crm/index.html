@@ -1201,32 +1201,56 @@ function closeAddLead() {
 }
 document.getElementById('new-lead-btn').addEventListener('click', openAddLead);
 
-document.getElementById('add-lead-form').addEventListener('submit', async (e) => {
+let isSubmittingLead = false;
+const addLeadForm = document.getElementById('add-lead-form');
+const addLeadSubmitBtn = addLeadForm.querySelector('button[type="submit"]');
+
+addLeadForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (isSubmittingLead) { console.warn('[add-lead] already submitting, ignored'); return; }
+  isSubmittingLead = true;
+  addLeadSubmitBtn.disabled = true;
+  const originalLabel = addLeadSubmitBtn.textContent;
+  addLeadSubmitBtn.textContent = 'Anlegen…';
+
   const fields = {
-    firma: document.getElementById('new-firma').value.trim(),
-    branche: document.getElementById('new-branche').value.trim() || null,
+    firma:         document.getElementById('new-firma').value.trim(),
+    branche:       document.getElementById('new-branche').value.trim() || null,
     kontaktperson: document.getElementById('new-kontaktperson').value.trim() || null,
-    telefon: document.getElementById('new-telefon').value.trim() || null,
-    email: document.getElementById('new-email').value.trim() || null,
-    alte_website: document.getElementById('new-alte-website').value.trim() || null,
-    website_url: document.getElementById('new-website-url').value.trim() || null,
-    status: 'in_arbeit',
+    telefon:       document.getElementById('new-telefon').value.trim() || null,
+    email:         document.getElementById('new-email').value.trim() || null,
+    alte_website:  document.getElementById('new-alte-website').value.trim() || null,
+    website_url:   document.getElementById('new-website-url').value.trim() || null,
+    status:        'in_arbeit',
   };
+  console.log('[add-lead] submit start', fields);
+
   if (!fields.firma) {
     toast('Bitte Firma eingeben.');
     document.getElementById('new-firma').focus();
+    isSubmittingLead = false;
+    addLeadSubmitBtn.disabled = false;
+    addLeadSubmitBtn.textContent = originalLabel;
     return;
   }
+
+  let lead = null;
   try {
-    const lead = await createLead(fields);
-    if (lead) {
-      closeAddLead();
-      await selectLead(lead.id);
-    }
+    lead = await createLead(fields);
+    console.log('[add-lead] createLead result', lead);
   } catch (err) {
-    console.error('[add-lead]', err);
-    toast('Fehler beim Anlegen: ' + (err.message || err));
+    console.error('[add-lead] threw', err);
+    toast('Fehler beim Anlegen: ' + (err?.message || err));
+  } finally {
+    isSubmittingLead = false;
+    addLeadSubmitBtn.disabled = false;
+    addLeadSubmitBtn.textContent = originalLabel;
+  }
+
+  if (lead) {
+    closeAddLead();
+    try { await selectLead(lead.id); }
+    catch (err) { console.error('[add-lead] selectLead threw', err); }
   }
 });
 
