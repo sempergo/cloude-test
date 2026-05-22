@@ -128,6 +128,8 @@
       <div id="filter-tabs" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
     </section>
 
+    <section id="pipeline-summary" class="mb-5"></section>
+
     <section>
       <div id="lead-list" class="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"></div>
       <div id="lead-list-empty" class="hidden text-center py-20">
@@ -164,6 +166,20 @@
       <div class="px-5 py-4 border-b border-zinc-900">
         <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Status</label>
         <div id="detail-status-buttons" class="grid grid-cols-3 gap-1.5"></div>
+      </div>
+
+      <!-- ANGEBOT BLOCK -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Angebot</label>
+          <span id="detail-angebot-display" class="text-lg font-semibold text-emerald-400 tabular-nums"></span>
+        </div>
+        <div class="relative">
+          <input type="text" id="detail-angebotspreis" inputmode="decimal" placeholder="z.B. 1.500"
+            class="w-full pl-3 pr-9 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm tabular-nums" />
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-500">€</span>
+        </div>
+        <p class="text-[10px] text-zinc-600 mt-1">Setze den Angebotswert sobald du an den Kunden rausgegangen bist.</p>
       </div>
 
       <!-- ACTIVITIES BLOCK -->
@@ -641,6 +657,22 @@ function needsActivityWarning(lead) {
   return openActivitiesOfLead(lead.id).length === 0;
 }
 
+const eurFmt        = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+const eurFmtCompact = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', notation: 'compact', maximumFractionDigits: 1 });
+
+function formatEur(n)        { return (n == null || isNaN(n)) ? '' : eurFmt.format(Number(n)); }
+function formatEurCompact(n) { return (n == null || isNaN(n)) ? '' : eurFmtCompact.format(Number(n)); }
+function parseEur(raw) {
+  if (raw == null) return null;
+  let s = String(raw).trim();
+  if (!s) return null;
+  s = s.replace(/[€\s]/g, '');
+  // "1.500,50" → "1500.50" ; "1500,50" → "1500.50" ; "1500.50" → "1500.50" ; "1500" → "1500"
+  if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+
 const dtfDate     = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const dtfDateTime = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 const dtfTime     = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' });
@@ -762,8 +794,73 @@ function visibleLeads() {
 function render() {
   renderAlerts();
   renderFilterTabs();
+  renderPipelineSummary();
   renderLeadList();
   if (state.selectedLeadId) renderLeadDetail();
+}
+
+function sumPriceOf(leads) {
+  return leads.reduce((acc, l) => acc + (Number(l.angebotspreis) || 0), 0);
+}
+
+function renderPipelineSummary() {
+  const el = document.getElementById('pipeline-summary');
+  const all = state.leads.filter(l => !l.deleted_at);
+  let leadsInFilter;
+  let label, sublabel, accent;
+
+  if (state.filter === 'aktiv') {
+    leadsInFilter = all.filter(l => !isLeadClosed(l));
+    label = 'Pipeline';
+    sublabel = `${leadsInFilter.length} aktive Deals`;
+    accent = 'sky';
+  } else if (state.filter === 'archiv') {
+    el.innerHTML = '';
+    return;
+  } else {
+    leadsInFilter = all.filter(l => l.status === state.filter);
+    label = STATUS_MAP[state.filter]?.label || state.filter;
+    sublabel = `${leadsInFilter.length} ${leadsInFilter.length === 1 ? 'Deal' : 'Deals'}`;
+    accent = state.filter === 'gewonnen' ? 'emerald'
+           : state.filter === 'verloren' ? 'zinc'
+           : state.filter === 'verhandlung' ? 'violet'
+           : state.filter === 'nachfass' ? 'amber'
+           : state.filter === 'gesendet' ? 'sky'
+           : 'indigo';
+  }
+
+  const total = sumPriceOf(leadsInFilter);
+  if (leadsInFilter.length === 0) { el.innerHTML = ''; return; }
+  if (total === 0 && !['gewonnen', 'verloren'].includes(state.filter)) { el.innerHTML = ''; return; }
+
+  const isWon = state.filter === 'gewonnen';
+  const palettes = {
+    emerald: { bg: 'from-emerald-500/20 via-emerald-500/5 to-transparent', ring: 'border-emerald-500/30', big: 'text-emerald-300', glow: 'shadow-[0_0_60px_-15px_rgba(16,185,129,0.4)]' },
+    violet:  { bg: 'from-violet-500/15 via-violet-500/5 to-transparent',   ring: 'border-violet-500/30',  big: 'text-violet-300',  glow: '' },
+    amber:   { bg: 'from-amber-500/15 via-amber-500/5 to-transparent',     ring: 'border-amber-500/30',   big: 'text-amber-300',   glow: '' },
+    sky:     { bg: 'from-sky-500/15 via-sky-500/5 to-transparent',         ring: 'border-sky-500/30',     big: 'text-sky-300',     glow: '' },
+    indigo:  { bg: 'from-indigo-500/15 via-indigo-500/5 to-transparent',   ring: 'border-indigo-500/30',  big: 'text-indigo-300',  glow: '' },
+    zinc:    { bg: 'from-zinc-700/30 via-zinc-700/10 to-transparent',      ring: 'border-zinc-800',       big: 'text-zinc-300',    glow: '' },
+  };
+  const p = palettes[accent] || palettes.indigo;
+
+  const withPrice = leadsInFilter.filter(l => l.angebotspreis != null && Number(l.angebotspreis) > 0).length;
+  const withoutPrice = leadsInFilter.length - withPrice;
+  const hint = total === 0
+    ? `noch kein Angebotspreis hinterlegt`
+    : (withoutPrice > 0 ? `${withPrice} mit Preis · ${withoutPrice} ohne` : `alle mit Preis`);
+
+  el.innerHTML = `
+    <div class="rounded-2xl border ${p.ring} bg-gradient-to-br ${p.bg} ${p.glow} px-5 sm:px-6 py-5 flex items-center justify-between gap-4">
+      <div class="min-w-0">
+        <p class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">${escapeHtml(label)}</p>
+        <p class="text-xs text-zinc-400 mt-0.5">${escapeHtml(sublabel)} · ${escapeHtml(hint)}</p>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="text-2xl sm:text-3xl font-bold ${p.big} tabular-nums">${escapeHtml(formatEur(total) || '0 €')}</p>
+        ${isWon && total > 0 ? `<p class="text-[10px] text-emerald-500 mt-0.5">🎉 Let's go</p>` : ''}
+      </div>
+    </div>`;
 }
 
 function renderAlerts() {
@@ -823,18 +920,24 @@ function renderAlerts() {
 
 function renderFilterTabs() {
   const el = document.getElementById('filter-tabs');
-  const counts = {};
-  counts.aktiv = state.leads.filter(l => !l.deleted_at && !isLeadClosed(l)).length;
-  for (const s of STATUS_LIST) counts[s.key] = state.leads.filter(l => !l.deleted_at && l.status === s.key).length;
-  counts.archiv = state.leads.filter(l => l.deleted_at).length;
+  const buckets = {};
+  buckets.aktiv  = state.leads.filter(l => !l.deleted_at && !isLeadClosed(l));
+  for (const s of STATUS_LIST) buckets[s.key] = state.leads.filter(l => !l.deleted_at && l.status === s.key);
+  buckets.archiv = state.leads.filter(l => l.deleted_at);
 
   el.innerHTML = FILTER_TABS.map(t => {
     const isActive = state.filter === t.key;
-    const count = counts[t.key] || 0;
+    const list = buckets[t.key] || [];
+    const total = sumPriceOf(list);
+    const showSum = total > 0 && t.key !== 'archiv';
+    const sumEl = showSum
+      ? `<span class="text-[10px] tabular-nums ${isActive ? 'text-zinc-500' : 'text-emerald-400/70'}">${escapeHtml(formatEurCompact(total))}</span>`
+      : '';
     return `
       <button data-filter="${t.key}" class="shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${isActive ? 'bg-white text-zinc-950' : 'bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800'}">
         ${escapeHtml(t.label)}
-        <span class="text-xs text-zinc-500">${count}</span>
+        <span class="text-xs text-zinc-500">${list.length}</span>
+        ${sumEl}
       </button>`;
   }).join('');
   el.querySelectorAll('button[data-filter]').forEach(btn => {
@@ -926,6 +1029,13 @@ function renderLeadDetail() {
   setIfDifferent('detail-email', lead.email || '');
   setIfDifferent('detail-alte-website', lead.alte_website || '');
   setIfDifferent('detail-website-url', lead.website_url || '');
+
+  // Angebotspreis: only set if field not focused
+  const priceEl = document.getElementById('detail-angebotspreis');
+  if (document.activeElement !== priceEl) {
+    priceEl.value = lead.angebotspreis != null ? String(lead.angebotspreis).replace('.', ',') : '';
+  }
+  document.getElementById('detail-angebot-display').textContent = lead.angebotspreis ? formatEur(lead.angebotspreis) : '';
 
   // Status buttons
   const statusEl = document.getElementById('detail-status-buttons');
@@ -1116,6 +1226,38 @@ Object.keys(FIELD_MAP).forEach(id => {
   el.addEventListener('input', () => queueSave(id));
   el.addEventListener('blur', () => flushSave(id));
 });
+
+// Angebotspreis-Input mit eigenem Parsing
+const priceInput = document.getElementById('detail-angebotspreis');
+priceInput.addEventListener('input', () => {
+  clearTimeout(state.saveTimers['detail-angebotspreis']);
+  state.saveTimers['detail-angebotspreis'] = setTimeout(flushPriceSave, 600);
+});
+priceInput.addEventListener('blur', flushPriceSave);
+
+async function flushPriceSave() {
+  clearTimeout(state.saveTimers['detail-angebotspreis']);
+  delete state.saveTimers['detail-angebotspreis'];
+  const lead = getSelectedLead();
+  if (!lead) return;
+  const raw = priceInput.value;
+  const parsed = parseEur(raw);
+  const current = lead.angebotspreis != null ? Number(lead.angebotspreis) : null;
+  if (parsed === current) return;
+  if (parsed === null && !raw.trim()) {
+    await updateLead(lead.id, { angebotspreis: null });
+  } else if (parsed !== null) {
+    await updateLead(lead.id, { angebotspreis: parsed });
+  } else {
+    toast('Ungültiger Preis. Beispiele: 1500 oder 1.500,50');
+    return;
+  }
+  showSaved();
+  document.getElementById('detail-angebot-display').textContent = formatEur(getSelectedLead()?.angebotspreis);
+  renderPipelineSummary();
+  renderFilterTabs();
+  renderLeadList();
+}
 
 function queueSave(id) { clearTimeout(state.saveTimers[id]); state.saveTimers[id] = setTimeout(() => flushSave(id), 600); }
 

@@ -15,6 +15,7 @@ create table if not exists leads (
   alte_website       text,
   website_url        text,
   status             text not null default 'in_arbeit',
+  angebotspreis      numeric(12,2),
   deleted_at         timestamptz,
   created_at         timestamptz not null default now(),
   updated_at         timestamptz not null default now()
@@ -61,6 +62,8 @@ create trigger activities_set_updated_at
 
 create index if not exists leads_status_idx
   on leads (status) where deleted_at is null;
+create index if not exists leads_angebotspreis_idx
+  on leads (angebotspreis) where deleted_at is null and angebotspreis is not null;
 create index if not exists notes_lead_created_idx
   on notes (lead_id, created_at desc);
 create index if not exists activities_lead_idx
