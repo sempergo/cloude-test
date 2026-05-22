@@ -230,11 +230,11 @@
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-medium text-zinc-500 mb-1">Alte Website</label>
-            <input type="url" id="detail-alte-website" placeholder="https://…" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+            <input type="text" id="detail-alte-website" placeholder="https://…" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-medium text-zinc-500 mb-1">Unsere Website</label>
-            <input type="url" id="detail-website-url" placeholder="https://sempergo.github.io/semp-studios/clients/…" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+            <input type="text" id="detail-website-url" placeholder="https://sempergo.github.io/semp-studios/clients/…" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
           </div>
         </div>
       </div>
@@ -269,10 +269,10 @@
           <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-      <form id="add-lead-form" class="p-5 space-y-3">
+      <form id="add-lead-form" novalidate class="p-5 space-y-3">
         <div>
           <label class="block text-xs font-medium text-zinc-400 mb-1">Firma *</label>
-          <input type="text" id="new-firma" required autofocus
+          <input type="text" id="new-firma" autofocus
             class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
         </div>
         <div class="grid grid-cols-2 gap-2">
@@ -292,12 +292,16 @@
           </div>
           <div>
             <label class="block text-xs font-medium text-zinc-400 mb-1">Email</label>
-            <input type="email" id="new-email" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+            <input type="text" id="new-email" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
           </div>
         </div>
         <div>
           <label class="block text-xs font-medium text-zinc-400 mb-1">Alte Website</label>
-          <input type="url" id="new-alte-website" placeholder="https://…" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+          <input type="text" id="new-alte-website" placeholder="https://…" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Unsere Website</label>
+          <input type="text" id="new-website-url" placeholder="https://sempergo.github.io/semp-studios/clients/…" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
         </div>
         <div class="flex gap-2 pt-2">
           <button type="button" onclick="closeAddLead()" class="flex-1 px-3 py-2 rounded-lg border border-zinc-800 hover:bg-zinc-800 transition-colors text-sm">Abbrechen</button>
@@ -499,9 +503,15 @@ async function loadNotes(leadId) {
 }
 
 async function createLead(fields) {
+  console.log('[createLead] insert', fields);
   const { data, error } = await sb.from('leads').insert(fields).select().single();
-  if (error) { toast('Konnte Lead nicht anlegen: ' + error.message); return null; }
-  state.leads.unshift(data);
+  if (error) {
+    console.error('[createLead] error', error);
+    toast('Konnte Lead nicht anlegen: ' + error.message);
+    return null;
+  }
+  console.log('[createLead] inserted', data);
+  if (data && !state.leads.find(l => l.id === data.id)) state.leads.unshift(data);
   render();
   return data;
 }
@@ -1136,12 +1146,26 @@ document.getElementById('add-lead-form').addEventListener('submit', async (e) =>
     telefon: document.getElementById('new-telefon').value.trim() || null,
     email: document.getElementById('new-email').value.trim() || null,
     alte_website: document.getElementById('new-alte-website').value.trim() || null,
+    website_url: document.getElementById('new-website-url').value.trim() || null,
     status: 'in_arbeit',
   };
-  if (!fields.firma) return;
-  const lead = await createLead(fields);
-  closeAddLead();
-  if (lead) await selectLead(lead.id);
+  console.log('[add-lead] submit', fields);
+  if (!fields.firma) {
+    toast('Bitte Firma eingeben.');
+    document.getElementById('new-firma').focus();
+    return;
+  }
+  try {
+    const lead = await createLead(fields);
+    console.log('[add-lead] result', lead);
+    if (lead) {
+      closeAddLead();
+      await selectLead(lead.id);
+    }
+  } catch (err) {
+    console.error('[add-lead] error', err);
+    toast('Fehler beim Anlegen: ' + (err.message || err));
+  }
 });
 
 // =============================================================
