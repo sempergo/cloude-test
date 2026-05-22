@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="de" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#09090b" />
+  <title>semp — CRM</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%2309090b'/><text x='16' y='22' text-anchor='middle' font-family='Inter,sans-serif' font-weight='700' font-size='16' fill='%23ffffff'>s</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          animation: {
+            'pulse-red': 'pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'slide-in-right': 'slide-in-right 0.3s ease-out',
+            'slide-up': 'slide-up 0.3s ease-out',
+            'fade-in': 'fade-in 0.2s ease-out',
+          },
+          keyframes: {
+            'pulse-red': {
+              '0%, 100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.4)' },
+              '50%': { boxShadow: '0 0 0 6px rgba(239, 68, 68, 0)' },
+            },
+            'slide-in-right': { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(0)' } },
+            'slide-up': { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } },
+            'fade-in': { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html, body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: #fafafa; }
+    body { -webkit-font-smoothing: antialiased; }
+    input, textarea, select, button { font-family: inherit; }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    /* Native scrollbar in detail panel */
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-100">
+
+<!-- ============================ LOGIN ============================ -->
+<section id="login-screen" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 bg-zinc-950">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-white text-zinc-950 flex items-center justify-center font-bold text-lg">s</div>
+      </div>
+      <h1 class="text-2xl font-semibold tracking-tight">semp — CRM</h1>
+      <p class="text-zinc-400 text-sm mt-2">Sales-Pipeline. Nichts geht verloren.</p>
+    </div>
+    <form id="login-form" class="space-y-3">
+      <div>
+        <label class="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+        <input type="email" id="login-email" required autocomplete="email"
+          class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-400 mb-1.5">Passwort</label>
+        <input type="password" id="login-password" required autocomplete="current-password"
+          class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+      </div>
+      <div id="login-error" class="hidden text-xs text-red-400 px-1"></div>
+      <button type="submit" id="login-submit"
+        class="w-full mt-2 px-3.5 py-2.5 rounded-lg bg-white text-zinc-950 font-medium text-sm hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        Anmelden
+      </button>
+    </form>
+    <p class="text-center text-xs text-zinc-600 mt-8">semp studios · interne Nutzung</p>
+  </div>
+</section>
+
+<!-- ============================ APP ============================ -->
+<div id="app" class="hidden min-h-screen flex flex-col">
+
+  <!-- TOP BAR -->
+  <header class="sticky top-0 z-30 bg-zinc-950/80 backdrop-blur-lg border-b border-zinc-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="w-7 h-7 rounded-lg bg-white text-zinc-950 flex items-center justify-center font-bold text-xs">s</div>
+        <span class="font-semibold text-sm tracking-tight hidden sm:inline">semp — CRM</span>
+      </div>
+
+      <div class="flex-1 max-w-xl mx-auto relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="search-input" placeholder="Suchen… (drücke /)"
+          class="w-full pl-9 pr-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm placeholder:text-zinc-500" />
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <div id="rt-indicator" title="Realtime" class="hidden sm:flex items-center gap-1.5 px-2 py-1 text-xs text-zinc-500">
+          <span id="rt-dot" class="w-1.5 h-1.5 rounded-full bg-zinc-600"></span>
+          <span id="rt-label">offline</span>
+        </div>
+        <button id="new-lead-btn"
+          class="px-3 py-2 rounded-lg bg-white text-zinc-950 font-medium text-sm hover:bg-zinc-200 transition-colors flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">Neuer Lead</span>
+        </button>
+        <div class="relative">
+          <button id="menu-btn" class="p-2 rounded-lg hover:bg-zinc-900 transition-colors">
+            <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01"/></svg>
+          </button>
+          <div id="menu-dropdown" class="hidden absolute right-0 top-12 w-48 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl py-1 z-50">
+            <button id="export-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors">JSON exportieren</button>
+            <div class="border-t border-zinc-800 my-1"></div>
+            <button id="logout-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors text-red-400">Abmelden</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24">
+
+    <!-- ALERT CARDS -->
+    <section id="alerts" class="mb-6 sm:mb-8"></section>
+
+    <!-- FILTER TABS -->
+    <section class="mb-5">
+      <div id="filter-tabs" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+    </section>
+
+    <!-- LEAD LIST -->
+    <section>
+      <div id="lead-list" class="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"></div>
+      <div id="lead-list-empty" class="hidden text-center py-20">
+        <div class="inline-block p-4 rounded-2xl bg-zinc-900 border border-zinc-800 mb-4">
+          <svg class="w-8 h-8 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+        <p class="text-zinc-400 mb-1" id="empty-title">Noch keine Leads</p>
+        <p class="text-sm text-zinc-500 mb-5" id="empty-sub">Lege den ersten Lead an, sobald die Website-Erstellung startet.</p>
+        <button onclick="openAddLead()" class="px-4 py-2 rounded-lg bg-white text-zinc-950 font-medium text-sm hover:bg-zinc-200 transition-colors">
+          + Ersten Lead anlegen
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LEAD DETAIL PANEL -->
+  <aside id="lead-detail" class="hidden fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[480px] z-40 bg-zinc-950 border-l border-zinc-900 shadow-2xl flex flex-col">
+    <!-- Header -->
+    <div class="px-5 py-4 border-b border-zinc-900 flex items-start gap-3 shrink-0">
+      <div class="flex-1 min-w-0">
+        <input type="text" id="detail-firma" placeholder="Firma"
+          class="w-full bg-transparent text-lg font-semibold focus:outline-none placeholder:text-zinc-600" />
+        <div class="flex items-center gap-2 mt-1">
+          <span id="detail-saved" class="text-xs text-zinc-500"></span>
+        </div>
+      </div>
+      <button onclick="closeLeadDetail()" class="p-1.5 rounded-lg hover:bg-zinc-900 transition-colors shrink-0">
+        <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Scrollable body -->
+    <div class="flex-1 overflow-y-auto scrollbar-thin">
+
+      <!-- Status -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Status</label>
+        <div id="detail-status-buttons" class="grid grid-cols-3 gap-1.5"></div>
+      </div>
+
+      <!-- Follow-up -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Nächster Schritt</label>
+          <span id="detail-followup-badge"></span>
+        </div>
+        <input type="datetime-local" id="detail-followup-at"
+          class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm mb-2" />
+        <div class="grid grid-cols-2 gap-1.5 mb-2">
+          <button data-quick="tomorrow10" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Morgen 10 Uhr</button>
+          <button data-quick="in3days" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">In 3 Tagen</button>
+          <button data-quick="nextweek" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Nächste Woche</button>
+          <button data-quick="clear" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-500 transition-colors">Datum löschen</button>
+        </div>
+        <input type="text" id="detail-followup-note" placeholder="Was ist zu tun? (z.B. Anrufen wegen Logo)"
+          class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+      </div>
+
+      <!-- Quick Actions -->
+      <div id="detail-quick-actions" class="px-5 py-4 border-b border-zinc-900 grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+
+      <!-- Anruf erledigt -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <button onclick="openAnrufErledigt()"
+          class="w-full px-3 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-colors text-emerald-400 font-medium text-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Anruf erledigt — Notiz + nächster Schritt
+        </button>
+      </div>
+
+      <!-- Stammdaten -->
+      <div class="px-5 py-4 border-b border-zinc-900 space-y-3">
+        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider">Stammdaten</label>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-medium text-zinc-500 mb-1">Branche</label>
+            <input type="text" id="detail-branche" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-[10px] font-medium text-zinc-500 mb-1">Kontaktperson</label>
+            <input type="text" id="detail-kontaktperson" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-[10px] font-medium text-zinc-500 mb-1">Telefon</label>
+            <input type="tel" id="detail-telefon" placeholder="+49…" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-[10px] font-medium text-zinc-500 mb-1">Email</label>
+            <input type="email" id="detail-email" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          </div>
+          <div class="col-span-2">
+            <label class="block text-[10px] font-medium text-zinc-500 mb-1">Alte Website</label>
+            <input type="url" id="detail-alte-website" placeholder="https://…" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          </div>
+          <div class="col-span-2">
+            <label class="block text-[10px] font-medium text-zinc-500 mb-1">Unsere Website</label>
+            <input type="url" id="detail-website-url" placeholder="https://sempergo.github.io/semp-studios/clients/…" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Notizen -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Notizen</label>
+        <div class="flex gap-2 mb-4">
+          <input type="text" id="new-note-input" placeholder="Neue Notiz…"
+            class="flex-1 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          <button id="add-note-btn" class="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm font-medium">
+            Hinzufügen
+          </button>
+        </div>
+        <div id="notes-timeline" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="px-5 py-4">
+        <div id="delete-restore-area"></div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ADD LEAD MODAL -->
+  <div id="add-lead-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
+      <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+        <h2 class="font-semibold">Neuer Lead</h2>
+        <button onclick="closeAddLead()" class="p-1 rounded-md hover:bg-zinc-800 transition-colors">
+          <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="add-lead-form" class="p-5 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Firma *</label>
+          <input type="text" id="new-firma" required autofocus
+            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Branche</label>
+            <input type="text" id="new-branche" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Kontaktperson</label>
+            <input type="text" id="new-kontaktperson" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Telefon</label>
+            <input type="tel" id="new-telefon" placeholder="+49…" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Email</label>
+            <input type="email" id="new-email" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Alte Website</label>
+          <input type="url" id="new-alte-website" placeholder="https://…" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeAddLead()" class="flex-1 px-3 py-2 rounded-lg border border-zinc-800 hover:bg-zinc-800 transition-colors text-sm">Abbrechen</button>
+          <button type="submit" class="flex-1 px-3 py-2 rounded-lg bg-white text-zinc-950 font-medium hover:bg-zinc-200 transition-colors text-sm">Anlegen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ANRUF ERLEDIGT MODAL -->
+  <div id="anruf-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
+      <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+        <h2 class="font-semibold">Anruf erledigt</h2>
+        <button onclick="closeAnrufErledigt()" class="p-1 rounded-md hover:bg-zinc-800 transition-colors">
+          <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="anruf-form" class="p-5 space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Was ist passiert?</label>
+          <textarea id="anruf-note" rows="3" required placeholder="Kunde will Logo-Änderung. Kommt morgen mit Feedback zurück."
+            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Nächster Schritt — wann?</label>
+          <input type="datetime-local" id="anruf-followup-at"
+            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm mb-2" />
+          <div class="grid grid-cols-3 gap-1.5">
+            <button type="button" data-anruf-quick="tomorrow10" class="px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Morgen 10 Uhr</button>
+            <button type="button" data-anruf-quick="in3days" class="px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">In 3 Tagen</button>
+            <button type="button" data-anruf-quick="nextweek" class="px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Nächste Woche</button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Was ist zu tun? (optional)</label>
+          <input type="text" id="anruf-followup-note" placeholder="Logo-Vorschläge schicken"
+            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeAnrufErledigt()" class="flex-1 px-3 py-2 rounded-lg border border-zinc-800 hover:bg-zinc-800 transition-colors text-sm">Abbrechen</button>
+          <button type="submit" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 text-zinc-950 font-medium hover:bg-emerald-400 transition-colors text-sm">Speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] hidden">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 max-w-md">
+      <span id="toast-message" class="text-sm text-zinc-200"></span>
+      <button id="toast-action" class="hidden text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"></button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================ SCRIPT ============================ -->
+<script>
+// =============================================================
+// CONFIG — Markus füllt hier nach dem Supabase-Setup ein
+// =============================================================
+const SUPABASE_URL      = '__SUPABASE_URL__';
+const SUPABASE_ANON_KEY = '__SUPABASE_ANON_KEY__';
+
+// =============================================================
+// CONSTANTS
+// =============================================================
+const STATUS_LIST = [
+  { key: 'in_arbeit',   label: 'In Arbeit',   color: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',  dotColor: 'bg-indigo-400' },
+  { key: 'gesendet',    label: 'Gesendet',    color: 'bg-sky-500/15 text-sky-300 border-sky-500/30',          dotColor: 'bg-sky-400' },
+  { key: 'nachfass',    label: 'Nachfass',    color: 'bg-amber-500/15 text-amber-300 border-amber-500/30',    dotColor: 'bg-amber-400' },
+  { key: 'verhandlung', label: 'Verhandlung', color: 'bg-violet-500/15 text-violet-300 border-violet-500/30', dotColor: 'bg-violet-400' },
+  { key: 'gewonnen',    label: 'Gewonnen',    color: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30', dotColor: 'bg-emerald-400' },
+  { key: 'verloren',    label: 'Verloren',    color: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',       dotColor: 'bg-zinc-500' },
+];
+const STATUS_MAP = Object.fromEntries(STATUS_LIST.map(s => [s.key, s]));
+
+const FILTER_TABS = [
+  { key: 'aktiv',       label: 'Aktiv' },
+  { key: 'in_arbeit',   label: 'In Arbeit' },
+  { key: 'gesendet',    label: 'Gesendet' },
+  { key: 'nachfass',    label: 'Nachfass' },
+  { key: 'verhandlung', label: 'Verhandlung' },
+  { key: 'gewonnen',    label: 'Gewonnen' },
+  { key: 'verloren',    label: 'Verloren' },
+  { key: 'archiv',      label: 'Archiv' },
+];
+
+// =============================================================
+// STATE
+// =============================================================
+const state = {
+  authed: false,
+  leads: [],
+  notesByLead: {},
+  selectedLeadId: null,
+  filter: 'aktiv',
+  search: '',
+  rtConnected: false,
+  saveTimers: {},
+};
+
+// =============================================================
+// SUPABASE CLIENT
+// =============================================================
+let sb;
+function initSupabase() {
+  if (SUPABASE_URL.startsWith('__') || SUPABASE_ANON_KEY.startsWith('__')) {
+    showConfigError();
+    return false;
+  }
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true },
+  });
+  return true;
+}
+
+function showConfigError() {
+  document.body.innerHTML = `
+    <div class="min-h-screen flex items-center justify-center px-4 bg-zinc-950 text-zinc-100">
+      <div class="max-w-md text-center">
+        <div class="text-4xl mb-4">⚙️</div>
+        <h1 class="text-xl font-semibold mb-2">Config fehlt</h1>
+        <p class="text-zinc-400 text-sm mb-4">Trage <code class="px-1.5 py-0.5 rounded bg-zinc-900">SUPABASE_URL</code> und <code class="px-1.5 py-0.5 rounded bg-zinc-900">SUPABASE_ANON_KEY</code> oben in <code class="px-1.5 py-0.5 rounded bg-zinc-900">crm/index.html</code> ein.</p>
+        <p class="text-zinc-500 text-xs">Anleitung: siehe <code class="px-1.5 py-0.5 rounded bg-zinc-900">crm/README.md</code>.</p>
+      </div>
+    </div>`;
+}
+
+// =============================================================
+// AUTH
+// =============================================================
+async function bootstrap() {
+  if (!initSupabase()) return;
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    await onSignedIn();
+  } else {
+    showLogin();
+  }
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) await onSignedIn();
+    if (event === 'SIGNED_OUT') showLogin();
+  });
+}
+
+async function onSignedIn() {
+  state.authed = true;
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  await loadLeads();
+  render();
+  subscribeRealtime();
+  setInterval(render, 60_000); // Re-render every minute so "overdue" recalculates
+}
+
+function showLogin() {
+  state.authed = false;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const submit = document.getElementById('login-submit');
+  const err = document.getElementById('login-error');
+  err.classList.add('hidden');
+  submit.disabled = true;
+  submit.textContent = 'Anmelden…';
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  submit.disabled = false;
+  submit.textContent = 'Anmelden';
+  if (error) {
+    err.textContent = error.message === 'Invalid login credentials' ? 'Email oder Passwort falsch.' : error.message;
+    err.classList.remove('hidden');
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+});
+
+// =============================================================
+// DATA
+// =============================================================
+async function loadLeads() {
+  const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending: false });
+  if (error) { toast('Fehler beim Laden: ' + error.message); return; }
+  state.leads = data || [];
+}
+
+async function loadNotes(leadId) {
+  const { data, error } = await sb.from('notes').select('*').eq('lead_id', leadId).order('created_at', { ascending: false });
+  if (error) { toast('Notizen-Fehler: ' + error.message); return; }
+  state.notesByLead[leadId] = data || [];
+}
+
+async function createLead(fields) {
+  const { data, error } = await sb.from('leads').insert(fields).select().single();
+  if (error) { toast('Konnte Lead nicht anlegen: ' + error.message); return null; }
+  state.leads.unshift(data);
+  render();
+  return data;
+}
+
+async function updateLead(id, patch) {
+  const { data, error } = await sb.from('leads').update(patch).eq('id', id).select().single();
+  if (error) { toast('Speichern fehlgeschlagen: ' + error.message); return null; }
+  const i = state.leads.findIndex(l => l.id === id);
+  if (i >= 0) state.leads[i] = data;
+  return data;
+}
+
+async function softDeleteLead(id) {
+  return await updateLead(id, { deleted_at: new Date().toISOString() });
+}
+
+async function restoreLead(id) {
+  return await updateLead(id, { deleted_at: null });
+}
+
+async function addNote(leadId, content) {
+  const { data, error } = await sb.from('notes').insert({ lead_id: leadId, content }).select().single();
+  if (error) { toast('Notiz nicht gespeichert: ' + error.message); return null; }
+  if (!state.notesByLead[leadId]) state.notesByLead[leadId] = [];
+  state.notesByLead[leadId].unshift(data);
+  return data;
+}
+
+async function deleteNote(noteId, leadId) {
+  const { error } = await sb.from('notes').delete().eq('id', noteId);
+  if (error) { toast('Konnte Notiz nicht löschen: ' + error.message); return; }
+  if (state.notesByLead[leadId]) {
+    state.notesByLead[leadId] = state.notesByLead[leadId].filter(n => n.id !== noteId);
+  }
+}
+
+// =============================================================
+// REALTIME
+// =============================================================
+function subscribeRealtime() {
+  sb.channel('crm-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, async (payload) => {
+      if (payload.eventType === 'INSERT') {
+        if (!state.leads.find(l => l.id === payload.new.id)) state.leads.unshift(payload.new);
+      } else if (payload.eventType === 'UPDATE') {
+        const i = state.leads.findIndex(l => l.id === payload.new.id);
+        if (i >= 0) state.leads[i] = payload.new;
+        else state.leads.unshift(payload.new);
+      } else if (payload.eventType === 'DELETE') {
+        state.leads = state.leads.filter(l => l.id !== payload.old.id);
+      }
+      render();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'notes' }, (payload) => {
+      const leadId = payload.new?.lead_id || payload.old?.lead_id;
+      if (!leadId || !state.notesByLead[leadId]) return;
+      if (payload.eventType === 'INSERT') {
+        if (!state.notesByLead[leadId].find(n => n.id === payload.new.id)) {
+          state.notesByLead[leadId].unshift(payload.new);
+        }
+      } else if (payload.eventType === 'DELETE') {
+        state.notesByLead[leadId] = state.notesByLead[leadId].filter(n => n.id !== payload.old.id);
+      }
+      if (state.selectedLeadId === leadId) renderNotes();
+    })
+    .subscribe((status) => {
+      state.rtConnected = (status === 'SUBSCRIBED');
+      updateRtIndicator();
+    });
+}
+
+function updateRtIndicator() {
+  const dot = document.getElementById('rt-dot');
+  const label = document.getElementById('rt-label');
+  if (state.rtConnected) {
+    dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+    label.textContent = 'live';
+  } else {
+    dot.className = 'w-1.5 h-1.5 rounded-full bg-zinc-600';
+    label.textContent = 'offline';
+  }
+}
+
+// =============================================================
+// HELPERS
+// =============================================================
+function isOverdue(lead)  { return lead.next_followup_at && new Date(lead.next_followup_at) < new Date(); }
+function isToday(lead)    {
+  if (!lead.next_followup_at) return false;
+  const d = new Date(lead.next_followup_at), now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate() && d >= now;
+}
+function isThisWeek(lead) {
+  if (!lead.next_followup_at) return false;
+  const d = new Date(lead.next_followup_at), now = new Date();
+  const weekEnd = new Date(now); weekEnd.setDate(now.getDate() + 7);
+  return d > now && d <= weekEnd && !isToday(lead);
+}
+
+function getFollowupState(lead) {
+  if (!lead.next_followup_at) return 'none';
+  if (isOverdue(lead)) return 'overdue';
+  if (isToday(lead)) return 'today';
+  return 'future';
+}
+
+function needsFollowupWarning(lead) {
+  return !lead.next_followup_at && ['nachfass', 'verhandlung'].includes(lead.status);
+}
+
+const dtfDate = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const dtfDateTime = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+const dtfTime = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+function formatDateTime(iso) {
+  if (!iso) return '';
+  return dtfDateTime.format(new Date(iso));
+}
+
+function formatRelative(iso) {
+  if (!iso) return '';
+  const d = new Date(iso), now = new Date();
+  const diffMs = d - now;
+  const diffMin = Math.round(diffMs / 60_000);
+  const absMin = Math.abs(diffMin);
+  if (absMin < 1) return 'jetzt';
+  if (absMin < 60) return diffMin > 0 ? `in ${absMin} Min` : `vor ${absMin} Min`;
+  const diffHour = Math.round(diffMin / 60);
+  if (Math.abs(diffHour) < 24) return diffHour > 0 ? `in ${diffHour} Std` : `vor ${Math.abs(diffHour)} Std`;
+  const diffDay = Math.round(diffHour / 24);
+  if (Math.abs(diffDay) < 30) return diffDay > 0 ? `in ${diffDay} Tg` : `vor ${Math.abs(diffDay)} Tg`;
+  return dtfDate.format(d);
+}
+
+function followupLabel(lead) {
+  if (!lead.next_followup_at) return '';
+  const state = getFollowupState(lead);
+  if (state === 'overdue') return `Überfällig · ${formatRelative(lead.next_followup_at)}`;
+  if (state === 'today') return `Heute · ${dtfTime.format(new Date(lead.next_followup_at))}`;
+  return formatDateTime(lead.next_followup_at);
+}
+
+function normalizePhone(raw) {
+  if (!raw) return '';
+  let p = raw.replace(/[^\d+]/g, '');
+  if (p.startsWith('00')) p = '+' + p.slice(2);
+  if (p.startsWith('0')) p = '+49' + p.slice(1);
+  if (!p.startsWith('+')) p = '+' + p;
+  return p;
+}
+function waLink(raw) {
+  const p = normalizePhone(raw);
+  return p ? `https://wa.me/${p.replace('+','')}` : '';
+}
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+function toLocalInputValue(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fromLocalInputValue(s) {
+  return s ? new Date(s).toISOString() : null;
+}
+
+function quickDate(kind) {
+  const d = new Date();
+  d.setSeconds(0); d.setMilliseconds(0);
+  if (kind === 'tomorrow10') { d.setDate(d.getDate()+1); d.setHours(10,0); }
+  else if (kind === 'in3days') { d.setDate(d.getDate()+3); d.setHours(10,0); }
+  else if (kind === 'nextweek') { d.setDate(d.getDate()+7); d.setHours(10,0); }
+  return d.toISOString();
+}
+
+function toast(message, action) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-message').textContent = message;
+  const btn = document.getElementById('toast-action');
+  if (action) {
+    btn.textContent = action.label;
+    btn.classList.remove('hidden');
+    btn.onclick = () => { hideToast(); action.onClick(); };
+  } else {
+    btn.classList.add('hidden');
+    btn.onclick = null;
+  }
+  t.classList.remove('hidden');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(hideToast, action ? 8000 : 3500);
+}
+function hideToast() { document.getElementById('toast').classList.add('hidden'); }
+
+// =============================================================
+// FILTERING + SORTING
+// =============================================================
+function visibleLeads() {
+  const q = state.search.trim().toLowerCase();
+  let arr = state.leads.filter(l => {
+    if (state.filter === 'archiv') return !!l.deleted_at;
+    if (l.deleted_at) return false;
+    if (state.filter === 'aktiv') return !['gewonnen','verloren'].includes(l.status);
+    return l.status === state.filter;
+  });
+  if (q) {
+    arr = arr.filter(l => {
+      const hay = [l.firma, l.branche, l.kontaktperson, l.telefon, l.email].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+  arr.sort((a, b) => {
+    const rank = (l) => {
+      if (isOverdue(l)) return 0;
+      if (isToday(l)) return 1;
+      if (isThisWeek(l)) return 2;
+      if (l.next_followup_at) return 3;
+      return 4;
+    };
+    const ra = rank(a), rb = rank(b);
+    if (ra !== rb) return ra - rb;
+    if (a.next_followup_at && b.next_followup_at) {
+      return new Date(a.next_followup_at) - new Date(b.next_followup_at);
+    }
+    return new Date(b.updated_at) - new Date(a.updated_at);
+  });
+  return arr;
+}
+
+// =============================================================
+// RENDER
+// =============================================================
+function render() {
+  renderAlerts();
+  renderFilterTabs();
+  renderLeadList();
+  if (state.selectedLeadId) renderLeadDetail(); // refresh badges/timestamps
+}
+
+function renderAlerts() {
+  const active = state.leads.filter(l => !l.deleted_at && !['gewonnen','verloren'].includes(l.status));
+  const overdue = active.filter(isOverdue);
+  const today = active.filter(isToday);
+  const thisweek = active.filter(isThisWeek);
+
+  const el = document.getElementById('alerts');
+  if (overdue.length === 0 && today.length === 0 && thisweek.length === 0) {
+    el.innerHTML = `
+      <div class="rounded-2xl border border-zinc-900 bg-zinc-900/30 p-5 sm:p-6 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <div>
+          <p class="font-medium">Alle Follow-ups im Griff</p>
+          <p class="text-sm text-zinc-500">Keine offenen Anrufe für heute oder diese Woche.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const card = (kind, title, leads, color) => {
+    if (leads.length === 0) return '';
+    const list = leads.slice(0, 4).map(l => `
+      <button onclick="selectLead('${l.id}')" class="w-full text-left flex items-center justify-between gap-2 py-1.5 hover:bg-white/5 rounded-md px-2 -mx-2 transition-colors">
+        <span class="text-sm font-medium truncate">${escapeHtml(l.firma)}</span>
+        <span class="text-xs text-zinc-500 shrink-0">${escapeHtml(formatRelative(l.next_followup_at))}</span>
+      </button>`).join('');
+    const more = leads.length > 4 ? `<p class="text-xs text-zinc-500 pt-2 pl-2">+ ${leads.length - 4} weitere</p>` : '';
+    return `
+      <div class="rounded-2xl border ${color.border} ${color.bg} p-4 sm:p-5 ${kind === 'overdue' ? 'animate-pulse-red' : ''}">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold ${color.title}">${escapeHtml(title)}</h3>
+          <span class="text-2xl font-bold ${color.count}">${leads.length}</span>
+        </div>
+        <div class="space-y-0.5">${list}${more}</div>
+      </div>`;
+  };
+
+  el.innerHTML = `
+    <div class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      ${card('overdue', 'Überfällig', overdue, { border: 'border-red-500/30', bg: 'bg-red-500/5', title: 'text-red-300', count: 'text-red-400' })}
+      ${card('today', 'Heute fällig', today, { border: 'border-amber-500/30', bg: 'bg-amber-500/5', title: 'text-amber-300', count: 'text-amber-400' })}
+      ${card('week', 'Diese Woche', thisweek, { border: 'border-zinc-800', bg: 'bg-zinc-900/30', title: 'text-zinc-300', count: 'text-zinc-200' })}
+    </div>`;
+}
+
+function renderFilterTabs() {
+  const el = document.getElementById('filter-tabs');
+  const counts = {};
+  for (const l of state.leads) {
+    if (state.filter !== 'archiv' && l.deleted_at) continue;
+    counts.aktiv = (counts.aktiv || 0) + (!l.deleted_at && !['gewonnen','verloren'].includes(l.status) ? 1 : 0);
+    counts[l.status] = (counts[l.status] || 0) + (!l.deleted_at ? 1 : 0);
+    if (l.deleted_at) counts.archiv = (counts.archiv || 0) + 1;
+  }
+  // recount with cleaner pass
+  counts.aktiv = state.leads.filter(l => !l.deleted_at && !['gewonnen','verloren'].includes(l.status)).length;
+  for (const s of STATUS_LIST) counts[s.key] = state.leads.filter(l => !l.deleted_at && l.status === s.key).length;
+  counts.archiv = state.leads.filter(l => l.deleted_at).length;
+
+  el.innerHTML = FILTER_TABS.map(t => {
+    const isActive = state.filter === t.key;
+    const count = counts[t.key] || 0;
+    return `
+      <button data-filter="${t.key}" class="shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${isActive ? 'bg-white text-zinc-950' : 'bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800'}">
+        ${escapeHtml(t.label)}
+        <span class="text-xs ${isActive ? 'text-zinc-500' : 'text-zinc-500'}">${count}</span>
+      </button>`;
+  }).join('');
+  el.querySelectorAll('button[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => { state.filter = btn.dataset.filter; render(); });
+  });
+}
+
+function renderLeadList() {
+  const el = document.getElementById('lead-list');
+  const empty = document.getElementById('lead-list-empty');
+  const list = visibleLeads();
+
+  if (list.length === 0) {
+    el.innerHTML = '';
+    empty.classList.remove('hidden');
+    const total = state.leads.length;
+    document.getElementById('empty-title').textContent = total === 0 ? 'Noch keine Leads' : (state.search ? 'Keine Treffer' : 'Diese Spalte ist leer');
+    document.getElementById('empty-sub').textContent = total === 0
+      ? 'Lege den ersten Lead an, sobald die Website-Erstellung startet.'
+      : (state.search ? `Keine Leads gefunden für „${state.search}".` : 'Wechsle den Filter oder lege einen neuen Lead an.');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  el.innerHTML = list.map(l => {
+    const s = STATUS_MAP[l.status] || STATUS_MAP.in_arbeit;
+    const fState = getFollowupState(l);
+    const cardBorder = fState === 'overdue' ? 'border-red-500/50 ring-1 ring-red-500/30 animate-pulse-red'
+                    : fState === 'today'   ? 'border-amber-500/40'
+                    : 'border-zinc-800 hover:border-zinc-700';
+    const fBadge = l.next_followup_at
+      ? `<span class="text-xs ${fState==='overdue'?'text-red-400':fState==='today'?'text-amber-400':'text-zinc-400'}">${escapeHtml(followupLabel(l))}</span>`
+      : (needsFollowupWarning(l) ? `<span class="text-xs text-yellow-400 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86l-8.18 14.18A2 2 0 003.83 21h16.34a2 2 0 001.72-2.96L13.71 3.86a2 2 0 00-3.42 0z"/></svg>Kein Follow-up</span>` : '');
+
+    const tel = normalizePhone(l.telefon);
+    const telBtn = tel ? `<a href="tel:${tel}" onclick="event.stopPropagation()" class="p-1.5 rounded-md hover:bg-zinc-800 transition-colors" title="Anrufen"><svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.79a2 2 0 01-.46 1.87L7.91 10.91a16 16 0 005.18 5.18l1.74-1.55a2 2 0 011.87-.46l2.79.7A2 2 0 0121 16.72V19a2 2 0 01-2 2A18 18 0 013 5z"/></svg></a>` : '';
+
+    return `
+      <article onclick="selectLead('${l.id}')" class="cursor-pointer rounded-xl border ${cardBorder} bg-zinc-900/40 hover:bg-zinc-900/70 p-4 transition-all">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <div class="min-w-0 flex-1">
+            <h3 class="font-semibold truncate">${escapeHtml(l.firma)}</h3>
+            ${l.kontaktperson ? `<p class="text-sm text-zinc-400 truncate">${escapeHtml(l.kontaktperson)}</p>` : ''}
+          </div>
+          ${telBtn}
+        </div>
+        <div class="flex items-center justify-between gap-2 mt-3">
+          <span class="px-2 py-0.5 rounded-md text-xs font-medium border ${s.color}">${escapeHtml(s.label)}</span>
+          ${fBadge}
+        </div>
+        ${l.branche ? `<p class="text-xs text-zinc-500 mt-3 truncate">${escapeHtml(l.branche)}</p>` : ''}
+      </article>`;
+  }).join('');
+}
+
+// =============================================================
+// LEAD DETAIL
+// =============================================================
+async function selectLead(id) {
+  state.selectedLeadId = id;
+  const panel = document.getElementById('lead-detail');
+  panel.classList.remove('hidden');
+  gsap.fromTo(panel, { opacity: 0, x: window.innerWidth >= 640 ? 40 : 0, y: window.innerWidth < 640 ? 40 : 0 }, { opacity: 1, x: 0, y: 0, duration: 0.25, ease: 'power2.out' });
+  document.body.style.overflow = 'hidden';
+  if (!state.notesByLead[id]) await loadNotes(id);
+  renderLeadDetail();
+}
+
+function closeLeadDetail() {
+  state.selectedLeadId = null;
+  document.getElementById('lead-detail').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function getSelectedLead() {
+  return state.leads.find(l => l.id === state.selectedLeadId);
+}
+
+function renderLeadDetail() {
+  const lead = getSelectedLead();
+  if (!lead) return;
+
+  // Stammdaten
+  setIfDifferent('detail-firma', lead.firma || '');
+  setIfDifferent('detail-branche', lead.branche || '');
+  setIfDifferent('detail-kontaktperson', lead.kontaktperson || '');
+  setIfDifferent('detail-telefon', lead.telefon || '');
+  setIfDifferent('detail-email', lead.email || '');
+  setIfDifferent('detail-alte-website', lead.alte_website || '');
+  setIfDifferent('detail-website-url', lead.website_url || '');
+
+  // Status buttons
+  const statusEl = document.getElementById('detail-status-buttons');
+  statusEl.innerHTML = STATUS_LIST.map(s => {
+    const active = lead.status === s.key;
+    return `<button data-status="${s.key}" class="px-2 py-2 rounded-md text-xs font-medium border transition-colors ${active ? s.color : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700'}">${escapeHtml(s.label)}</button>`;
+  }).join('');
+  statusEl.querySelectorAll('button[data-status]').forEach(btn => {
+    btn.addEventListener('click', () => changeStatus(btn.dataset.status));
+  });
+
+  // Follow-up
+  setIfDifferent('detail-followup-at', toLocalInputValue(lead.next_followup_at));
+  setIfDifferent('detail-followup-note', lead.next_followup_note || '');
+  const badge = document.getElementById('detail-followup-badge');
+  if (lead.next_followup_at) {
+    const fState = getFollowupState(lead);
+    const cls = fState === 'overdue' ? 'bg-red-500/15 text-red-300 border-red-500/30'
+              : fState === 'today'   ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+              : 'bg-zinc-800 text-zinc-400 border-zinc-700';
+    badge.innerHTML = `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md border ${cls}">${escapeHtml(followupLabel(lead))}</span>`;
+  } else if (needsFollowupWarning(lead)) {
+    badge.innerHTML = `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md border bg-yellow-500/10 text-yellow-300 border-yellow-500/30">⚠ Kein Follow-up</span>`;
+  } else {
+    badge.innerHTML = '';
+  }
+
+  // Quick actions
+  const qa = document.getElementById('detail-quick-actions');
+  const tel = normalizePhone(lead.telefon);
+  const wa = waLink(lead.telefon);
+  qa.innerHTML = `
+    ${tel ? `<a href="tel:${tel}" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm transition-colors">📞 <span>Anruf</span></a>` : `<div class="flex items-center justify-center px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-600">📞</div>`}
+    ${wa ? `<a href="${wa}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm transition-colors">💬 <span>WhatsApp</span></a>` : `<div class="flex items-center justify-center px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-600">💬</div>`}
+    ${lead.email ? `<a href="mailto:${escapeHtml(lead.email)}" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm transition-colors">✉ <span>Email</span></a>` : `<div class="flex items-center justify-center px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-600">✉</div>`}
+    ${lead.website_url ? `<a href="${escapeHtml(lead.website_url)}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm transition-colors">🔗 <span>Website</span></a>` : `<div class="flex items-center justify-center px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-600">🔗</div>`}
+  `;
+
+  // Delete / restore
+  const dr = document.getElementById('delete-restore-area');
+  if (lead.deleted_at) {
+    dr.innerHTML = `
+      <div class="flex flex-col gap-2">
+        <p class="text-xs text-zinc-500 mb-1">Archiviert am ${escapeHtml(formatDateTime(lead.deleted_at))}</p>
+        <button onclick="doRestoreLead()" class="w-full px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-emerald-400 text-sm font-medium transition-colors">Wiederherstellen</button>
+      </div>`;
+  } else {
+    dr.innerHTML = `<button onclick="doSoftDeleteLead()" class="w-full px-3 py-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 text-sm font-medium transition-colors">Lead löschen</button>`;
+  }
+
+  renderNotes();
+}
+
+function setIfDifferent(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (document.activeElement === el) return; // don't clobber active input
+  if (el.value !== value) el.value = value;
+}
+
+function renderNotes() {
+  const lead = getSelectedLead();
+  if (!lead) return;
+  const notes = state.notesByLead[lead.id] || [];
+  const el = document.getElementById('notes-timeline');
+  if (notes.length === 0) {
+    el.innerHTML = '<p class="text-sm text-zinc-500">Noch keine Notizen.</p>';
+    return;
+  }
+  el.innerHTML = notes.map(n => `
+    <div class="group flex items-start gap-3 py-2 px-3 rounded-lg bg-zinc-900/50 border border-zinc-900 hover:border-zinc-800 transition-colors">
+      <div class="w-1.5 h-1.5 rounded-full bg-zinc-600 mt-2 shrink-0"></div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-zinc-200 whitespace-pre-wrap break-words">${escapeHtml(n.content)}</p>
+        <p class="text-[11px] text-zinc-500 mt-1" title="${escapeHtml(formatDateTime(n.created_at))}">${escapeHtml(formatRelative(n.created_at))}</p>
+      </div>
+      <button onclick="doDeleteNote('${n.id}','${lead.id}')" class="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-zinc-800 transition-opacity shrink-0" title="Notiz löschen">
+        <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a2 2 0 012-2h2a2 2 0 012 2v3"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+// =============================================================
+// EDIT HANDLERS (Auto-Save with Debounce)
+// =============================================================
+const FIELD_MAP = {
+  'detail-firma': 'firma',
+  'detail-branche': 'branche',
+  'detail-kontaktperson': 'kontaktperson',
+  'detail-telefon': 'telefon',
+  'detail-email': 'email',
+  'detail-alte-website': 'alte_website',
+  'detail-website-url': 'website_url',
+  'detail-followup-note': 'next_followup_note',
+};
+
+Object.keys(FIELD_MAP).forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => queueSave(id));
+  el.addEventListener('blur', () => flushSave(id));
+});
+
+document.getElementById('detail-followup-at').addEventListener('change', async (e) => {
+  const lead = getSelectedLead();
+  if (!lead) return;
+  const iso = fromLocalInputValue(e.target.value);
+  await updateLead(lead.id, { next_followup_at: iso });
+  showSaved();
+  render();
+});
+
+document.querySelectorAll('.quick-followup').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const lead = getSelectedLead();
+    if (!lead) return;
+    const kind = btn.dataset.quick;
+    const iso = kind === 'clear' ? null : quickDate(kind);
+    await updateLead(lead.id, { next_followup_at: iso });
+    showSaved();
+    renderLeadDetail();
+    renderAlerts();
+    renderLeadList();
+  });
+});
+
+function queueSave(id) {
+  clearTimeout(state.saveTimers[id]);
+  state.saveTimers[id] = setTimeout(() => flushSave(id), 600);
+}
+
+async function flushSave(id) {
+  clearTimeout(state.saveTimers[id]);
+  delete state.saveTimers[id];
+  const lead = getSelectedLead();
+  if (!lead) return;
+  const field = FIELD_MAP[id];
+  const value = document.getElementById(id).value;
+  if ((lead[field] || '') === value) return;
+  await updateLead(lead.id, { [field]: value || null });
+  showSaved();
+  if (id === 'detail-firma') renderLeadList(); // firma in card needs refresh
+}
+
+function showSaved() {
+  const el = document.getElementById('detail-saved');
+  el.textContent = '✓ Gespeichert';
+  clearTimeout(showSaved._t);
+  showSaved._t = setTimeout(() => el.textContent = '', 1500);
+}
+
+async function changeStatus(newStatus) {
+  const lead = getSelectedLead();
+  if (!lead || lead.status === newStatus) return;
+  const patch = { status: newStatus };
+  if (['gewonnen','verloren'].includes(newStatus)) {
+    patch.next_followup_at = null;
+    patch.next_followup_note = null;
+  }
+  await updateLead(lead.id, patch);
+  showSaved();
+  renderLeadDetail();
+  renderAlerts();
+  renderLeadList();
+  renderFilterTabs();
+}
+
+async function doSoftDeleteLead() {
+  const lead = getSelectedLead();
+  if (!lead) return;
+  await softDeleteLead(lead.id);
+  const deletedId = lead.id;
+  closeLeadDetail();
+  render();
+  toast('Lead archiviert', { label: 'Rückgängig', onClick: async () => {
+    await restoreLead(deletedId);
+    render();
+  }});
+}
+
+async function doRestoreLead() {
+  const lead = getSelectedLead();
+  if (!lead) return;
+  await restoreLead(lead.id);
+  renderLeadDetail();
+  renderAlerts();
+  renderLeadList();
+  renderFilterTabs();
+  toast('Lead wiederhergestellt');
+}
+
+async function doDeleteNote(noteId, leadId) {
+  await deleteNote(noteId, leadId);
+  renderNotes();
+}
+
+document.getElementById('add-note-btn').addEventListener('click', submitNote);
+document.getElementById('new-note-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); submitNote(); }
+});
+
+async function submitNote() {
+  const lead = getSelectedLead();
+  if (!lead) return;
+  const input = document.getElementById('new-note-input');
+  const content = input.value.trim();
+  if (!content) return;
+  input.value = '';
+  await addNote(lead.id, content);
+  renderNotes();
+}
+
+// =============================================================
+// ADD LEAD MODAL
+// =============================================================
+function openAddLead() {
+  document.getElementById('add-lead-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('new-firma').focus(), 50);
+}
+function closeAddLead() {
+  document.getElementById('add-lead-modal').classList.add('hidden');
+  document.getElementById('add-lead-form').reset();
+}
+document.getElementById('new-lead-btn').addEventListener('click', openAddLead);
+
+document.getElementById('add-lead-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fields = {
+    firma: document.getElementById('new-firma').value.trim(),
+    branche: document.getElementById('new-branche').value.trim() || null,
+    kontaktperson: document.getElementById('new-kontaktperson').value.trim() || null,
+    telefon: document.getElementById('new-telefon').value.trim() || null,
+    email: document.getElementById('new-email').value.trim() || null,
+    alte_website: document.getElementById('new-alte-website').value.trim() || null,
+    status: 'in_arbeit',
+  };
+  if (!fields.firma) return;
+  const lead = await createLead(fields);
+  closeAddLead();
+  if (lead) await selectLead(lead.id);
+});
+
+// =============================================================
+// ANRUF ERLEDIGT MODAL
+// =============================================================
+function openAnrufErledigt() {
+  document.getElementById('anruf-form').reset();
+  document.getElementById('anruf-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('anruf-note').focus(), 50);
+}
+function closeAnrufErledigt() {
+  document.getElementById('anruf-modal').classList.add('hidden');
+}
+
+document.querySelectorAll('[data-anruf-quick]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const iso = quickDate(btn.dataset.anrufQuick);
+    document.getElementById('anruf-followup-at').value = toLocalInputValue(iso);
+  });
+});
+
+document.getElementById('anruf-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const lead = getSelectedLead();
+  if (!lead) return;
+  const note = document.getElementById('anruf-note').value.trim();
+  const followupRaw = document.getElementById('anruf-followup-at').value;
+  const followupNote = document.getElementById('anruf-followup-note').value.trim();
+  if (!note) return;
+  await addNote(lead.id, note);
+  const patch = {};
+  if (followupRaw) patch.next_followup_at = fromLocalInputValue(followupRaw);
+  if (followupNote) patch.next_followup_note = followupNote;
+  if (Object.keys(patch).length) await updateLead(lead.id, patch);
+  closeAnrufErledigt();
+  renderLeadDetail();
+  renderAlerts();
+  renderLeadList();
+  toast('Notiz + nächster Schritt gespeichert');
+});
+
+// =============================================================
+// SEARCH
+// =============================================================
+const searchInput = document.getElementById('search-input');
+searchInput.addEventListener('input', () => {
+  state.search = searchInput.value;
+  renderLeadList();
+});
+
+// =============================================================
+// MENU
+// =============================================================
+const menuBtn = document.getElementById('menu-btn');
+const menuDd = document.getElementById('menu-dropdown');
+menuBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  menuDd.classList.toggle('hidden');
+});
+document.addEventListener('click', (e) => {
+  if (!menuBtn.contains(e.target) && !menuDd.contains(e.target)) menuDd.classList.add('hidden');
+});
+
+// =============================================================
+// JSON EXPORT
+// =============================================================
+document.getElementById('export-btn').addEventListener('click', async () => {
+  menuDd.classList.add('hidden');
+  const { data: leads } = await sb.from('leads').select('*').order('created_at');
+  const { data: notes } = await sb.from('notes').select('*').order('created_at');
+  const blob = new Blob([JSON.stringify({ exported_at: new Date().toISOString(), leads: leads || [], notes: notes || [] }, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `semp-crm-export-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast('Export heruntergeladen');
+});
+
+// =============================================================
+// KEYBOARD SHORTCUTS
+// =============================================================
+document.addEventListener('keydown', (e) => {
+  if (!state.authed) return;
+  const tag = e.target.tagName.toLowerCase();
+  const isInput = tag === 'input' || tag === 'textarea' || e.target.isContentEditable;
+  if (e.key === 'Escape') {
+    if (!document.getElementById('anruf-modal').classList.contains('hidden')) { closeAnrufErledigt(); return; }
+    if (!document.getElementById('add-lead-modal').classList.contains('hidden')) { closeAddLead(); return; }
+    if (state.selectedLeadId) { closeLeadDetail(); return; }
+  }
+  if (isInput) return;
+  if (e.key === '/') { e.preventDefault(); searchInput.focus(); }
+  if (e.key === 'n') { e.preventDefault(); openAddLead(); }
+});
+
+// =============================================================
+// BOOT
+// =============================================================
+bootstrap();
+</script>
+</body>
+</html>
