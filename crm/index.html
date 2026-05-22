@@ -111,6 +111,7 @@
           <div id="menu-dropdown" class="hidden absolute right-0 top-12 w-56 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl py-1 z-50">
             <button id="ics-all-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors">Alle Aktivitäten als .ics</button>
             <button id="export-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors">JSON exportieren</button>
+            <button id="debug-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors">Debug-Log anzeigen</button>
             <div class="border-t border-zinc-800 my-1"></div>
             <button id="logout-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors text-red-400">Abmelden</button>
           </div>
@@ -367,6 +368,21 @@
     </div>
   </div>
 
+  <!-- DEBUG OVERLAY -->
+  <div id="debug-overlay" class="hidden fixed inset-x-2 sm:inset-x-4 top-16 bottom-4 z-[70] bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl flex flex-col">
+    <div class="px-4 py-3 border-b border-zinc-900 flex items-center justify-between shrink-0">
+      <h2 class="font-semibold text-sm">Debug-Log</h2>
+      <div class="flex items-center gap-2">
+        <button id="debug-copy" class="text-xs px-2 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors">Kopieren</button>
+        <button id="debug-clear" class="text-xs px-2 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors">Leeren</button>
+        <button onclick="closeDebug()" class="p-1 rounded-md hover:bg-zinc-800 transition-colors">
+          <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="debug-content" class="flex-1 overflow-y-auto scrollbar-thin p-3 font-mono text-[11px] leading-snug whitespace-pre-wrap break-all"></div>
+  </div>
+
   <!-- TOAST -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] hidden">
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 max-w-md">
@@ -417,6 +433,55 @@ function safeLocalGet(key, fallback) {
 }
 function safeLocalSet(key, value) {
   try { localStorage.setItem(key, value); } catch {}
+}
+
+// =============================================================
+// IN-APP DEBUG LOG — sichtbar ohne DevTools
+// =============================================================
+const __logs = [];
+function pushLog(level, args) {
+  const msg = args.map(a => {
+    if (a == null) return String(a);
+    if (typeof a === 'string') return a;
+    if (a instanceof Error) return `${a.name}: ${a.message}`;
+    try { return JSON.stringify(a, null, 0); } catch { return String(a); }
+  }).join(' ');
+  __logs.push({ t: new Date().toISOString().slice(11, 19), level, msg });
+  if (__logs.length > 200) __logs.shift();
+  if (window.__debugOpen) renderDebug();
+}
+['log', 'warn', 'error', 'info'].forEach(level => {
+  const orig = console[level].bind(console);
+  console[level] = (...args) => { try { orig(...args); } catch {} try { pushLog(level, args); } catch {} };
+});
+
+window.__debugOpen = false;
+function openDebug() { window.__debugOpen = true; document.getElementById('debug-overlay').classList.remove('hidden'); renderDebug(); }
+function closeDebug() { window.__debugOpen = false; document.getElementById('debug-overlay').classList.add('hidden'); }
+function renderDebug() {
+  const el = document.getElementById('debug-content');
+  if (!el) return;
+  if (__logs.length === 0) { el.innerHTML = '<p class="text-zinc-500">Noch keine Logs. Versuche eine Aktion (z.B. Lead anlegen) und schau hier wieder rein.</p>'; return; }
+  el.innerHTML = __logs.map(l => {
+    const color = l.level === 'error' ? 'text-red-400' : l.level === 'warn' ? 'text-amber-400' : l.level === 'info' ? 'text-sky-400' : 'text-zinc-300';
+    return `<div class="${color}"><span class="text-zinc-600">${l.t}</span> <span class="text-zinc-500">[${l.level}]</span> ${escapeHtmlBasic(l.msg)}</div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+function escapeHtmlBasic(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// =============================================================
+// TIMEOUT WRAPPER — Supabase-Aufrufe können sonst still hängen
+// =============================================================
+async function withTimeout(promise, ms, label) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label}: keine Antwort nach ${Math.round(ms/1000)}s`)), ms);
+  });
+  try { return await Promise.race([promise, timeout]); }
+  finally { clearTimeout(timer); }
 }
 
 const state = {
@@ -533,20 +598,39 @@ async function loadNotes(leadId) {
 }
 
 async function createLead(fields) {
-  console.log('[createLead]', fields);
-  const { data, error } = await sb.from('leads').insert(fields).select().single();
-  if (error) { console.error('[createLead] error', error); toast('Konnte Lead nicht anlegen: ' + error.message); return null; }
-  if (data && !state.leads.find(l => l.id === data.id)) state.leads.unshift(data);
-  render();
-  return data;
+  console.log('[createLead] start', fields);
+  try {
+    const { data, error } = await withTimeout(
+      sb.from('leads').insert(fields).select().single(),
+      10000, 'createLead'
+    );
+    if (error) { console.error('[createLead] error', error); toast('Konnte Lead nicht anlegen: ' + error.message); return null; }
+    console.log('[createLead] inserted', data?.id);
+    if (data && !state.leads.find(l => l.id === data.id)) state.leads.unshift(data);
+    render();
+    return data;
+  } catch (err) {
+    console.error('[createLead] threw', err);
+    toast('Lead-Anlegen: ' + (err?.message || err));
+    return null;
+  }
 }
 
 async function updateLead(id, patch) {
-  const { data, error } = await sb.from('leads').update(patch).eq('id', id).select().single();
-  if (error) { console.error('[updateLead]', error); toast('Speichern fehlgeschlagen: ' + error.message); return null; }
-  const i = state.leads.findIndex(l => l.id === id);
-  if (i >= 0) state.leads[i] = data;
-  return data;
+  try {
+    const { data, error } = await withTimeout(
+      sb.from('leads').update(patch).eq('id', id).select().single(),
+      10000, 'updateLead'
+    );
+    if (error) { console.error('[updateLead]', error); toast('Speichern fehlgeschlagen: ' + error.message); return null; }
+    const i = state.leads.findIndex(l => l.id === id);
+    if (i >= 0) state.leads[i] = data;
+    return data;
+  } catch (err) {
+    console.error('[updateLead] threw', err);
+    toast('Speichern fehlgeschlagen: ' + (err?.message || err));
+    return null;
+  }
 }
 
 async function softDeleteLead(id) { return await updateLead(id, { deleted_at: new Date().toISOString() }); }
@@ -567,19 +651,38 @@ async function deleteNote(noteId, leadId) {
 }
 
 async function createActivity(fields) {
-  console.log('[createActivity]', fields);
-  const { data, error } = await sb.from('activities').insert(fields).select().single();
-  if (error) { console.error('[createActivity]', error); toast('Aktivität nicht angelegt: ' + error.message); return null; }
-  if (data && !state.activities.find(a => a.id === data.id)) state.activities.push(data);
-  return data;
+  console.log('[createActivity] start', fields);
+  try {
+    const { data, error } = await withTimeout(
+      sb.from('activities').insert(fields).select().single(),
+      10000, 'createActivity'
+    );
+    if (error) { console.error('[createActivity] error', error); toast('Aktivität nicht angelegt: ' + error.message); return null; }
+    console.log('[createActivity] inserted', data?.id);
+    if (data && !state.activities.find(a => a.id === data.id)) state.activities.push(data);
+    return data;
+  } catch (err) {
+    console.error('[createActivity] threw', err);
+    toast('Aktivität-Anlegen: ' + (err?.message || err));
+    return null;
+  }
 }
 
 async function updateActivity(id, patch) {
-  const { data, error } = await sb.from('activities').update(patch).eq('id', id).select().single();
-  if (error) { console.error('[updateActivity]', error); toast('Aktivität nicht gespeichert: ' + error.message); return null; }
-  const i = state.activities.findIndex(a => a.id === id);
-  if (i >= 0) state.activities[i] = data;
-  return data;
+  try {
+    const { data, error } = await withTimeout(
+      sb.from('activities').update(patch).eq('id', id).select().single(),
+      10000, 'updateActivity'
+    );
+    if (error) { console.error('[updateActivity]', error); toast('Aktivität nicht gespeichert: ' + error.message); return null; }
+    const i = state.activities.findIndex(a => a.id === id);
+    if (i >= 0) state.activities[i] = data;
+    return data;
+  } catch (err) {
+    console.error('[updateActivity] threw', err);
+    toast('Aktivität-Speichern: ' + (err?.message || err));
+    return null;
+  }
 }
 
 async function deleteActivity(id) {
@@ -1775,6 +1878,24 @@ document.addEventListener('click', (e) => {
 document.getElementById('ics-all-btn').addEventListener('click', () => {
   menuDd.classList.add('hidden');
   downloadAllActivitiesICS();
+});
+
+document.getElementById('debug-btn').addEventListener('click', () => {
+  menuDd.classList.add('hidden');
+  openDebug();
+});
+document.getElementById('debug-clear').addEventListener('click', () => {
+  __logs.length = 0;
+  renderDebug();
+});
+document.getElementById('debug-copy').addEventListener('click', async () => {
+  const text = __logs.map(l => `${l.t} [${l.level}] ${l.msg}`).join('\n');
+  try {
+    await navigator.clipboard.writeText(text);
+    toast('Debug-Log kopiert');
+  } catch {
+    toast('Konnte nicht kopieren — markier + Cmd+C');
+  }
 });
 
 document.getElementById('export-btn').addEventListener('click', async () => {
