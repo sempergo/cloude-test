@@ -108,7 +108,8 @@
           <button id="menu-btn" class="p-2 rounded-lg hover:bg-zinc-900 transition-colors">
             <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01"/></svg>
           </button>
-          <div id="menu-dropdown" class="hidden absolute right-0 top-12 w-48 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl py-1 z-50">
+          <div id="menu-dropdown" class="hidden absolute right-0 top-12 w-56 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl py-1 z-50">
+            <button id="ics-all-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors">Alle Aktivitäten als .ics</button>
             <button id="export-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors">JSON exportieren</button>
             <div class="border-t border-zinc-800 my-1"></div>
             <button id="logout-btn" class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-800 transition-colors text-red-400">Abmelden</button>
@@ -321,6 +322,13 @@
         <div id="activity-done-block" class="hidden flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800">
           <input type="checkbox" id="activity-done-check" class="w-4 h-4 rounded accent-emerald-500" />
           <label for="activity-done-check" class="text-sm text-zinc-300 select-none cursor-pointer">Als erledigt markieren</label>
+        </div>
+        <div id="activity-ics-block" class="hidden">
+          <button type="button" onclick="downloadActivityICS()" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition-colors text-sm flex items-center justify-center gap-2 text-zinc-300">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Zum Kalender hinzufügen (.ics)
+          </button>
+          <p class="text-[10px] text-zinc-500 mt-1 text-center">Apple/Google Calendar: Datei öffnen → importieren. Re-Download aktualisiert den Termin.</p>
         </div>
         <div class="flex gap-2 pt-2">
           <button type="button" id="activity-delete-btn" onclick="deleteActivityFromModal()" class="hidden px-3 py-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors text-sm">Löschen</button>
@@ -1241,9 +1249,11 @@ function openActivityModal(activityId) {
     document.getElementById('activity-scheduled-at').value = toLocalInputValue(a.scheduled_at);
     document.getElementById('activity-note').value = a.note || '';
     document.getElementById('activity-done-check').checked = !!a.done_at;
+    document.getElementById('activity-ics-block').classList.toggle('hidden', !a.scheduled_at);
   } else {
     document.getElementById('activity-form').reset();
     document.getElementById('activity-done-check').checked = false;
+    document.getElementById('activity-ics-block').classList.add('hidden');
   }
 
   document.getElementById('activity-modal').classList.remove('hidden');
@@ -1303,6 +1313,99 @@ async function markActivityDone(id) {
 }
 
 // =============================================================
+// ICS EXPORT
+// =============================================================
+function icsEscape(s) {
+  return (s || '').toString().replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+}
+function icsDate(iso) {
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
+}
+function foldLine(line) {
+  if (line.length <= 73) return line;
+  const out = [];
+  let i = 0;
+  out.push(line.slice(0, 73));
+  i = 73;
+  while (i < line.length) { out.push(' ' + line.slice(i, i + 72)); i += 72; }
+  return out.join('\r\n');
+}
+function activityVEVENT(activity, lead) {
+  if (!activity.scheduled_at) return null;
+  const start = new Date(activity.scheduled_at);
+  const end = new Date(start.getTime() + 30 * 60_000);
+  const summary = `[${lead.firma || 'Lead'}] ${activity.titel}`;
+  const descParts = [];
+  if (activity.note) descParts.push(activity.note);
+  if (descParts.length) descParts.push('');
+  descParts.push(`Lead: ${lead.firma}`);
+  if (lead.kontaktperson) descParts.push(`Kontakt: ${lead.kontaktperson}`);
+  if (lead.telefon) descParts.push(`Telefon: ${lead.telefon}`);
+  if (lead.email) descParts.push(`Email: ${lead.email}`);
+  if (lead.website_url) descParts.push(`Website: ${lead.website_url}`);
+  const description = descParts.join('\n');
+  const seq = Math.floor(new Date(activity.updated_at || activity.created_at).getTime() / 1000);
+  const lines = [
+    'BEGIN:VEVENT',
+    foldLine(`UID:activity-${activity.id}@semp-crm`),
+    foldLine(`DTSTAMP:${icsDate(new Date().toISOString())}`),
+    foldLine(`DTSTART:${icsDate(activity.scheduled_at)}`),
+    foldLine(`DTEND:${icsDate(end.toISOString())}`),
+    foldLine(`SEQUENCE:${seq}`),
+    foldLine(`SUMMARY:${icsEscape(summary)}`),
+    foldLine(`DESCRIPTION:${icsEscape(description)}`),
+  ];
+  if (activity.done_at) lines.push('STATUS:COMPLETED');
+  lines.push('END:VEVENT');
+  return lines.join('\r\n');
+}
+function buildICS(events) {
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//semp-studios//CRM//DE',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:semp CRM',
+    ...events,
+    'END:VCALENDAR',
+  ].join('\r\n');
+}
+function downloadICS(filename, content) {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function downloadActivityICS() {
+  if (!state.editingActivityId) return;
+  const a = state.activities.find(x => x.id === state.editingActivityId);
+  if (!a || !a.scheduled_at) { toast('Bitte erst ein Datum setzen.'); return; }
+  const lead = state.leads.find(l => l.id === a.lead_id);
+  if (!lead) return;
+  const event = activityVEVENT(a, lead);
+  if (!event) return;
+  const safe = (lead.firma || 'lead').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 30);
+  downloadICS(`semp-${safe}-${a.id.slice(0,8)}.ics`, buildICS([event]));
+  toast('Termin heruntergeladen — Datei öffnen importiert ihn');
+}
+
+function downloadAllActivitiesICS() {
+  const activeLeads = new Set(state.leads.filter(l => !l.deleted_at).map(l => l.id));
+  const items = state.activities.filter(a => a.scheduled_at && activeLeads.has(a.lead_id));
+  if (items.length === 0) { toast('Keine Aktivitäten mit Datum.'); return; }
+  const leadById = Object.fromEntries(state.leads.map(l => [l.id, l]));
+  const events = items.map(a => activityVEVENT(a, leadById[a.lead_id])).filter(Boolean);
+  downloadICS(`semp-crm-activities-${new Date().toISOString().slice(0,10)}.ics`, buildICS(events));
+  toast(`${events.length} Aktivität${events.length === 1 ? '' : 'en'} exportiert`);
+}
+
+// =============================================================
 // SEARCH
 // =============================================================
 const searchInput = document.getElementById('search-input');
@@ -1321,6 +1424,11 @@ document.addEventListener('click', (e) => {
 // =============================================================
 // EXPORT
 // =============================================================
+document.getElementById('ics-all-btn').addEventListener('click', () => {
+  menuDd.classList.add('hidden');
+  downloadAllActivitiesICS();
+});
+
 document.getElementById('export-btn').addEventListener('click', async () => {
   menuDd.classList.add('hidden');
   const [{ data: leads }, { data: notes }, { data: activities }] = await Promise.all([
