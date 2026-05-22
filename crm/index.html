@@ -1296,12 +1296,38 @@ document.querySelectorAll('[data-activity-quick]').forEach(btn => {
   });
 });
 
-document.getElementById('activity-form').addEventListener('submit', async (e) => {
+let isSubmittingActivity = false;
+const activityForm = document.getElementById('activity-form');
+const activitySubmitBtn = activityForm.querySelector('button[type="submit"]');
+
+activityForm.addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (isSubmittingActivity) { console.warn('[activity] already submitting, ignored'); return; }
+  isSubmittingActivity = true;
+  activitySubmitBtn.disabled = true;
+  const originalLabel = activitySubmitBtn.textContent;
+  activitySubmitBtn.textContent = 'Speichern…';
+
   const lead = getSelectedLead();
-  if (!lead) return;
+  console.log('[activity] submit start, selectedLeadId:', state.selectedLeadId, 'lead:', lead);
+  if (!lead) {
+    toast('Kein Lead ausgewählt. Bitte Lead erst öffnen.');
+    isSubmittingActivity = false;
+    activitySubmitBtn.disabled = false;
+    activitySubmitBtn.textContent = originalLabel;
+    return;
+  }
+
   const titel = document.getElementById('activity-titel').value.trim();
-  if (!titel) { toast('Bitte einen Titel angeben.'); return; }
+  if (!titel) {
+    toast('Bitte einen Titel angeben.');
+    document.getElementById('activity-titel').focus();
+    isSubmittingActivity = false;
+    activitySubmitBtn.disabled = false;
+    activitySubmitBtn.textContent = originalLabel;
+    return;
+  }
+
   const scheduledRaw = document.getElementById('activity-scheduled-at').value;
   const note = document.getElementById('activity-note').value.trim() || null;
   const isDone = document.getElementById('activity-done-check').checked;
@@ -1310,17 +1336,36 @@ document.getElementById('activity-form').addEventListener('submit', async (e) =>
     scheduled_at: fromLocalInputValue(scheduledRaw),
     note,
   };
-  if (state.editingActivityId) {
-    const current = state.activities.find(a => a.id === state.editingActivityId);
-    fields.done_at = isDone ? (current?.done_at || new Date().toISOString()) : null;
-    await updateActivity(state.editingActivityId, fields);
-  } else {
-    fields.lead_id = lead.id;
-    if (isDone) fields.done_at = new Date().toISOString();
-    await createActivity(fields);
+
+  let ok = false;
+  try {
+    if (state.editingActivityId) {
+      const current = state.activities.find(a => a.id === state.editingActivityId);
+      fields.done_at = isDone ? (current?.done_at || new Date().toISOString()) : null;
+      console.log('[activity] updateActivity', state.editingActivityId, fields);
+      const result = await updateActivity(state.editingActivityId, fields);
+      ok = !!result;
+    } else {
+      fields.lead_id = lead.id;
+      if (isDone) fields.done_at = new Date().toISOString();
+      console.log('[activity] createActivity', fields);
+      const result = await createActivity(fields);
+      ok = !!result;
+    }
+    console.log('[activity] done, ok=', ok);
+  } catch (err) {
+    console.error('[activity] threw', err);
+    toast('Fehler beim Speichern: ' + (err?.message || err));
+  } finally {
+    isSubmittingActivity = false;
+    activitySubmitBtn.disabled = false;
+    activitySubmitBtn.textContent = originalLabel;
   }
-  closeActivityModal();
-  render();
+
+  if (ok) {
+    closeActivityModal();
+    render();
+  }
 });
 
 async function deleteActivityFromModal() {
