@@ -412,6 +412,13 @@ const FILTER_TABS = [
 // =============================================================
 // STATE
 // =============================================================
+function safeLocalGet(key, fallback) {
+  try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
+}
+function safeLocalSet(key, value) {
+  try { localStorage.setItem(key, value); } catch {}
+}
+
 const state = {
   authed: false,
   leads: [],
@@ -424,7 +431,7 @@ const state = {
   saveTimers: {},
   showDoneActivities: false,
   editingActivityId: null,
-  viewMode: localStorage.getItem('semp-crm-view') || 'cards',
+  viewMode: safeLocalGet('semp-crm-view', 'cards'),
 };
 
 let sb;
@@ -1120,7 +1127,7 @@ document.getElementById('view-list').addEventListener('click', () => setViewMode
 
 function setViewMode(mode) {
   state.viewMode = mode;
-  localStorage.setItem('semp-crm-view', mode);
+  safeLocalSet('semp-crm-view', mode);
   renderLeadList();
 }
 
