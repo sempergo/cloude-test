@@ -18,18 +18,12 @@
           fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
           animation: {
             'pulse-red': 'pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'slide-in-right': 'slide-in-right 0.3s ease-out',
-            'slide-up': 'slide-up 0.3s ease-out',
-            'fade-in': 'fade-in 0.2s ease-out',
           },
           keyframes: {
             'pulse-red': {
               '0%, 100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.4)' },
               '50%': { boxShadow: '0 0 0 6px rgba(239, 68, 68, 0)' },
             },
-            'slide-in-right': { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(0)' } },
-            'slide-up': { '0%': { transform: 'translateY(100%)' }, '100%': { transform: 'translateY(0)' } },
-            'fade-in': { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
           },
         },
       },
@@ -42,7 +36,6 @@
     input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    /* Native scrollbar in detail panel */
     .scrollbar-thin::-webkit-scrollbar { width: 6px; }
     .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
     .scrollbar-thin::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
@@ -63,15 +56,15 @@
       <h1 class="text-2xl font-semibold tracking-tight">semp — CRM</h1>
       <p class="text-zinc-400 text-sm mt-2">Sales-Pipeline. Nichts geht verloren.</p>
     </div>
-    <form id="login-form" class="space-y-3">
+    <form id="login-form" novalidate class="space-y-3">
       <div>
         <label class="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
-        <input type="email" id="login-email" required autocomplete="email"
+        <input type="email" id="login-email" autocomplete="email"
           class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
       </div>
       <div>
         <label class="block text-xs font-medium text-zinc-400 mb-1.5">Passwort</label>
-        <input type="password" id="login-password" required autocomplete="current-password"
+        <input type="password" id="login-password" autocomplete="current-password"
           class="w-full px-3.5 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
       </div>
       <div id="login-error" class="hidden text-xs text-red-400 px-1"></div>
@@ -128,15 +121,12 @@
   <!-- MAIN -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24">
 
-    <!-- ALERT CARDS -->
     <section id="alerts" class="mb-6 sm:mb-8"></section>
 
-    <!-- FILTER TABS -->
     <section class="mb-5">
       <div id="filter-tabs" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
     </section>
 
-    <!-- LEAD LIST -->
     <section>
       <div id="lead-list" class="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"></div>
       <div id="lead-list-empty" class="hidden text-center py-20">
@@ -154,8 +144,7 @@
   </main>
 
   <!-- LEAD DETAIL PANEL -->
-  <aside id="lead-detail" class="hidden fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[480px] z-40 bg-zinc-950 border-l border-zinc-900 shadow-2xl flex flex-col">
-    <!-- Header -->
+  <aside id="lead-detail" class="hidden fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[520px] z-40 bg-zinc-950 border-l border-zinc-900 shadow-2xl flex flex-col">
     <div class="px-5 py-4 border-b border-zinc-900 flex items-start gap-3 shrink-0">
       <div class="flex-1 min-w-0">
         <input type="text" id="detail-firma" placeholder="Firma"
@@ -169,46 +158,35 @@
       </button>
     </div>
 
-    <!-- Scrollable body -->
     <div class="flex-1 overflow-y-auto scrollbar-thin">
 
-      <!-- Status -->
       <div class="px-5 py-4 border-b border-zinc-900">
         <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Status</label>
         <div id="detail-status-buttons" class="grid grid-cols-3 gap-1.5"></div>
       </div>
 
-      <!-- Follow-up -->
+      <!-- ACTIVITIES BLOCK -->
       <div class="px-5 py-4 border-b border-zinc-900">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Nächster Schritt</label>
-          <span id="detail-followup-badge"></span>
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Aktivitäten</label>
+          <button onclick="openActivityModal()" class="text-xs font-medium text-zinc-300 hover:text-white flex items-center gap-1 px-2 py-1 rounded-md hover:bg-zinc-900 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            Neu
+          </button>
         </div>
-        <input type="datetime-local" id="detail-followup-at"
-          class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm mb-2" />
-        <div class="grid grid-cols-2 gap-1.5 mb-2">
-          <button data-quick="tomorrow10" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Morgen 10 Uhr</button>
-          <button data-quick="in3days" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">In 3 Tagen</button>
-          <button data-quick="nextweek" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Nächste Woche</button>
-          <button data-quick="clear" class="quick-followup px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-500 transition-colors">Datum löschen</button>
+        <div id="activities-warning"></div>
+        <div id="activities-open" class="space-y-2"></div>
+        <div id="activities-done-toggle" class="hidden mt-4">
+          <button onclick="toggleDoneActivities()" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1">
+            <svg id="activities-done-chevron" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <span id="activities-done-label">Erledigte anzeigen</span>
+          </button>
         </div>
-        <input type="text" id="detail-followup-note" placeholder="Was ist zu tun? (z.B. Anrufen wegen Logo)"
-          class="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+        <div id="activities-done" class="hidden space-y-1.5 mt-3"></div>
       </div>
 
-      <!-- Quick Actions -->
       <div id="detail-quick-actions" class="px-5 py-4 border-b border-zinc-900 grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
 
-      <!-- Anruf erledigt -->
-      <div class="px-5 py-4 border-b border-zinc-900">
-        <button onclick="openAnrufErledigt()"
-          class="w-full px-3 py-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-colors text-emerald-400 font-medium text-sm flex items-center justify-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-          Anruf erledigt — Notiz + nächster Schritt
-        </button>
-      </div>
-
-      <!-- Stammdaten -->
       <div class="px-5 py-4 border-b border-zinc-900 space-y-3">
         <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider">Stammdaten</label>
         <div class="grid grid-cols-2 gap-2">
@@ -226,7 +204,7 @@
           </div>
           <div>
             <label class="block text-[10px] font-medium text-zinc-500 mb-1">Email</label>
-            <input type="email" id="detail-email" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+            <input type="text" id="detail-email" class="detail-field w-full px-2.5 py-1.5 rounded-md bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-medium text-zinc-500 mb-1">Alte Website</label>
@@ -239,11 +217,10 @@
         </div>
       </div>
 
-      <!-- Notizen -->
       <div class="px-5 py-4 border-b border-zinc-900">
-        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Notizen</label>
+        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Allgemeine Notizen</label>
         <div class="flex gap-2 mb-4">
-          <input type="text" id="new-note-input" placeholder="Neue Notiz…"
+          <input type="text" id="new-note-input" placeholder="Schnelle Lead-Notiz…"
             class="flex-1 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
           <button id="add-note-btn" class="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm font-medium">
             Hinzufügen
@@ -252,7 +229,6 @@
         <div id="notes-timeline" class="space-y-2.5"></div>
       </div>
 
-      <!-- Footer Actions -->
       <div class="px-5 py-4">
         <div id="delete-restore-area"></div>
       </div>
@@ -311,45 +287,51 @@
     </div>
   </div>
 
-  <!-- ANRUF ERLEDIGT MODAL -->
-  <div id="anruf-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
-    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
-      <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
-        <h2 class="font-semibold">Anruf erledigt</h2>
-        <button onclick="closeAnrufErledigt()" class="p-1 rounded-md hover:bg-zinc-800 transition-colors">
+  <!-- ACTIVITY MODAL -->
+  <div id="activity-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-thin">
+      <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between sticky top-0 bg-zinc-900">
+        <h2 id="activity-modal-title" class="font-semibold">Neue Aktivität</h2>
+        <button onclick="closeActivityModal()" class="p-1 rounded-md hover:bg-zinc-800 transition-colors">
           <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-      <form id="anruf-form" class="p-5 space-y-4">
+      <form id="activity-form" novalidate class="p-5 space-y-4">
         <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Was ist passiert?</label>
-          <textarea id="anruf-note" rows="3" required placeholder="Kunde will Logo-Änderung. Kommt morgen mit Feedback zurück."
-            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm resize-none"></textarea>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Titel *</label>
+          <input type="text" id="activity-titel" autofocus placeholder="z.B. Anruf wegen Logo / Termin Café"
+            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Nächster Schritt — wann?</label>
-          <input type="datetime-local" id="anruf-followup-at"
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Datum &amp; Uhrzeit</label>
+          <input type="datetime-local" id="activity-scheduled-at"
             class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm mb-2" />
-          <div class="grid grid-cols-3 gap-1.5">
-            <button type="button" data-anruf-quick="tomorrow10" class="px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Morgen 10 Uhr</button>
-            <button type="button" data-anruf-quick="in3days" class="px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">In 3 Tagen</button>
-            <button type="button" data-anruf-quick="nextweek" class="px-2 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Nächste Woche</button>
+          <div class="grid grid-cols-2 gap-1.5">
+            <button type="button" data-activity-quick="tomorrow10" class="px-2.5 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Morgen 10 Uhr</button>
+            <button type="button" data-activity-quick="in3days" class="px-2.5 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">In 3 Tagen</button>
+            <button type="button" data-activity-quick="nextweek" class="px-2.5 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-300 transition-colors">Nächste Woche</button>
+            <button type="button" data-activity-quick="clear" class="px-2.5 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs text-zinc-500 transition-colors">Datum löschen</button>
           </div>
         </div>
         <div>
-          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Was ist zu tun? (optional)</label>
-          <input type="text" id="anruf-followup-note" placeholder="Logo-Vorschläge schicken"
-            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Notiz</label>
+          <textarea id="activity-note" rows="4" placeholder="Was ist zu tun? Was wurde besprochen?"
+            class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm resize-none"></textarea>
+        </div>
+        <div id="activity-done-block" class="hidden flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800">
+          <input type="checkbox" id="activity-done-check" class="w-4 h-4 rounded accent-emerald-500" />
+          <label for="activity-done-check" class="text-sm text-zinc-300 select-none cursor-pointer">Als erledigt markieren</label>
         </div>
         <div class="flex gap-2 pt-2">
-          <button type="button" onclick="closeAnrufErledigt()" class="flex-1 px-3 py-2 rounded-lg border border-zinc-800 hover:bg-zinc-800 transition-colors text-sm">Abbrechen</button>
-          <button type="submit" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500 text-zinc-950 font-medium hover:bg-emerald-400 transition-colors text-sm">Speichern</button>
+          <button type="button" id="activity-delete-btn" onclick="deleteActivityFromModal()" class="hidden px-3 py-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors text-sm">Löschen</button>
+          <button type="button" onclick="closeActivityModal()" class="flex-1 px-3 py-2 rounded-lg border border-zinc-800 hover:bg-zinc-800 transition-colors text-sm">Abbrechen</button>
+          <button type="submit" class="flex-1 px-3 py-2 rounded-lg bg-white text-zinc-950 font-medium hover:bg-zinc-200 transition-colors text-sm">Speichern</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- TOAST CONTAINER -->
+  <!-- TOAST -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] hidden">
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl px-4 py-3 flex items-center gap-3 max-w-md">
       <span id="toast-message" class="text-sm text-zinc-200"></span>
@@ -362,7 +344,7 @@
 <!-- ============================ SCRIPT ============================ -->
 <script>
 // =============================================================
-// CONFIG — Markus füllt hier nach dem Supabase-Setup ein
+// CONFIG
 // =============================================================
 const SUPABASE_URL      = 'https://zljwjeshbduuzimjndls.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_z0IM0JF7zblBe-uj1uqDXw_HJj2xo91';
@@ -371,12 +353,12 @@ const SUPABASE_ANON_KEY = 'sb_publishable_z0IM0JF7zblBe-uj1uqDXw_HJj2xo91';
 // CONSTANTS
 // =============================================================
 const STATUS_LIST = [
-  { key: 'in_arbeit',   label: 'In Arbeit',   color: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',  dotColor: 'bg-indigo-400' },
-  { key: 'gesendet',    label: 'Gesendet',    color: 'bg-sky-500/15 text-sky-300 border-sky-500/30',          dotColor: 'bg-sky-400' },
-  { key: 'nachfass',    label: 'Nachfass',    color: 'bg-amber-500/15 text-amber-300 border-amber-500/30',    dotColor: 'bg-amber-400' },
-  { key: 'verhandlung', label: 'Verhandlung', color: 'bg-violet-500/15 text-violet-300 border-violet-500/30', dotColor: 'bg-violet-400' },
-  { key: 'gewonnen',    label: 'Gewonnen',    color: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30', dotColor: 'bg-emerald-400' },
-  { key: 'verloren',    label: 'Verloren',    color: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',       dotColor: 'bg-zinc-500' },
+  { key: 'in_arbeit',   label: 'In Arbeit',   color: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30' },
+  { key: 'gesendet',    label: 'Gesendet',    color: 'bg-sky-500/15 text-sky-300 border-sky-500/30' },
+  { key: 'nachfass',    label: 'Nachfass',    color: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
+  { key: 'verhandlung', label: 'Verhandlung', color: 'bg-violet-500/15 text-violet-300 border-violet-500/30' },
+  { key: 'gewonnen',    label: 'Gewonnen',    color: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
+  { key: 'verloren',    label: 'Verloren',    color: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30' },
 ];
 const STATUS_MAP = Object.fromEntries(STATUS_LIST.map(s => [s.key, s]));
 
@@ -397,18 +379,22 @@ const FILTER_TABS = [
 const state = {
   authed: false,
   leads: [],
+  activities: [],
   notesByLead: {},
   selectedLeadId: null,
   filter: 'aktiv',
   search: '',
   rtConnected: false,
   saveTimers: {},
+  showDoneActivities: false,
+  editingActivityId: null,
 };
+
+let sb;
 
 // =============================================================
 // SUPABASE CLIENT
 // =============================================================
-let sb;
 function initSupabase() {
   if (SUPABASE_URL.startsWith('__') || SUPABASE_ANON_KEY.startsWith('__')) {
     showConfigError();
@@ -427,7 +413,6 @@ function showConfigError() {
         <div class="text-4xl mb-4">⚙️</div>
         <h1 class="text-xl font-semibold mb-2">Config fehlt</h1>
         <p class="text-zinc-400 text-sm mb-4">Trage <code class="px-1.5 py-0.5 rounded bg-zinc-900">SUPABASE_URL</code> und <code class="px-1.5 py-0.5 rounded bg-zinc-900">SUPABASE_ANON_KEY</code> oben in <code class="px-1.5 py-0.5 rounded bg-zinc-900">crm/index.html</code> ein.</p>
-        <p class="text-zinc-500 text-xs">Anleitung: siehe <code class="px-1.5 py-0.5 rounded bg-zinc-900">crm/README.md</code>.</p>
       </div>
     </div>`;
 }
@@ -438,11 +423,8 @@ function showConfigError() {
 async function bootstrap() {
   if (!initSupabase()) return;
   const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    await onSignedIn();
-  } else {
-    showLogin();
-  }
+  if (session) await onSignedIn();
+  else showLogin();
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) await onSignedIn();
     if (event === 'SIGNED_OUT') showLogin();
@@ -453,10 +435,10 @@ async function onSignedIn() {
   state.authed = true;
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  await loadLeads();
+  await Promise.all([loadLeads(), loadActivities()]);
   render();
   subscribeRealtime();
-  setInterval(render, 60_000); // Re-render every minute so "overdue" recalculates
+  setInterval(render, 60_000);
 }
 
 function showLogin() {
@@ -483,34 +465,33 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   }
 });
 
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  await sb.auth.signOut();
-});
+document.getElementById('logout-btn').addEventListener('click', async () => { await sb.auth.signOut(); });
 
 // =============================================================
 // DATA
 // =============================================================
 async function loadLeads() {
   const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending: false });
-  if (error) { toast('Fehler beim Laden: ' + error.message); return; }
+  if (error) { console.error('[loadLeads]', error); toast('Fehler beim Laden: ' + error.message); return; }
   state.leads = data || [];
+}
+
+async function loadActivities() {
+  const { data, error } = await sb.from('activities').select('*').order('scheduled_at', { ascending: true, nullsFirst: false });
+  if (error) { console.error('[loadActivities]', error); toast('Aktivitäten-Fehler: ' + error.message); return; }
+  state.activities = data || [];
 }
 
 async function loadNotes(leadId) {
   const { data, error } = await sb.from('notes').select('*').eq('lead_id', leadId).order('created_at', { ascending: false });
-  if (error) { toast('Notizen-Fehler: ' + error.message); return; }
+  if (error) { console.error('[loadNotes]', error); toast('Notizen-Fehler: ' + error.message); return; }
   state.notesByLead[leadId] = data || [];
 }
 
 async function createLead(fields) {
-  console.log('[createLead] insert', fields);
+  console.log('[createLead]', fields);
   const { data, error } = await sb.from('leads').insert(fields).select().single();
-  if (error) {
-    console.error('[createLead] error', error);
-    toast('Konnte Lead nicht anlegen: ' + error.message);
-    return null;
-  }
-  console.log('[createLead] inserted', data);
+  if (error) { console.error('[createLead] error', error); toast('Konnte Lead nicht anlegen: ' + error.message); return null; }
   if (data && !state.leads.find(l => l.id === data.id)) state.leads.unshift(data);
   render();
   return data;
@@ -518,34 +499,49 @@ async function createLead(fields) {
 
 async function updateLead(id, patch) {
   const { data, error } = await sb.from('leads').update(patch).eq('id', id).select().single();
-  if (error) { toast('Speichern fehlgeschlagen: ' + error.message); return null; }
+  if (error) { console.error('[updateLead]', error); toast('Speichern fehlgeschlagen: ' + error.message); return null; }
   const i = state.leads.findIndex(l => l.id === id);
   if (i >= 0) state.leads[i] = data;
   return data;
 }
 
-async function softDeleteLead(id) {
-  return await updateLead(id, { deleted_at: new Date().toISOString() });
-}
-
-async function restoreLead(id) {
-  return await updateLead(id, { deleted_at: null });
-}
+async function softDeleteLead(id) { return await updateLead(id, { deleted_at: new Date().toISOString() }); }
+async function restoreLead(id)    { return await updateLead(id, { deleted_at: null }); }
 
 async function addNote(leadId, content) {
   const { data, error } = await sb.from('notes').insert({ lead_id: leadId, content }).select().single();
-  if (error) { toast('Notiz nicht gespeichert: ' + error.message); return null; }
+  if (error) { console.error('[addNote]', error); toast('Notiz nicht gespeichert: ' + error.message); return null; }
   if (!state.notesByLead[leadId]) state.notesByLead[leadId] = [];
-  state.notesByLead[leadId].unshift(data);
+  if (data && !state.notesByLead[leadId].find(n => n.id === data.id)) state.notesByLead[leadId].unshift(data);
   return data;
 }
 
 async function deleteNote(noteId, leadId) {
   const { error } = await sb.from('notes').delete().eq('id', noteId);
-  if (error) { toast('Konnte Notiz nicht löschen: ' + error.message); return; }
-  if (state.notesByLead[leadId]) {
-    state.notesByLead[leadId] = state.notesByLead[leadId].filter(n => n.id !== noteId);
-  }
+  if (error) { console.error('[deleteNote]', error); toast('Konnte Notiz nicht löschen: ' + error.message); return; }
+  if (state.notesByLead[leadId]) state.notesByLead[leadId] = state.notesByLead[leadId].filter(n => n.id !== noteId);
+}
+
+async function createActivity(fields) {
+  console.log('[createActivity]', fields);
+  const { data, error } = await sb.from('activities').insert(fields).select().single();
+  if (error) { console.error('[createActivity]', error); toast('Aktivität nicht angelegt: ' + error.message); return null; }
+  if (data && !state.activities.find(a => a.id === data.id)) state.activities.push(data);
+  return data;
+}
+
+async function updateActivity(id, patch) {
+  const { data, error } = await sb.from('activities').update(patch).eq('id', id).select().single();
+  if (error) { console.error('[updateActivity]', error); toast('Aktivität nicht gespeichert: ' + error.message); return null; }
+  const i = state.activities.findIndex(a => a.id === id);
+  if (i >= 0) state.activities[i] = data;
+  return data;
+}
+
+async function deleteActivity(id) {
+  const { error } = await sb.from('activities').delete().eq('id', id);
+  if (error) { console.error('[deleteActivity]', error); toast('Aktivität nicht gelöscht: ' + error.message); return; }
+  state.activities = state.activities.filter(a => a.id !== id);
 }
 
 // =============================================================
@@ -553,15 +549,25 @@ async function deleteNote(noteId, leadId) {
 // =============================================================
 function subscribeRealtime() {
   sb.channel('crm-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, async (payload) => {
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, (payload) => {
       if (payload.eventType === 'INSERT') {
         if (!state.leads.find(l => l.id === payload.new.id)) state.leads.unshift(payload.new);
       } else if (payload.eventType === 'UPDATE') {
         const i = state.leads.findIndex(l => l.id === payload.new.id);
-        if (i >= 0) state.leads[i] = payload.new;
-        else state.leads.unshift(payload.new);
+        if (i >= 0) state.leads[i] = payload.new; else state.leads.unshift(payload.new);
       } else if (payload.eventType === 'DELETE') {
         state.leads = state.leads.filter(l => l.id !== payload.old.id);
+      }
+      render();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, (payload) => {
+      if (payload.eventType === 'INSERT') {
+        if (!state.activities.find(a => a.id === payload.new.id)) state.activities.push(payload.new);
+      } else if (payload.eventType === 'UPDATE') {
+        const i = state.activities.findIndex(a => a.id === payload.new.id);
+        if (i >= 0) state.activities[i] = payload.new; else state.activities.push(payload.new);
+      } else if (payload.eventType === 'DELETE') {
+        state.activities = state.activities.filter(a => a.id !== payload.old.id);
       }
       render();
     })
@@ -569,9 +575,7 @@ function subscribeRealtime() {
       const leadId = payload.new?.lead_id || payload.old?.lead_id;
       if (!leadId || !state.notesByLead[leadId]) return;
       if (payload.eventType === 'INSERT') {
-        if (!state.notesByLead[leadId].find(n => n.id === payload.new.id)) {
-          state.notesByLead[leadId].unshift(payload.new);
-        }
+        if (!state.notesByLead[leadId].find(n => n.id === payload.new.id)) state.notesByLead[leadId].unshift(payload.new);
       } else if (payload.eventType === 'DELETE') {
         state.notesByLead[leadId] = state.notesByLead[leadId].filter(n => n.id !== payload.old.id);
       }
@@ -586,56 +590,69 @@ function subscribeRealtime() {
 function updateRtIndicator() {
   const dot = document.getElementById('rt-dot');
   const label = document.getElementById('rt-label');
-  if (state.rtConnected) {
-    dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
-    label.textContent = 'live';
-  } else {
-    dot.className = 'w-1.5 h-1.5 rounded-full bg-zinc-600';
-    label.textContent = 'offline';
-  }
+  if (state.rtConnected) { dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500'; label.textContent = 'live'; }
+  else                   { dot.className = 'w-1.5 h-1.5 rounded-full bg-zinc-600';     label.textContent = 'offline'; }
 }
 
 // =============================================================
 // HELPERS
 // =============================================================
-function isOverdue(lead)  { return lead.next_followup_at && new Date(lead.next_followup_at) < new Date(); }
-function isToday(lead)    {
-  if (!lead.next_followup_at) return false;
-  const d = new Date(lead.next_followup_at), now = new Date();
-  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate() && d >= now;
+function activitiesOfLead(leadId) {
+  return state.activities.filter(a => a.lead_id === leadId);
 }
-function isThisWeek(lead) {
-  if (!lead.next_followup_at) return false;
-  const d = new Date(lead.next_followup_at), now = new Date();
-  const weekEnd = new Date(now); weekEnd.setDate(now.getDate() + 7);
-  return d > now && d <= weekEnd && !isToday(lead);
+function openActivitiesOfLead(leadId) {
+  return activitiesOfLead(leadId).filter(a => !a.done_at);
+}
+function doneActivitiesOfLead(leadId) {
+  return activitiesOfLead(leadId).filter(a => a.done_at)
+    .sort((a, b) => new Date(b.done_at) - new Date(a.done_at));
+}
+function nextOpenActivity(leadId) {
+  const list = openActivitiesOfLead(leadId).filter(a => a.scheduled_at);
+  if (!list.length) return null;
+  return list.sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at))[0];
 }
 
-function getFollowupState(lead) {
-  if (!lead.next_followup_at) return 'none';
-  if (isOverdue(lead)) return 'overdue';
-  if (isToday(lead)) return 'today';
+function isLeadClosed(lead) { return ['gewonnen', 'verloren'].includes(lead.status); }
+
+function activityState(activity) {
+  if (activity.done_at) return 'done';
+  if (!activity.scheduled_at) return 'unscheduled';
+  const d = new Date(activity.scheduled_at), now = new Date();
+  if (d < now) return 'overdue';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
+  if (d >= now && d < tomorrow) return 'today';
+  const weekEnd = new Date(today); weekEnd.setDate(today.getDate()+7);
+  if (d < weekEnd) return 'thisweek';
   return 'future';
 }
 
-function needsFollowupWarning(lead) {
-  return !lead.next_followup_at && ['nachfass', 'verhandlung'].includes(lead.status);
+function needsActivityWarning(lead) {
+  if (!['nachfass', 'verhandlung'].includes(lead.status)) return false;
+  return openActivitiesOfLead(lead.id).length === 0;
 }
 
-const dtfDate = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const dtfDate     = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 const dtfDateTime = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-const dtfTime = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' });
+const dtfTime     = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit' });
+const dtfWeekday  = new Intl.DateTimeFormat('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
-function formatDateTime(iso) {
-  if (!iso) return '';
-  return dtfDateTime.format(new Date(iso));
-}
-
-function formatRelative(iso) {
+function formatDateTime(iso) { return iso ? dtfDateTime.format(new Date(iso)) : ''; }
+function formatScheduled(iso) {
   if (!iso) return '';
   const d = new Date(iso), now = new Date();
   const diffMs = d - now;
-  const diffMin = Math.round(diffMs / 60_000);
+  const absHour = Math.abs(diffMs) / 3_600_000;
+  if (absHour < 24 && d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+    return `Heute ${dtfTime.format(d)}`;
+  }
+  return dtfWeekday.format(d);
+}
+function formatRelative(iso) {
+  if (!iso) return '';
+  const d = new Date(iso), now = new Date();
+  const diffMs = d - now, diffMin = Math.round(diffMs / 60_000);
   const absMin = Math.abs(diffMin);
   if (absMin < 1) return 'jetzt';
   if (absMin < 60) return diffMin > 0 ? `in ${absMin} Min` : `vor ${absMin} Min`;
@@ -646,14 +663,6 @@ function formatRelative(iso) {
   return dtfDate.format(d);
 }
 
-function followupLabel(lead) {
-  if (!lead.next_followup_at) return '';
-  const state = getFollowupState(lead);
-  if (state === 'overdue') return `Überfällig · ${formatRelative(lead.next_followup_at)}`;
-  if (state === 'today') return `Heute · ${dtfTime.format(new Date(lead.next_followup_at))}`;
-  return formatDateTime(lead.next_followup_at);
-}
-
 function normalizePhone(raw) {
   if (!raw) return '';
   let p = raw.replace(/[^\d+]/g, '');
@@ -662,10 +671,7 @@ function normalizePhone(raw) {
   if (!p.startsWith('+')) p = '+' + p;
   return p;
 }
-function waLink(raw) {
-  const p = normalizePhone(raw);
-  return p ? `https://wa.me/${p.replace('+','')}` : '';
-}
+function waLink(raw) { const p = normalizePhone(raw); return p ? `https://wa.me/${p.replace('+','')}` : ''; }
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -674,18 +680,13 @@ function escapeHtml(str) {
 
 function toLocalInputValue(iso) {
   if (!iso) return '';
-  const d = new Date(iso);
-  const pad = (n) => String(n).padStart(2,'0');
+  const d = new Date(iso), pad = (n) => String(n).padStart(2,'0');
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
-
-function fromLocalInputValue(s) {
-  return s ? new Date(s).toISOString() : null;
-}
+function fromLocalInputValue(s) { return s ? new Date(s).toISOString() : null; }
 
 function quickDate(kind) {
-  const d = new Date();
-  d.setSeconds(0); d.setMilliseconds(0);
+  const d = new Date(); d.setSeconds(0); d.setMilliseconds(0);
   if (kind === 'tomorrow10') { d.setDate(d.getDate()+1); d.setHours(10,0); }
   else if (kind === 'in3days') { d.setDate(d.getDate()+3); d.setHours(10,0); }
   else if (kind === 'nextweek') { d.setDate(d.getDate()+7); d.setHours(10,0); }
@@ -718,7 +719,7 @@ function visibleLeads() {
   let arr = state.leads.filter(l => {
     if (state.filter === 'archiv') return !!l.deleted_at;
     if (l.deleted_at) return false;
-    if (state.filter === 'aktiv') return !['gewonnen','verloren'].includes(l.status);
+    if (state.filter === 'aktiv') return !isLeadClosed(l);
     return l.status === state.filter;
   });
   if (q) {
@@ -728,18 +729,20 @@ function visibleLeads() {
     });
   }
   arr.sort((a, b) => {
-    const rank = (l) => {
-      if (isOverdue(l)) return 0;
-      if (isToday(l)) return 1;
-      if (isThisWeek(l)) return 2;
-      if (l.next_followup_at) return 3;
+    const aNext = nextOpenActivity(a.id), bNext = nextOpenActivity(b.id);
+    const rank = (lead, nx) => {
+      if (nx) {
+        const s = activityState(nx);
+        if (s === 'overdue') return 0;
+        if (s === 'today') return 1;
+        if (s === 'thisweek') return 2;
+        return 3;
+      }
       return 4;
     };
-    const ra = rank(a), rb = rank(b);
+    const ra = rank(a, aNext), rb = rank(b, bNext);
     if (ra !== rb) return ra - rb;
-    if (a.next_followup_at && b.next_followup_at) {
-      return new Date(a.next_followup_at) - new Date(b.next_followup_at);
-    }
+    if (aNext && bNext) return new Date(aNext.scheduled_at) - new Date(bNext.scheduled_at);
     return new Date(b.updated_at) - new Date(a.updated_at);
   });
   return arr;
@@ -752,14 +755,15 @@ function render() {
   renderAlerts();
   renderFilterTabs();
   renderLeadList();
-  if (state.selectedLeadId) renderLeadDetail(); // refresh badges/timestamps
+  if (state.selectedLeadId) renderLeadDetail();
 }
 
 function renderAlerts() {
-  const active = state.leads.filter(l => !l.deleted_at && !['gewonnen','verloren'].includes(l.status));
-  const overdue = active.filter(isOverdue);
-  const today = active.filter(isToday);
-  const thisweek = active.filter(isThisWeek);
+  const activeLeadIds = new Set(state.leads.filter(l => !l.deleted_at && !isLeadClosed(l)).map(l => l.id));
+  const opens = state.activities.filter(a => !a.done_at && activeLeadIds.has(a.lead_id));
+  const overdue = opens.filter(a => activityState(a) === 'overdue').sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+  const today = opens.filter(a => activityState(a) === 'today').sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+  const thisweek = opens.filter(a => activityState(a) === 'thisweek').sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
 
   const el = document.getElementById('alerts');
   if (overdue.length === 0 && today.length === 0 && thisweek.length === 0) {
@@ -769,26 +773,33 @@ function renderAlerts() {
           <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
         </div>
         <div>
-          <p class="font-medium">Alle Follow-ups im Griff</p>
-          <p class="text-sm text-zinc-500">Keine offenen Anrufe für heute oder diese Woche.</p>
+          <p class="font-medium">Alle Aktivitäten im Griff</p>
+          <p class="text-sm text-zinc-500">Keine offenen Termine für heute oder diese Woche.</p>
         </div>
       </div>`;
     return;
   }
 
-  const card = (kind, title, leads, color) => {
-    if (leads.length === 0) return '';
-    const list = leads.slice(0, 4).map(l => `
-      <button onclick="selectLead('${l.id}')" class="w-full text-left flex items-center justify-between gap-2 py-1.5 hover:bg-white/5 rounded-md px-2 -mx-2 transition-colors">
-        <span class="text-sm font-medium truncate">${escapeHtml(l.firma)}</span>
-        <span class="text-xs text-zinc-500 shrink-0">${escapeHtml(formatRelative(l.next_followup_at))}</span>
-      </button>`).join('');
-    const more = leads.length > 4 ? `<p class="text-xs text-zinc-500 pt-2 pl-2">+ ${leads.length - 4} weitere</p>` : '';
+  const card = (kind, title, items, color) => {
+    if (items.length === 0) return '';
+    const list = items.slice(0, 5).map(a => {
+      const lead = state.leads.find(l => l.id === a.lead_id);
+      if (!lead) return '';
+      return `
+        <button onclick="selectLead('${lead.id}')" class="w-full text-left flex items-center justify-between gap-2 py-1.5 hover:bg-white/5 rounded-md px-2 -mx-2 transition-colors">
+          <span class="min-w-0 flex-1">
+            <span class="text-sm font-medium truncate block">${escapeHtml(a.titel)}</span>
+            <span class="text-[11px] text-zinc-500 truncate block">${escapeHtml(lead.firma)}</span>
+          </span>
+          <span class="text-xs text-zinc-500 shrink-0">${escapeHtml(formatRelative(a.scheduled_at))}</span>
+        </button>`;
+    }).join('');
+    const more = items.length > 5 ? `<p class="text-xs text-zinc-500 pt-2 pl-2">+ ${items.length - 5} weitere</p>` : '';
     return `
       <div class="rounded-2xl border ${color.border} ${color.bg} p-4 sm:p-5 ${kind === 'overdue' ? 'animate-pulse-red' : ''}">
         <div class="flex items-center justify-between mb-3">
           <h3 class="font-semibold ${color.title}">${escapeHtml(title)}</h3>
-          <span class="text-2xl font-bold ${color.count}">${leads.length}</span>
+          <span class="text-2xl font-bold ${color.count}">${items.length}</span>
         </div>
         <div class="space-y-0.5">${list}${more}</div>
       </div>`;
@@ -805,14 +816,7 @@ function renderAlerts() {
 function renderFilterTabs() {
   const el = document.getElementById('filter-tabs');
   const counts = {};
-  for (const l of state.leads) {
-    if (state.filter !== 'archiv' && l.deleted_at) continue;
-    counts.aktiv = (counts.aktiv || 0) + (!l.deleted_at && !['gewonnen','verloren'].includes(l.status) ? 1 : 0);
-    counts[l.status] = (counts[l.status] || 0) + (!l.deleted_at ? 1 : 0);
-    if (l.deleted_at) counts.archiv = (counts.archiv || 0) + 1;
-  }
-  // recount with cleaner pass
-  counts.aktiv = state.leads.filter(l => !l.deleted_at && !['gewonnen','verloren'].includes(l.status)).length;
+  counts.aktiv = state.leads.filter(l => !l.deleted_at && !isLeadClosed(l)).length;
   for (const s of STATUS_LIST) counts[s.key] = state.leads.filter(l => !l.deleted_at && l.status === s.key).length;
   counts.archiv = state.leads.filter(l => l.deleted_at).length;
 
@@ -822,7 +826,7 @@ function renderFilterTabs() {
     return `
       <button data-filter="${t.key}" class="shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${isActive ? 'bg-white text-zinc-950' : 'bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800'}">
         ${escapeHtml(t.label)}
-        <span class="text-xs ${isActive ? 'text-zinc-500' : 'text-zinc-500'}">${count}</span>
+        <span class="text-xs text-zinc-500">${count}</span>
       </button>`;
   }).join('');
   el.querySelectorAll('button[data-filter]').forEach(btn => {
@@ -849,13 +853,14 @@ function renderLeadList() {
 
   el.innerHTML = list.map(l => {
     const s = STATUS_MAP[l.status] || STATUS_MAP.in_arbeit;
-    const fState = getFollowupState(l);
-    const cardBorder = fState === 'overdue' ? 'border-red-500/50 ring-1 ring-red-500/30 animate-pulse-red'
-                    : fState === 'today'   ? 'border-amber-500/40'
+    const next = nextOpenActivity(l.id);
+    const nState = next ? activityState(next) : null;
+    const cardBorder = nState === 'overdue' ? 'border-red-500/50 ring-1 ring-red-500/30 animate-pulse-red'
+                    : nState === 'today'   ? 'border-amber-500/40'
                     : 'border-zinc-800 hover:border-zinc-700';
-    const fBadge = l.next_followup_at
-      ? `<span class="text-xs ${fState==='overdue'?'text-red-400':fState==='today'?'text-amber-400':'text-zinc-400'}">${escapeHtml(followupLabel(l))}</span>`
-      : (needsFollowupWarning(l) ? `<span class="text-xs text-yellow-400 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86l-8.18 14.18A2 2 0 003.83 21h16.34a2 2 0 001.72-2.96L13.71 3.86a2 2 0 00-3.42 0z"/></svg>Kein Follow-up</span>` : '');
+    const activityBadge = next
+      ? `<span class="text-xs ${nState==='overdue'?'text-red-400':nState==='today'?'text-amber-400':'text-zinc-400'} truncate"><span class="font-medium">${escapeHtml(next.titel)}</span> · ${escapeHtml(formatRelative(next.scheduled_at))}</span>`
+      : (needsActivityWarning(l) ? `<span class="text-xs text-yellow-400 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86l-8.18 14.18A2 2 0 003.83 21h16.34a2 2 0 001.72-2.96L13.71 3.86a2 2 0 00-3.42 0z"/></svg>Keine Aktivität</span>` : '');
 
     const tel = normalizePhone(l.telefon);
     const telBtn = tel ? `<a href="tel:${tel}" onclick="event.stopPropagation()" class="p-1.5 rounded-md hover:bg-zinc-800 transition-colors" title="Anrufen"><svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 2.79a2 2 0 01-.46 1.87L7.91 10.91a16 16 0 005.18 5.18l1.74-1.55a2 2 0 011.87-.46l2.79.7A2 2 0 0121 16.72V19a2 2 0 01-2 2A18 18 0 013 5z"/></svg></a>` : '';
@@ -869,9 +874,9 @@ function renderLeadList() {
           </div>
           ${telBtn}
         </div>
-        <div class="flex items-center justify-between gap-2 mt-3">
-          <span class="px-2 py-0.5 rounded-md text-xs font-medium border ${s.color}">${escapeHtml(s.label)}</span>
-          ${fBadge}
+        <div class="flex items-center justify-between gap-2 mt-3 min-w-0">
+          <span class="px-2 py-0.5 rounded-md text-xs font-medium border ${s.color} shrink-0">${escapeHtml(s.label)}</span>
+          <div class="min-w-0 text-right">${activityBadge}</div>
         </div>
         ${l.branche ? `<p class="text-xs text-zinc-500 mt-3 truncate">${escapeHtml(l.branche)}</p>` : ''}
       </article>`;
@@ -883,9 +888,12 @@ function renderLeadList() {
 // =============================================================
 async function selectLead(id) {
   state.selectedLeadId = id;
+  state.showDoneActivities = false;
   const panel = document.getElementById('lead-detail');
   panel.classList.remove('hidden');
-  gsap.fromTo(panel, { opacity: 0, x: window.innerWidth >= 640 ? 40 : 0, y: window.innerWidth < 640 ? 40 : 0 }, { opacity: 1, x: 0, y: 0, duration: 0.25, ease: 'power2.out' });
+  gsap.fromTo(panel,
+    { opacity: 0, x: window.innerWidth >= 640 ? 40 : 0, y: window.innerWidth < 640 ? 40 : 0 },
+    { opacity: 1, x: 0, y: 0, duration: 0.25, ease: 'power2.out' });
   document.body.style.overflow = 'hidden';
   if (!state.notesByLead[id]) await loadNotes(id);
   renderLeadDetail();
@@ -897,15 +905,12 @@ function closeLeadDetail() {
   document.body.style.overflow = '';
 }
 
-function getSelectedLead() {
-  return state.leads.find(l => l.id === state.selectedLeadId);
-}
+function getSelectedLead() { return state.leads.find(l => l.id === state.selectedLeadId); }
 
 function renderLeadDetail() {
   const lead = getSelectedLead();
   if (!lead) return;
 
-  // Stammdaten
   setIfDifferent('detail-firma', lead.firma || '');
   setIfDifferent('detail-branche', lead.branche || '');
   setIfDifferent('detail-kontaktperson', lead.kontaktperson || '');
@@ -924,26 +929,11 @@ function renderLeadDetail() {
     btn.addEventListener('click', () => changeStatus(btn.dataset.status));
   });
 
-  // Follow-up
-  setIfDifferent('detail-followup-at', toLocalInputValue(lead.next_followup_at));
-  setIfDifferent('detail-followup-note', lead.next_followup_note || '');
-  const badge = document.getElementById('detail-followup-badge');
-  if (lead.next_followup_at) {
-    const fState = getFollowupState(lead);
-    const cls = fState === 'overdue' ? 'bg-red-500/15 text-red-300 border-red-500/30'
-              : fState === 'today'   ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-              : 'bg-zinc-800 text-zinc-400 border-zinc-700';
-    badge.innerHTML = `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md border ${cls}">${escapeHtml(followupLabel(lead))}</span>`;
-  } else if (needsFollowupWarning(lead)) {
-    badge.innerHTML = `<span class="text-[10px] font-medium px-2 py-0.5 rounded-md border bg-yellow-500/10 text-yellow-300 border-yellow-500/30">⚠ Kein Follow-up</span>`;
-  } else {
-    badge.innerHTML = '';
-  }
+  renderActivities();
 
   // Quick actions
   const qa = document.getElementById('detail-quick-actions');
-  const tel = normalizePhone(lead.telefon);
-  const wa = waLink(lead.telefon);
+  const tel = normalizePhone(lead.telefon), wa = waLink(lead.telefon);
   qa.innerHTML = `
     ${tel ? `<a href="tel:${tel}" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm transition-colors">📞 <span>Anruf</span></a>` : `<div class="flex items-center justify-center px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-600">📞</div>`}
     ${wa ? `<a href="${wa}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm transition-colors">💬 <span>WhatsApp</span></a>` : `<div class="flex items-center justify-center px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-600">💬</div>`}
@@ -951,7 +941,7 @@ function renderLeadDetail() {
     ${lead.website_url ? `<a href="${escapeHtml(lead.website_url)}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm transition-colors">🔗 <span>Website</span></a>` : `<div class="flex items-center justify-center px-3 py-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800 text-sm text-zinc-600">🔗</div>`}
   `;
 
-  // Delete / restore
+  // Delete/restore
   const dr = document.getElementById('delete-restore-area');
   if (lead.deleted_at) {
     dr.innerHTML = `
@@ -966,10 +956,115 @@ function renderLeadDetail() {
   renderNotes();
 }
 
+function renderActivities() {
+  const lead = getSelectedLead();
+  if (!lead) return;
+  const opens = openActivitiesOfLead(lead.id).sort((a, b) => {
+    if (a.scheduled_at && !b.scheduled_at) return -1;
+    if (!a.scheduled_at && b.scheduled_at) return 1;
+    if (!a.scheduled_at && !b.scheduled_at) return new Date(a.created_at) - new Date(b.created_at);
+    return new Date(a.scheduled_at) - new Date(b.scheduled_at);
+  });
+  const dones = doneActivitiesOfLead(lead.id);
+
+  const warnEl = document.getElementById('activities-warning');
+  if (needsActivityWarning(lead)) {
+    warnEl.innerHTML = `<div class="mb-3 p-2.5 rounded-lg bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-xs flex items-center gap-2">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86l-8.18 14.18A2 2 0 003.83 21h16.34a2 2 0 001.72-2.96L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      Status ${escapeHtml(STATUS_MAP[lead.status].label)} ohne offene Aktivität — jemand vergessen?
+    </div>`;
+  } else {
+    warnEl.innerHTML = '';
+  }
+
+  const openEl = document.getElementById('activities-open');
+  if (opens.length === 0) {
+    openEl.innerHTML = `<p class="text-sm text-zinc-500 py-2">Keine offenen Aktivitäten.</p>`;
+  } else {
+    openEl.innerHTML = opens.map(renderActivityCard).join('');
+    openEl.querySelectorAll('[data-activity-card]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('[data-activity-action]')) return;
+        openActivityModal(el.dataset.activityCard);
+      });
+    });
+    openEl.querySelectorAll('[data-activity-action="done"]').forEach(el => {
+      el.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await markActivityDone(el.dataset.id);
+      });
+    });
+  }
+
+  const doneToggle = document.getElementById('activities-done-toggle');
+  const doneList = document.getElementById('activities-done');
+  const doneLabel = document.getElementById('activities-done-label');
+  const doneChevron = document.getElementById('activities-done-chevron');
+  if (dones.length === 0) {
+    doneToggle.classList.add('hidden');
+    doneList.classList.add('hidden');
+  } else {
+    doneToggle.classList.remove('hidden');
+    doneLabel.textContent = state.showDoneActivities ? `${dones.length} erledigte ausblenden` : `${dones.length} erledigte anzeigen`;
+    doneChevron.style.transform = state.showDoneActivities ? 'rotate(90deg)' : '';
+    if (state.showDoneActivities) {
+      doneList.classList.remove('hidden');
+      doneList.innerHTML = dones.map(renderDoneActivityRow).join('');
+      doneList.querySelectorAll('[data-activity-card]').forEach(el => {
+        el.addEventListener('click', () => openActivityModal(el.dataset.activityCard));
+      });
+    } else {
+      doneList.classList.add('hidden');
+    }
+  }
+}
+
+function renderActivityCard(a) {
+  const aState = activityState(a);
+  const tone = aState === 'overdue' ? { ring: 'border-red-500/40 bg-red-500/5', date: 'text-red-400', pulse: 'animate-pulse-red' }
+            : aState === 'today'   ? { ring: 'border-amber-500/40 bg-amber-500/5', date: 'text-amber-400', pulse: '' }
+            : aState === 'thisweek'? { ring: 'border-zinc-800 bg-zinc-900/50', date: 'text-zinc-300', pulse: '' }
+            : aState === 'unscheduled' ? { ring: 'border-zinc-800 bg-zinc-900/50', date: 'text-zinc-500', pulse: '' }
+            : { ring: 'border-zinc-800 bg-zinc-900/50', date: 'text-zinc-400', pulse: '' };
+  const dateLabel = a.scheduled_at
+    ? `${escapeHtml(formatScheduled(a.scheduled_at))} · ${escapeHtml(formatRelative(a.scheduled_at))}`
+    : 'Kein Datum';
+  const noteHtml = a.note ? `<p class="text-xs text-zinc-400 mt-1.5 whitespace-pre-wrap break-words line-clamp-3">${escapeHtml(a.note)}</p>` : '';
+  return `
+    <div data-activity-card="${a.id}" class="cursor-pointer rounded-lg border ${tone.ring} ${tone.pulse} p-3 hover:border-zinc-600 transition-colors">
+      <div class="flex items-start gap-3">
+        <button data-activity-action="done" data-id="${a.id}" class="mt-0.5 w-4 h-4 rounded border border-zinc-600 hover:border-emerald-500 hover:bg-emerald-500/20 transition-colors shrink-0" title="Als erledigt markieren"></button>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium text-zinc-100 break-words">${escapeHtml(a.titel)}</p>
+          <p class="text-xs ${tone.date} mt-0.5">${dateLabel}</p>
+          ${noteHtml}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderDoneActivityRow(a) {
+  const noteHtml = a.note ? `<p class="text-xs text-zinc-500 mt-0.5 line-clamp-1 break-words">${escapeHtml(a.note)}</p>` : '';
+  return `
+    <div data-activity-card="${a.id}" class="cursor-pointer flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-zinc-900 transition-colors">
+      <svg class="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm text-zinc-300 truncate"><span class="line-through text-zinc-500">${escapeHtml(a.titel)}</span></p>
+        ${noteHtml}
+      </div>
+      <span class="text-[10px] text-zinc-600 shrink-0 mt-1">${escapeHtml(formatRelative(a.done_at))}</span>
+    </div>`;
+}
+
+function toggleDoneActivities() {
+  state.showDoneActivities = !state.showDoneActivities;
+  renderActivities();
+}
+
 function setIfDifferent(id, value) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (document.activeElement === el) return; // don't clobber active input
+  if (document.activeElement === el) return;
   if (el.value !== value) el.value = value;
 }
 
@@ -979,7 +1074,7 @@ function renderNotes() {
   const notes = state.notesByLead[lead.id] || [];
   const el = document.getElementById('notes-timeline');
   if (notes.length === 0) {
-    el.innerHTML = '<p class="text-sm text-zinc-500">Noch keine Notizen.</p>';
+    el.innerHTML = '<p class="text-sm text-zinc-500">Noch keine allgemeinen Notizen.</p>';
     return;
   }
   el.innerHTML = notes.map(n => `
@@ -996,7 +1091,7 @@ function renderNotes() {
 }
 
 // =============================================================
-// EDIT HANDLERS (Auto-Save with Debounce)
+// EDIT HANDLERS (Auto-Save)
 // =============================================================
 const FIELD_MAP = {
   'detail-firma': 'firma',
@@ -1006,7 +1101,6 @@ const FIELD_MAP = {
   'detail-email': 'email',
   'detail-alte-website': 'alte_website',
   'detail-website-url': 'website_url',
-  'detail-followup-note': 'next_followup_note',
 };
 
 Object.keys(FIELD_MAP).forEach(id => {
@@ -1015,37 +1109,10 @@ Object.keys(FIELD_MAP).forEach(id => {
   el.addEventListener('blur', () => flushSave(id));
 });
 
-document.getElementById('detail-followup-at').addEventListener('change', async (e) => {
-  const lead = getSelectedLead();
-  if (!lead) return;
-  const iso = fromLocalInputValue(e.target.value);
-  await updateLead(lead.id, { next_followup_at: iso });
-  showSaved();
-  render();
-});
-
-document.querySelectorAll('.quick-followup').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const lead = getSelectedLead();
-    if (!lead) return;
-    const kind = btn.dataset.quick;
-    const iso = kind === 'clear' ? null : quickDate(kind);
-    await updateLead(lead.id, { next_followup_at: iso });
-    showSaved();
-    renderLeadDetail();
-    renderAlerts();
-    renderLeadList();
-  });
-});
-
-function queueSave(id) {
-  clearTimeout(state.saveTimers[id]);
-  state.saveTimers[id] = setTimeout(() => flushSave(id), 600);
-}
+function queueSave(id) { clearTimeout(state.saveTimers[id]); state.saveTimers[id] = setTimeout(() => flushSave(id), 600); }
 
 async function flushSave(id) {
-  clearTimeout(state.saveTimers[id]);
-  delete state.saveTimers[id];
+  clearTimeout(state.saveTimers[id]); delete state.saveTimers[id];
   const lead = getSelectedLead();
   if (!lead) return;
   const field = FIELD_MAP[id];
@@ -1053,7 +1120,7 @@ async function flushSave(id) {
   if ((lead[field] || '') === value) return;
   await updateLead(lead.id, { [field]: value || null });
   showSaved();
-  if (id === 'detail-firma') renderLeadList(); // firma in card needs refresh
+  if (id === 'detail-firma') renderLeadList();
 }
 
 function showSaved() {
@@ -1066,17 +1133,9 @@ function showSaved() {
 async function changeStatus(newStatus) {
   const lead = getSelectedLead();
   if (!lead || lead.status === newStatus) return;
-  const patch = { status: newStatus };
-  if (['gewonnen','verloren'].includes(newStatus)) {
-    patch.next_followup_at = null;
-    patch.next_followup_note = null;
-  }
-  await updateLead(lead.id, patch);
+  await updateLead(lead.id, { status: newStatus });
   showSaved();
-  renderLeadDetail();
-  renderAlerts();
-  renderLeadList();
-  renderFilterTabs();
+  render();
 }
 
 async function doSoftDeleteLead() {
@@ -1096,10 +1155,7 @@ async function doRestoreLead() {
   const lead = getSelectedLead();
   if (!lead) return;
   await restoreLead(lead.id);
-  renderLeadDetail();
-  renderAlerts();
-  renderLeadList();
-  renderFilterTabs();
+  render();
   toast('Lead wiederhergestellt');
 }
 
@@ -1125,7 +1181,7 @@ async function submitNote() {
 }
 
 // =============================================================
-// ADD LEAD MODAL
+// ADD LEAD
 // =============================================================
 function openAddLead() {
   document.getElementById('add-lead-modal').classList.remove('hidden');
@@ -1149,7 +1205,6 @@ document.getElementById('add-lead-form').addEventListener('submit', async (e) =>
     website_url: document.getElementById('new-website-url').value.trim() || null,
     status: 'in_arbeit',
   };
-  console.log('[add-lead] submit', fields);
   if (!fields.firma) {
     toast('Bitte Firma eingeben.');
     document.getElementById('new-firma').focus();
@@ -1157,90 +1212,126 @@ document.getElementById('add-lead-form').addEventListener('submit', async (e) =>
   }
   try {
     const lead = await createLead(fields);
-    console.log('[add-lead] result', lead);
     if (lead) {
       closeAddLead();
       await selectLead(lead.id);
     }
   } catch (err) {
-    console.error('[add-lead] error', err);
+    console.error('[add-lead]', err);
     toast('Fehler beim Anlegen: ' + (err.message || err));
   }
 });
 
 // =============================================================
-// ANRUF ERLEDIGT MODAL
+// ACTIVITY MODAL
 // =============================================================
-function openAnrufErledigt() {
-  document.getElementById('anruf-form').reset();
-  document.getElementById('anruf-modal').classList.remove('hidden');
-  setTimeout(() => document.getElementById('anruf-note').focus(), 50);
-}
-function closeAnrufErledigt() {
-  document.getElementById('anruf-modal').classList.add('hidden');
+function openActivityModal(activityId) {
+  const lead = getSelectedLead();
+  if (!lead) return;
+  state.editingActivityId = activityId || null;
+  const isEdit = !!activityId;
+  document.getElementById('activity-modal-title').textContent = isEdit ? 'Aktivität bearbeiten' : 'Neue Aktivität';
+  document.getElementById('activity-delete-btn').classList.toggle('hidden', !isEdit);
+  document.getElementById('activity-done-block').classList.toggle('hidden', !isEdit);
+
+  if (isEdit) {
+    const a = state.activities.find(x => x.id === activityId);
+    if (!a) return;
+    document.getElementById('activity-titel').value = a.titel || '';
+    document.getElementById('activity-scheduled-at').value = toLocalInputValue(a.scheduled_at);
+    document.getElementById('activity-note').value = a.note || '';
+    document.getElementById('activity-done-check').checked = !!a.done_at;
+  } else {
+    document.getElementById('activity-form').reset();
+    document.getElementById('activity-done-check').checked = false;
+  }
+
+  document.getElementById('activity-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('activity-titel').focus(), 50);
 }
 
-document.querySelectorAll('[data-anruf-quick]').forEach(btn => {
+function closeActivityModal() {
+  document.getElementById('activity-modal').classList.add('hidden');
+  state.editingActivityId = null;
+}
+
+document.querySelectorAll('[data-activity-quick]').forEach(btn => {
   btn.addEventListener('click', () => {
-    const iso = quickDate(btn.dataset.anrufQuick);
-    document.getElementById('anruf-followup-at').value = toLocalInputValue(iso);
+    const kind = btn.dataset.activityQuick;
+    document.getElementById('activity-scheduled-at').value = kind === 'clear' ? '' : toLocalInputValue(quickDate(kind));
   });
 });
 
-document.getElementById('anruf-form').addEventListener('submit', async (e) => {
+document.getElementById('activity-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const lead = getSelectedLead();
   if (!lead) return;
-  const note = document.getElementById('anruf-note').value.trim();
-  const followupRaw = document.getElementById('anruf-followup-at').value;
-  const followupNote = document.getElementById('anruf-followup-note').value.trim();
-  if (!note) return;
-  await addNote(lead.id, note);
-  const patch = {};
-  if (followupRaw) patch.next_followup_at = fromLocalInputValue(followupRaw);
-  if (followupNote) patch.next_followup_note = followupNote;
-  if (Object.keys(patch).length) await updateLead(lead.id, patch);
-  closeAnrufErledigt();
-  renderLeadDetail();
-  renderAlerts();
-  renderLeadList();
-  toast('Notiz + nächster Schritt gespeichert');
+  const titel = document.getElementById('activity-titel').value.trim();
+  if (!titel) { toast('Bitte einen Titel angeben.'); return; }
+  const scheduledRaw = document.getElementById('activity-scheduled-at').value;
+  const note = document.getElementById('activity-note').value.trim() || null;
+  const isDone = document.getElementById('activity-done-check').checked;
+  const fields = {
+    titel,
+    scheduled_at: fromLocalInputValue(scheduledRaw),
+    note,
+  };
+  if (state.editingActivityId) {
+    const current = state.activities.find(a => a.id === state.editingActivityId);
+    fields.done_at = isDone ? (current?.done_at || new Date().toISOString()) : null;
+    await updateActivity(state.editingActivityId, fields);
+  } else {
+    fields.lead_id = lead.id;
+    if (isDone) fields.done_at = new Date().toISOString();
+    await createActivity(fields);
+  }
+  closeActivityModal();
+  render();
 });
+
+async function deleteActivityFromModal() {
+  if (!state.editingActivityId) return;
+  if (!confirm('Aktivität wirklich löschen?')) return;
+  await deleteActivity(state.editingActivityId);
+  closeActivityModal();
+  render();
+}
+
+async function markActivityDone(id) {
+  await updateActivity(id, { done_at: new Date().toISOString() });
+  render();
+}
 
 // =============================================================
 // SEARCH
 // =============================================================
 const searchInput = document.getElementById('search-input');
-searchInput.addEventListener('input', () => {
-  state.search = searchInput.value;
-  renderLeadList();
-});
+searchInput.addEventListener('input', () => { state.search = searchInput.value; renderLeadList(); });
 
 // =============================================================
 // MENU
 // =============================================================
 const menuBtn = document.getElementById('menu-btn');
-const menuDd = document.getElementById('menu-dropdown');
-menuBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  menuDd.classList.toggle('hidden');
-});
+const menuDd  = document.getElementById('menu-dropdown');
+menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuDd.classList.toggle('hidden'); });
 document.addEventListener('click', (e) => {
   if (!menuBtn.contains(e.target) && !menuDd.contains(e.target)) menuDd.classList.add('hidden');
 });
 
 // =============================================================
-// JSON EXPORT
+// EXPORT
 // =============================================================
 document.getElementById('export-btn').addEventListener('click', async () => {
   menuDd.classList.add('hidden');
-  const { data: leads } = await sb.from('leads').select('*').order('created_at');
-  const { data: notes } = await sb.from('notes').select('*').order('created_at');
-  const blob = new Blob([JSON.stringify({ exported_at: new Date().toISOString(), leads: leads || [], notes: notes || [] }, null, 2)], { type: 'application/json' });
+  const [{ data: leads }, { data: notes }, { data: activities }] = await Promise.all([
+    sb.from('leads').select('*').order('created_at'),
+    sb.from('notes').select('*').order('created_at'),
+    sb.from('activities').select('*').order('created_at'),
+  ]);
+  const blob = new Blob([JSON.stringify({ exported_at: new Date().toISOString(), leads: leads || [], notes: notes || [], activities: activities || [] }, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `semp-crm-export-${new Date().toISOString().slice(0,10)}.json`;
+  a.href = url; a.download = `semp-crm-export-${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
   toast('Export heruntergeladen');
@@ -1254,13 +1345,14 @@ document.addEventListener('keydown', (e) => {
   const tag = e.target.tagName.toLowerCase();
   const isInput = tag === 'input' || tag === 'textarea' || e.target.isContentEditable;
   if (e.key === 'Escape') {
-    if (!document.getElementById('anruf-modal').classList.contains('hidden')) { closeAnrufErledigt(); return; }
+    if (!document.getElementById('activity-modal').classList.contains('hidden')) { closeActivityModal(); return; }
     if (!document.getElementById('add-lead-modal').classList.contains('hidden')) { closeAddLead(); return; }
     if (state.selectedLeadId) { closeLeadDetail(); return; }
   }
   if (isInput) return;
   if (e.key === '/') { e.preventDefault(); searchInput.focus(); }
   if (e.key === 'n') { e.preventDefault(); openAddLead(); }
+  if (e.key === 'a' && state.selectedLeadId) { e.preventDefault(); openActivityModal(); }
 });
 
 // =============================================================

@@ -15,8 +15,6 @@ create table if not exists leads (
   alte_website       text,
   website_url        text,
   status             text not null default 'in_arbeit',
-  next_followup_at   timestamptz,
-  next_followup_note text,
   deleted_at         timestamptz,
   created_at         timestamptz not null default now(),
   updated_at         timestamptz not null default now()
@@ -27,6 +25,17 @@ create table if not exists notes (
   lead_id     uuid not null references leads(id) on delete cascade,
   content     text not null,
   created_at  timestamptz not null default now()
+);
+
+create table if not exists activities (
+  id           uuid primary key default gen_random_uuid(),
+  lead_id      uuid not null references leads(id) on delete cascade,
+  titel        text not null,
+  scheduled_at timestamptz,
+  note         text,
+  done_at      timestamptz,
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
 );
 
 -- ---------- TRIGGERS -------------------------------------------------------
@@ -43,19 +52,29 @@ create trigger leads_set_updated_at
   before update on leads
   for each row execute function set_updated_at();
 
+drop trigger if exists activities_set_updated_at on activities;
+create trigger activities_set_updated_at
+  before update on activities
+  for each row execute function set_updated_at();
+
 -- ---------- INDICES --------------------------------------------------------
 
-create index if not exists leads_followup_idx
-  on leads (next_followup_at) where deleted_at is null;
 create index if not exists leads_status_idx
   on leads (status) where deleted_at is null;
 create index if not exists notes_lead_created_idx
   on notes (lead_id, created_at desc);
+create index if not exists activities_lead_idx
+  on activities (lead_id);
+create index if not exists activities_lead_scheduled_idx
+  on activities (lead_id, scheduled_at desc);
+create index if not exists activities_open_scheduled_idx
+  on activities (scheduled_at) where done_at is null;
 
 -- ---------- ROW LEVEL SECURITY ---------------------------------------------
 
 alter table leads enable row level security;
 alter table notes enable row level security;
+alter table activities enable row level security;
 
 drop policy if exists "auth_all_leads" on leads;
 create policy "auth_all_leads" on leads
@@ -64,6 +83,11 @@ create policy "auth_all_leads" on leads
 
 drop policy if exists "auth_all_notes" on notes;
 create policy "auth_all_notes" on notes
+  for all to authenticated
+  using (true) with check (true);
+
+drop policy if exists "auth_all_activities" on activities;
+create policy "auth_all_activities" on activities
   for all to authenticated
   using (true) with check (true);
 
@@ -83,5 +107,11 @@ begin
     where pubname = 'supabase_realtime' and tablename = 'notes'
   ) then
     alter publication supabase_realtime add table notes;
+  end if;
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and tablename = 'activities'
+  ) then
+    alter publication supabase_realtime add table activities;
   end if;
 end $$;
