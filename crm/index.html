@@ -177,7 +177,7 @@
     <div id="engine-view" class="hidden">
       <section class="mb-6 sm:mb-8">
         <div class="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent px-5 sm:px-6 py-5">
-          <div class="flex items-start justify-between gap-4">
+          <div class="flex items-start justify-between gap-4 mb-4">
             <div class="min-w-0">
               <p class="text-[11px] font-medium text-amber-300/70 uppercase tracking-wider flex items-center gap-1.5">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -190,6 +190,18 @@
               <p id="engine-count" class="text-2xl font-bold text-amber-300 tabular-nums">0</p>
               <p class="text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5">Prospects</p>
             </div>
+          </div>
+          <!-- Engine Actions -->
+          <div class="flex flex-wrap gap-2">
+            <button onclick="openScrapeModal()" class="px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs flex items-center gap-1.5 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              Neue Leads ziehen
+            </button>
+            <button onclick="triggerEnrichJob()" id="engine-enrich-btn" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-medium text-xs flex items-center gap-1.5 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span id="engine-enrich-label">Enrich Neue</span>
+            </button>
+            <p class="ml-auto text-[10px] text-zinc-500 self-center">Watcher muss laufen: <code class="px-1 py-0.5 rounded bg-zinc-900 text-zinc-400">node watch.mjs</code></p>
           </div>
         </div>
       </section>
@@ -455,6 +467,33 @@
     <!-- Progress Bar -->
     <div class="mt-2 h-1 rounded-full bg-zinc-800 overflow-hidden">
       <div id="esb-progress" class="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-300" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- SCRAPE MODAL -->
+  <div id="scrape-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
+      <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+        <h2 class="font-semibold text-sm">Neue Leads ziehen</h2>
+        <button onclick="closeScrapeModal()" class="p-1 rounded-md hover:bg-zinc-800 transition-colors">
+          <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Stadt</label>
+          <input type="text" id="scrape-stadt" placeholder="z.B. Frankfurt, München, Hamburg" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Radius (in Meter)</label>
+          <input type="number" id="scrape-radius" value="2500" step="500" min="500" max="10000" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          <p class="text-[10px] text-zinc-500 mt-1">Faustregel: 1500m = Zentrum (~150 Leads), 3000m = ganze Stadt (~300+ Leads)</p>
+        </div>
+      </div>
+      <div class="px-5 py-3 border-t border-zinc-800 flex justify-end gap-2">
+        <button onclick="closeScrapeModal()" class="px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-zinc-200 transition-colors">Abbrechen</button>
+        <button onclick="submitScrapeJob()" class="px-3 py-2 rounded-lg bg-white text-zinc-950 font-medium text-sm hover:bg-zinc-200 transition-colors">Job starten</button>
+      </div>
     </div>
   </div>
 
@@ -2469,16 +2508,18 @@ function renderProspectCard(p) {
   const pains = (p.pain_points || []).slice(0, 3);
   const ownerBadgeHtml = ownerBadge(p.owner, 'sm');
 
+  const canAudit = p.prospect_status !== 'new' && p.llm_score == null && !p.enrichment?.no_website;
   return `
-    <button type="button" data-prospect-id="${p.id}" class="prospect-card-btn text-left rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/70 transition-colors p-3 sm:p-4 flex gap-3 sm:gap-4 group w-full">
-      <div class="shrink-0 w-24 sm:w-28 h-40 sm:h-44 rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 relative">
+    <div class="rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/70 transition-colors p-3 sm:p-4 flex gap-3 sm:gap-4 group relative">
+      <button type="button" data-prospect-id="${p.id}" class="prospect-card-btn absolute inset-0 z-0 cursor-pointer" aria-label="Open prospect"></button>
+      <div class="shrink-0 w-24 sm:w-28 h-40 sm:h-44 rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 relative pointer-events-none">
         ${thumb
           ? `<img src="${escapeHtml(thumb)}" alt="" class="w-full h-full object-cover object-top" loading="lazy" onerror="this.style.display='none'" />`
           : noWeb
             ? `<div class="absolute inset-0 flex items-center justify-center text-[10px] text-zinc-500 text-center p-2">keine<br>Website</div>`
             : `<div class="absolute inset-0 flex items-center justify-center text-zinc-700"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4-4a3 3 0 014 0l4 4M16 12l1-1a3 3 0 014 0l-1 1M4 4h16v16H4z"/></svg></div>`}
       </div>
-      <div class="flex-1 min-w-0">
+      <div class="flex-1 min-w-0 pointer-events-none">
         <div class="flex items-start gap-2 mb-1">
           <div class="flex-1 min-w-0">
             <p class="font-semibold text-sm text-zinc-100 truncate">${escapeHtml(p.firma)}</p>
@@ -2501,7 +2542,12 @@ function renderProspectCard(p) {
           <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] border ${status.color}">${escapeHtml(status.label)}</span>
         </div>
       </div>
-    </button>`;
+      ${canAudit ? `
+        <button type="button" data-audit-id="${p.id}" class="audit-trigger-btn absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-[11px] font-semibold flex items-center gap-1 transition-colors pointer-events-auto">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          AI Audit
+        </button>` : ''}
+    </div>`;
 }
 
 function renderEngine() {
@@ -2566,7 +2612,8 @@ function renderProspectDetail() {
     (e.tech_stack && e.tech_stack[0]) && escapeHtml(e.tech_stack[0]),
   ].filter(Boolean).join(' · ');
 
-  // Hero: Score + Hook + Summary
+  // Hero: Score + Hook + Summary + AI-Audit-Button
+  const canRunAudit = p.prospect_status !== 'new' && !p.enrichment?.no_website;
   document.getElementById('pd-hero').innerHTML = `
     <div class="flex items-start gap-3">
       <div class="shrink-0 w-16 h-16 rounded-2xl border ${scoreColor(score)} flex flex-col items-center justify-center font-bold">
@@ -2576,6 +2623,11 @@ function renderProspectDetail() {
       <div class="flex-1 min-w-0">
         ${p.sales_pitch_hook ? `<p class="text-sm text-amber-200 italic mb-1">"${escapeHtml(p.sales_pitch_hook)}"</p>` : ''}
         ${p.scoring_summary ? `<p class="text-xs text-zinc-400">${escapeHtml(p.scoring_summary)}</p>` : ''}
+        ${canRunAudit ? `
+          <button type="button" data-audit-id="${p.id}" class="audit-trigger-btn mt-2 px-3 py-1.5 rounded-md bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            ${p.llm_score == null ? 'AI Audit starten' : 'AI Audit erneut'}
+          </button>` : ''}
       </div>
     </div>`;
 
@@ -2925,6 +2977,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event-Delegation auf document — überlebt Re-Renders garantiert
   document.addEventListener('click', (e) => {
+    // AI-Audit-Button (zuerst checken, damit er nicht als Card-Click rausgeht)
+    const auditBtn = e.target.closest('.audit-trigger-btn');
+    if (auditBtn && auditBtn.dataset.auditId) {
+      e.preventDefault();
+      e.stopPropagation();
+      triggerAuditJob(auditBtn.dataset.auditId);
+      return;
+    }
     // Prospect Card öffnen
     const card = e.target.closest('.prospect-card-btn');
     if (card && card.dataset.prospectId) {
@@ -3067,6 +3127,46 @@ function subscribeEngineStatus() {
       if (payload.new) renderEngineStatus(payload.new);
     })
     .subscribe();
+}
+
+// =============================================================
+// ENGINE JOBS — vom CRM triggern
+// =============================================================
+function openScrapeModal() {
+  document.getElementById('scrape-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('scrape-stadt').focus(), 50);
+}
+function closeScrapeModal() {
+  document.getElementById('scrape-modal').classList.add('hidden');
+}
+
+async function submitScrapeJob() {
+  const stadt = (document.getElementById('scrape-stadt').value || '').trim();
+  const radius = parseInt(document.getElementById('scrape-radius').value, 10) || 2500;
+  if (!stadt) { toast('Stadt fehlt'); return; }
+  const { error } = await sb.from('engine_jobs').insert({
+    kind: 'scrape', payload: { stadt, radius }, created_by: 'CRM',
+  });
+  if (error) { toast('Job nicht angelegt: ' + error.message); return; }
+  closeScrapeModal();
+  toast(`✓ Scrape-Job in Queue: ${stadt} (${radius}m)`);
+}
+
+async function triggerEnrichJob() {
+  const { error } = await sb.from('engine_jobs').insert({
+    kind: 'enrich', payload: {}, created_by: 'CRM',
+  });
+  if (error) { toast('Job nicht angelegt: ' + error.message); return; }
+  toast('✓ Enrich-Job in Queue — schaut alle Prospects mit Status "neu" an');
+}
+
+async function triggerAuditJob(prospectId) {
+  if (!prospectId) return;
+  const { error } = await sb.from('engine_jobs').insert({
+    kind: 'audit', prospect_id: prospectId, payload: {}, created_by: 'CRM',
+  });
+  if (error) { toast('Audit nicht gestartet: ' + error.message); return; }
+  toast('✓ AI-Audit in Queue (dauert ~10-20s)');
 }
 
 // =============================================================
