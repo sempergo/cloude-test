@@ -977,7 +977,7 @@ function subscribeRealtime() {
         state.prospects = state.prospects.filter(p => p.id !== payload.old.id);
       }
       if (state.view === 'engine') {
-        renderEngine();
+        scheduleEngineRender();
         if (state.selectedProspectId === (payload.new?.id || payload.old?.id)) renderProspectDetail();
       }
     })
@@ -2438,7 +2438,7 @@ function renderProspectCard(p) {
   const ownerBadgeHtml = ownerBadge(p.owner, 'sm');
 
   return `
-    <button onclick="selectProspect('${p.id}')" class="text-left rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/70 transition-colors p-3 sm:p-4 flex gap-3 sm:gap-4 group">
+    <button type="button" data-prospect-id="${p.id}" class="prospect-card-btn text-left rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/70 transition-colors p-3 sm:p-4 flex gap-3 sm:gap-4 group w-full">
       <div class="shrink-0 w-24 sm:w-28 h-40 sm:h-44 rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 relative">
         ${thumb
           ? `<img src="${escapeHtml(thumb)}" alt="" class="w-full h-full object-cover object-top" loading="lazy" onerror="this.style.display='none'" />`
@@ -2876,13 +2876,33 @@ function handleProspectActivityRealtime(payload) {
   if (state.view === 'engine' && state.selectedProspectId) renderProspectActivities();
 }
 
-// ---------- Sort/Stadt change handlers --------------------------------------
+// ---------- Sort/Stadt change handlers + Card-Click Delegation --------------
 document.addEventListener('DOMContentLoaded', () => {
   const sortEl = document.getElementById('engine-sort');
   if (sortEl) sortEl.addEventListener('change', e => { state.prospectSort = e.target.value; renderEngine(); });
   const stadtEl = document.getElementById('engine-stadt');
   if (stadtEl) stadtEl.addEventListener('change', e => { state.prospectStadt = e.target.value; renderEngine(); });
+
+  // Event-Delegation auf dem Parent → überlebt Re-Renders während Realtime-Updates
+  const listEl = document.getElementById('prospect-list');
+  if (listEl) {
+    listEl.addEventListener('click', (e) => {
+      const card = e.target.closest('.prospect-card-btn');
+      if (card && card.dataset.prospectId) {
+        e.preventDefault();
+        selectProspect(card.dataset.prospectId);
+      }
+    });
+  }
 });
+
+// Throttled renderEngine: max einmal pro 250ms während Bulk-Updates
+let _engineRenderPending = false;
+function scheduleEngineRender() {
+  if (_engineRenderPending) return;
+  _engineRenderPending = true;
+  setTimeout(() => { _engineRenderPending = false; renderEngine(); }, 250);
+}
 
 // =============================================================
 // BOOT
