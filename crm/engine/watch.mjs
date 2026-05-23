@@ -239,10 +239,10 @@ async function handleAuditJob(job) {
   const p = await getProspect(job.prospect_id);
   if (!p) throw new Error('Prospect nicht gefunden');
 
-  await startRun('audit', 1, `AI-Audit: ${p.firma}`);
-  await reportProgress({ processed: 0, current_label: p.firma, message: 'Phase A: Regeln' });
+  await startRun('audit', 3, `AI-Audit: ${p.firma}`);
 
   // Phase A: Rule-Score (immer aktualisieren)
+  await reportProgress({ processed: 0, current_label: p.firma, message: 'Phase A: Regeln' });
   const rs = ruleScore(p);
   await updateProspect(p.id, {
     rule_score: rs,
@@ -251,11 +251,34 @@ async function handleAuditJob(job) {
   });
 
   if (p.enrichment?.no_website) {
-    await reportProgress({ processed: 1, message: 'Keine Website — kein LLM-Audit möglich' });
+    await reportProgress({ processed: 3, message: 'Keine Website — kein LLM-Audit möglich' });
     return { rule_score: rs, llm_score: null };
   }
 
-  await reportProgress({ processed: 0, current_label: p.firma, message: 'Phase B: Vision-LLM (Claude)' });
+  // Phase A.5: Frische Screenshots (mit Cookie-Banner-Fix) — überschreibt alte
+  await reportProgress({ processed: 1, current_label: p.firma, message: 'Frische Screenshots (Cookies ausblenden)…' });
+  try {
+    const [desktop, mobile] = await Promise.all([
+      captureSite(p.website, { mobile: false }),
+      captureSite(p.website, { mobile: true }),
+    ]);
+    if (desktop.ok && desktop.screenshot) {
+      p.screenshot_desktop = await uploadScreenshot(p.id, 'desktop', desktop.screenshot);
+    }
+    if (mobile.ok && mobile.screenshot) {
+      p.screenshot_mobile = await uploadScreenshot(p.id, 'mobile', mobile.screenshot);
+    }
+    await updateProspect(p.id, {
+      screenshot_desktop: p.screenshot_desktop,
+      screenshot_mobile: p.screenshot_mobile,
+      enriched_at: new Date().toISOString(),
+    });
+  } catch (e) {
+    log.warn(`screenshot refresh failed (audit nutzt alte): ${e.message}`);
+  }
+
+  // Phase B: Vision-LLM
+  await reportProgress({ processed: 2, current_label: p.firma, message: 'Phase B: Vision-LLM (Claude)' });
   const [desktopB64, mobileB64] = await Promise.all([
     fetchAsBase64(p.screenshot_desktop),
     fetchAsBase64(p.screenshot_mobile),
@@ -277,7 +300,7 @@ async function handleAuditJob(job) {
     sales_pitch_hook: result.sales_pitch_hook,
     scored_at: new Date().toISOString(),
   });
-  await reportProgress({ processed: 1, message: `Audit fertig — Score ${result.llm_score}` });
+  await reportProgress({ processed: 3, message: `Audit fertig — Score ${result.llm_score}` });
   return { rule_score: rs, llm_score: result.llm_score, cost_usd: result._meta?.cost_usd };
 }
 

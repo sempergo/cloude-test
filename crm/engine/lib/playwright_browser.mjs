@@ -6,6 +6,132 @@ import { log } from './log.mjs';
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
 
+// ============================================================================
+// COOKIE-BANNER DISMISSAL
+// ============================================================================
+
+// Selektoren für die verbreitetsten Consent-Manager (Cookiebot, OneTrust, Usercentrics, Borlabs, etc.)
+const COOKIE_ACCEPT_SELECTORS = [
+  // Cookiebot
+  '#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll',
+  '#CybotCookiebotDialogBodyButtonAccept',
+  '#CybotCookiebotDialogBodyLevelButtonAccept',
+  // OneTrust
+  '#onetrust-accept-btn-handler',
+  '#accept-recommended-btn-handler',
+  // Usercentrics
+  '#usercentrics-root button[data-testid="uc-accept-all-button"]',
+  '[data-testid="uc-accept-all-button"]',
+  'button[data-action="onAcceptAllConsents"]',
+  // Borlabs Cookie (sehr verbreitet bei WordPress in DE)
+  'a._brlbs-btn-accept-all',
+  '._brlbs-accept-all',
+  '#BorlabsCookieBox a[data-cookie-accept-all]',
+  // Cookiefirst
+  'button#cf-accept-all',
+  // Iubenda
+  '.iubenda-cs-accept-btn',
+  // Quantcast
+  'button.qc-cmp-button[mode="primary"]',
+  // Termly
+  '#truste-consent-button',
+  // WordPress Cookie Notice (Hu-Manity)
+  'button.hu-cookies-accept',
+  '#cn-accept-cookie',
+  // Generic data-attrs
+  'button[data-cy="cookiebar-accept"]',
+  'button[data-cookie-accept]',
+  'button[aria-label*="akzeptieren" i]',
+  'button[aria-label*="accept all" i]',
+];
+
+// Text-basierter Fallback (auf Deutsch + Englisch)
+const COOKIE_ACCEPT_TEXTS = [
+  'Alle akzeptieren', 'Alles akzeptieren', 'Alle Cookies akzeptieren',
+  'Akzeptieren', 'Zustimmen', 'Einverstanden', 'OK',
+  'Accept all', 'Accept All', 'Accept Cookies', 'Accept', 'Agree', 'I agree',
+  'Allow all', 'Got it',
+];
+
+// CSS um restliche Banner zu verstecken (für Sites die unsere Klicks nicht akzeptiert haben)
+const COOKIE_HIDE_CSS = `
+  /* Bekannte Container */
+  #CybotCookiebotDialog, #cookiebot-dialog,
+  #onetrust-banner-sdk, #onetrust-consent-sdk,
+  #usercentrics-root, #usercentrics-cmp-ui,
+  #BorlabsCookieBox, ._brlbs-bar-wrap, ._brlbs-box-wrap,
+  #cookiefirst-root, .cookiefirst-banner,
+  .iubenda-cs-container, #iubenda-cs-banner,
+  #qc-cmp2-container, #qcCmpUi, .qc-cmp-ui-container,
+  #truste-consent-track, .truste_box_overlay,
+  #cookie-notice, #cn-notice-text,
+  .hu-cookies-modal, #hu-cookies-bar,
+  /* Generic Patterns */
+  [id*="cookie-consent" i],
+  [id*="cookie-banner" i],
+  [id*="cookie-notice" i],
+  [id*="consent-banner" i],
+  [id*="consent-popup" i],
+  [class*="cookie-banner" i]:not([class*="acceptedcookies" i]),
+  [class*="cookie-notice" i],
+  [class*="cookie-modal" i],
+  [class*="cookie-consent" i],
+  [class*="consent-banner" i],
+  [class*="gdpr-banner" i],
+  [class*="cc-window" i],
+  .cc-banner, .cc-window,
+  /* Generic Overlays mit hohem z-index */
+  div[style*="z-index: 99999"],
+  div[style*="z-index: 999999"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  html, body { overflow: auto !important; }
+`;
+
+async function dismissCookieBanners(page) {
+  // 1. Selector-basierte Klicks (schnell)
+  for (const sel of COOKIE_ACCEPT_SELECTORS) {
+    try {
+      const btn = await page.$(sel);
+      if (btn) {
+        await btn.click({ timeout: 1500 }).catch(() => {});
+        await page.waitForTimeout(150);
+      }
+    } catch { /* ignore */ }
+  }
+  // 2. Text-basierter Fallback — finde Buttons mit passendem Text
+  try {
+    await page.evaluate((texts) => {
+      const lowerTexts = texts.map(t => t.toLowerCase());
+      const buttons = [...document.querySelectorAll('button, a, [role="button"]')];
+      for (const el of buttons) {
+        const t = (el.innerText || el.textContent || '').trim().toLowerCase();
+        if (!t || t.length > 40) continue;
+        if (lowerTexts.some(lt => t === lt || t.startsWith(lt))) {
+          try { el.click(); } catch {}
+          return; // nur den ersten Match klicken
+        }
+      }
+    }, COOKIE_ACCEPT_TEXTS);
+    await page.waitForTimeout(200);
+  } catch { /* ignore */ }
+  // 3. iframes (manche Banner sind in iframes)
+  try {
+    for (const frame of page.frames()) {
+      if (frame === page.mainFrame()) continue;
+      for (const sel of COOKIE_ACCEPT_SELECTORS.slice(0, 8)) {
+        try {
+          const btn = await frame.$(sel);
+          if (btn) { await btn.click({ timeout: 1000 }).catch(() => {}); }
+        } catch {}
+      }
+    }
+  } catch {}
+}
+
 let _browser = null;
 let _shuttingDown = false;
 
@@ -95,6 +221,13 @@ export async function captureSite(url, opts = {}) {
     }
     // Kleine Pause für Lazy-Load-Content
     await page.waitForTimeout(800);
+
+    // Cookie-Banner wegklicken (probiert verbreitete Consent-Manager + Fallback per Text)
+    await dismissCookieBanners(page);
+
+    // Restliche Banner per CSS verstecken (für die Sites die wir nicht klicken konnten)
+    await page.addStyleTag({ content: COOKIE_HIDE_CSS }).catch(() => {});
+    await page.waitForTimeout(200);
 
     // Bis ans Seitenende scrollen (mit hartem Cap, damit Infinite-Scroll-Seiten nicht hängen)
     try {
