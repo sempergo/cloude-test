@@ -333,6 +333,14 @@
             class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm" />
         </div>
         <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Owner</label>
+          <div id="activity-owner-buttons" class="inline-flex rounded-lg border border-zinc-800 p-0.5 bg-zinc-950 gap-0.5">
+            <button type="button" data-owner="Markus" class="owner-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors">Markus</button>
+            <button type="button" data-owner="Robin"  class="owner-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors">Robin</button>
+            <button type="button" data-owner=""       class="owner-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors">—</button>
+          </div>
+        </div>
+        <div>
           <label class="block text-xs font-medium text-zinc-400 mb-1.5">Datum &amp; Uhrzeit</label>
           <input type="datetime-local" id="activity-scheduled-at"
             class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-600 focus:outline-none text-sm mb-2" />
@@ -404,6 +412,20 @@ const SUPABASE_ANON_KEY = 'sb_publishable_z0IM0JF7zblBe-uj1uqDXw_HJj2xo91';
 // =============================================================
 // CONSTANTS
 // =============================================================
+const OWNERS = {
+  Markus: { initial: 'M', label: 'Markus', badge: 'bg-teal-500/20 text-teal-300 border-teal-500/40', active: 'bg-teal-500/20 text-teal-100 border-teal-500/40' },
+  Robin:  { initial: 'R', label: 'Robin',  badge: 'bg-pink-500/20 text-pink-300 border-pink-500/40', active: 'bg-pink-500/20 text-pink-100 border-pink-500/40' },
+};
+
+function ownerBadge(owner, size = 'sm') {
+  if (!owner || !OWNERS[owner]) return '';
+  const o = OWNERS[owner];
+  const cls = size === 'xs'
+    ? `inline-flex items-center justify-center w-4 h-4 rounded text-[9px] font-bold border ${o.badge}`
+    : `inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-bold border ${o.badge}`;
+  return `<span class="${cls}" title="Owner: ${o.label}">${o.initial}</span>`;
+}
+
 const STATUS_LIST = [
   { key: 'in_arbeit',   label: 'In Arbeit',   color: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30' },
   { key: 'gesendet',    label: 'Gesendet',    color: 'bg-sky-500/15 text-sky-300 border-sky-500/30' },
@@ -1039,7 +1061,10 @@ function renderAlerts() {
             <span class="text-sm font-medium truncate block">${escapeHtml(a.titel)}</span>
             <span class="text-[11px] text-zinc-500 truncate block">${escapeHtml(lead.firma)}</span>
           </span>
-          <span class="text-xs text-zinc-500 shrink-0">${escapeHtml(formatRelative(a.scheduled_at))}</span>
+          <span class="flex items-center gap-1.5 shrink-0">
+            ${ownerBadge(a.owner, 'xs')}
+            <span class="text-xs text-zinc-500">${escapeHtml(formatRelative(a.scheduled_at))}</span>
+          </span>
         </button>`;
     }).join('');
     const more = items.length > 5 ? `<p class="text-xs text-zinc-500 pt-2 pl-2">+ ${items.length - 5} weitere</p>` : '';
@@ -1408,12 +1433,16 @@ function renderActivityCard(a) {
     ? `${escapeHtml(formatScheduled(a.scheduled_at))} · ${escapeHtml(formatRelative(a.scheduled_at))}`
     : 'Kein Datum';
   const noteHtml = a.note ? `<p class="text-xs text-zinc-400 mt-1.5 whitespace-pre-wrap break-words line-clamp-3">${escapeHtml(a.note)}</p>` : '';
+  const owner = ownerBadge(a.owner);
   return `
     <div data-activity-card="${a.id}" class="cursor-pointer rounded-lg border ${tone.ring} ${tone.pulse} p-3 hover:border-zinc-600 transition-colors">
       <div class="flex items-start gap-3">
         <button data-activity-action="done" data-id="${a.id}" class="mt-0.5 w-4 h-4 rounded border border-zinc-600 hover:border-emerald-500 hover:bg-emerald-500/20 transition-colors shrink-0" title="Als erledigt markieren"></button>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-zinc-100 break-words">${escapeHtml(a.titel)}</p>
+          <div class="flex items-start justify-between gap-2">
+            <p class="text-sm font-medium text-zinc-100 break-words flex-1">${escapeHtml(a.titel)}</p>
+            ${owner}
+          </div>
           <p class="text-xs ${tone.date} mt-0.5">${dateLabel}</p>
           ${noteHtml}
         </div>
@@ -1423,6 +1452,7 @@ function renderActivityCard(a) {
 
 function renderDoneActivityRow(a) {
   const noteHtml = a.note ? `<p class="text-xs text-zinc-500 mt-0.5 line-clamp-1 break-words">${escapeHtml(a.note)}</p>` : '';
+  const owner = ownerBadge(a.owner, 'xs');
   return `
     <div data-activity-card="${a.id}" class="cursor-pointer flex items-start gap-2 px-2 py-1.5 rounded-md hover:bg-zinc-900 transition-colors">
       <svg class="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
@@ -1430,6 +1460,7 @@ function renderDoneActivityRow(a) {
         <p class="text-sm text-zinc-300 truncate"><span class="line-through text-zinc-500">${escapeHtml(a.titel)}</span></p>
         ${noteHtml}
       </div>
+      ${owner ? `<span class="shrink-0 mt-0.5">${owner}</span>` : ''}
       <span class="text-[10px] text-zinc-600 shrink-0 mt-1">${escapeHtml(formatRelative(a.done_at))}</span>
     </div>`;
 }
@@ -1676,15 +1707,40 @@ function openActivityModal(activityId) {
     document.getElementById('activity-note').value = a.note || '';
     document.getElementById('activity-done-check').checked = !!a.done_at;
     document.getElementById('activity-ics-block').classList.toggle('hidden', !a.scheduled_at);
+    setActivityOwnerUI(a.owner || '');
   } else {
     document.getElementById('activity-form').reset();
     document.getElementById('activity-done-check').checked = false;
     document.getElementById('activity-ics-block').classList.add('hidden');
+    setActivityOwnerUI(safeLocalGet('semp-crm-last-owner', ''));
   }
 
   document.getElementById('activity-modal').classList.remove('hidden');
   setTimeout(() => document.getElementById('activity-titel').focus(), 50);
 }
+
+let currentActivityOwner = '';
+function setActivityOwnerUI(owner) {
+  currentActivityOwner = OWNERS[owner] ? owner : '';
+  document.querySelectorAll('.owner-btn').forEach(btn => {
+    const v = btn.dataset.owner || '';
+    const isActive = v === currentActivityOwner;
+    if (isActive && OWNERS[v]) {
+      btn.className = `owner-btn px-3 py-1.5 rounded-md text-xs font-medium border ${OWNERS[v].active}`;
+    } else if (isActive) {
+      btn.className = 'owner-btn px-3 py-1.5 rounded-md text-xs font-medium bg-zinc-800 text-zinc-200 border border-zinc-700';
+    } else {
+      btn.className = 'owner-btn px-3 py-1.5 rounded-md text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors';
+    }
+  });
+}
+document.querySelectorAll('.owner-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const v = btn.dataset.owner || '';
+    setActivityOwnerUI(v);
+    if (v) safeLocalSet('semp-crm-last-owner', v);
+  });
+});
 
 function closeActivityModal() {
   document.getElementById('activity-modal').classList.add('hidden');
@@ -1737,6 +1793,7 @@ activityForm.addEventListener('submit', async (e) => {
     titel,
     scheduled_at: fromLocalInputValue(scheduledRaw),
     note,
+    owner: currentActivityOwner || null,
   };
 
   let ok = false;

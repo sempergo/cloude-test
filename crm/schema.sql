@@ -35,6 +35,7 @@ create table if not exists activities (
   scheduled_at timestamptz,
   note         text,
   done_at      timestamptz,
+  owner        text check (owner is null or owner in ('Markus', 'Robin')),
   created_at   timestamptz not null default now(),
   updated_at   timestamptz not null default now()
 );
@@ -72,6 +73,8 @@ create index if not exists activities_lead_scheduled_idx
   on activities (lead_id, scheduled_at desc);
 create index if not exists activities_open_scheduled_idx
   on activities (scheduled_at) where done_at is null;
+create index if not exists activities_owner_idx
+  on activities (owner) where owner is not null and done_at is null;
 
 -- ---------- ROW LEVEL SECURITY ---------------------------------------------
 
