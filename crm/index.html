@@ -548,6 +548,16 @@ async function onSignedIn() {
   render();
   subscribeRealtime();
   setInterval(render, 60_000);
+  // Keep-warm ping verhindert Supabase Free-Tier Cold-Starts
+  setInterval(keepWarm, 90_000);
+}
+
+async function keepWarm() {
+  try {
+    await withTimeout(sb.from('leads').select('id', { count: 'exact', head: true }).limit(1), 8000, 'keepWarm');
+  } catch (err) {
+    console.warn('[keepWarm] failed', err?.message || err);
+  }
 }
 
 function showLogin() {
@@ -602,7 +612,7 @@ async function createLead(fields) {
   try {
     const { data, error } = await withTimeout(
       sb.from('leads').insert(fields).select().single(),
-      10000, 'createLead'
+      25000, 'createLead'
     );
     if (error) { console.error('[createLead] error', error); toast('Konnte Lead nicht anlegen: ' + error.message); return null; }
     console.log('[createLead] inserted', data?.id);
@@ -620,7 +630,7 @@ async function updateLead(id, patch) {
   try {
     const { data, error } = await withTimeout(
       sb.from('leads').update(patch).eq('id', id).select().single(),
-      10000, 'updateLead'
+      25000, 'updateLead'
     );
     if (error) { console.error('[updateLead]', error); toast('Speichern fehlgeschlagen: ' + error.message); return null; }
     const i = state.leads.findIndex(l => l.id === id);
@@ -655,7 +665,7 @@ async function createActivity(fields) {
   try {
     const { data, error } = await withTimeout(
       sb.from('activities').insert(fields).select().single(),
-      10000, 'createActivity'
+      25000, 'createActivity'
     );
     if (error) { console.error('[createActivity] error', error); toast('Aktivität nicht angelegt: ' + error.message); return null; }
     console.log('[createActivity] inserted', data?.id);
@@ -672,7 +682,7 @@ async function updateActivity(id, patch) {
   try {
     const { data, error } = await withTimeout(
       sb.from('activities').update(patch).eq('id', id).select().single(),
-      10000, 'updateActivity'
+      25000, 'updateActivity'
     );
     if (error) { console.error('[updateActivity]', error); toast('Aktivität nicht gespeichert: ' + error.message); return null; }
     const i = state.activities.findIndex(a => a.id === id);
