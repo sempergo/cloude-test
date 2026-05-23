@@ -437,6 +437,14 @@
     </div>
   </div>
 
+  <!-- LIGHTBOX (Screenshot full-size, kein neuer Tab nötig) -->
+  <div id="lightbox" class="hidden fixed inset-0 z-[60] bg-zinc-950/95 backdrop-blur-sm flex items-center justify-center p-6 cursor-zoom-out" onclick="closeLightbox(event)">
+    <button onclick="closeLightbox(event)" class="absolute top-4 right-4 p-2 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-200 transition-colors z-10">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" />
+  </div>
+
   <!-- ADD LEAD MODAL -->
   <div id="add-lead-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
     <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
@@ -2554,8 +2562,8 @@ function renderProspectDetail() {
     <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Website</label>
     ${(desktop || mobile) ? `
       <div class="grid grid-cols-3 gap-2">
-        ${desktop ? `<a href="${escapeHtml(desktop)}" target="_blank" class="col-span-2 block rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900"><img src="${escapeHtml(desktop)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top" /></a>` : ''}
-        ${mobile ? `<a href="${escapeHtml(mobile)}" target="_blank" class="block rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900"><img src="${escapeHtml(mobile)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top" /></a>` : ''}
+        ${desktop ? `<button type="button" data-lightbox="${escapeHtml(desktop)}" class="lightbox-btn col-span-2 block rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900 cursor-zoom-in"><img src="${escapeHtml(desktop)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top pointer-events-none" /></button>` : ''}
+        ${mobile ? `<button type="button" data-lightbox="${escapeHtml(mobile)}" class="lightbox-btn block rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900 cursor-zoom-in"><img src="${escapeHtml(mobile)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top pointer-events-none" /></button>` : ''}
       </div>` : `<p class="text-xs text-zinc-500 italic">${e.no_website ? 'Keine eigene Website (nur Google-Profil).' : 'Noch keine Screenshots — bitte enrichment laufen lassen.'}</p>`}
     ${p.website ? `<a href="${escapeHtml(p.website)}" target="_blank" class="text-xs text-zinc-400 hover:text-zinc-200 mt-2 inline-flex items-center gap-1">
       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -2891,18 +2899,46 @@ document.addEventListener('DOMContentLoaded', () => {
   const stadtEl = document.getElementById('engine-stadt');
   if (stadtEl) stadtEl.addEventListener('change', e => { state.prospectStadt = e.target.value; renderEngine(); });
 
-  // Event-Delegation auf dem Parent → überlebt Re-Renders während Realtime-Updates
-  const listEl = document.getElementById('prospect-list');
-  if (listEl) {
-    listEl.addEventListener('click', (e) => {
-      const card = e.target.closest('.prospect-card-btn');
-      if (card && card.dataset.prospectId) {
-        e.preventDefault();
-        selectProspect(card.dataset.prospectId);
-      }
-    });
-  }
+  // Event-Delegation auf document — überlebt Re-Renders garantiert
+  document.addEventListener('click', (e) => {
+    // Prospect Card öffnen
+    const card = e.target.closest('.prospect-card-btn');
+    if (card && card.dataset.prospectId) {
+      e.preventDefault();
+      selectProspect(card.dataset.prospectId);
+      return;
+    }
+    // Screenshot-Lightbox öffnen
+    const lightboxBtn = e.target.closest('.lightbox-btn');
+    if (lightboxBtn && lightboxBtn.dataset.lightbox) {
+      e.preventDefault();
+      openLightbox(lightboxBtn.dataset.lightbox);
+      return;
+    }
+  });
+
+  // ESC schließt Lightbox
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const lb = document.getElementById('lightbox');
+      if (lb && !lb.classList.contains('hidden')) closeLightbox();
+    }
+  });
 });
+
+function openLightbox(url) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  if (!lb || !img) return;
+  img.src = url;
+  lb.classList.remove('hidden');
+}
+
+function closeLightbox(e) {
+  if (e && e.target && e.target.tagName === 'IMG') return; // Klick aufs Bild selbst soll nicht schließen
+  const lb = document.getElementById('lightbox');
+  if (lb) lb.classList.add('hidden');
+}
 
 // Throttled renderEngine: max einmal pro 250ms während Bulk-Updates
 let _engineRenderPending = false;
