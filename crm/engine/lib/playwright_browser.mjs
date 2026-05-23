@@ -191,6 +191,7 @@ export async function newContext({ mobile = false } = {}) {
 
 /**
  * Lädt eine URL und macht einen Screenshot. Returnt Buffer + HTML + Lade-Metadaten.
+ * Hart limitiert auf ~45s total — kein Hängen mehr.
  *
  * @param {string} url
  * @param {object} opts
@@ -198,11 +199,24 @@ export async function newContext({ mobile = false } = {}) {
  *   - maxClipHeight: max. Pixelhöhe des Screenshots (default 6000)
  *   - quality: JPEG quality (default 70)
  *   - timeoutMs: Navigation-Timeout (default 30000)
+ *   - hardTimeoutMs: Hard-cap für die gesamte Operation (default 45000)
  */
 export async function captureSite(url, opts = {}) {
-  const { mobile = false, maxClipHeight = 6000, quality = 70, timeoutMs = 30000 } = opts;
+  return Promise.race([
+    _captureSiteInner(url, opts),
+    new Promise((resolve) => setTimeout(() => resolve({
+      ok: false, error: 'hard timeout 45s', html: null, screenshot: null,
+    }), opts.hardTimeoutMs || 45000)),
+  ]);
+}
+
+async function _captureSiteInner(url, opts = {}) {
+  const { mobile = false, maxClipHeight = 6000, quality = 70, timeoutMs = 25000 } = opts;
   const context = await newContext({ mobile });
   const page = await context.newPage();
+  // Default-Timeouts hart auf 15s
+  page.setDefaultTimeout(15000);
+  page.setDefaultNavigationTimeout(timeoutMs);
   const result = { ok: false, error: null, html: null, screenshot: null, viewport: null, finalUrl: null };
 
   try {
