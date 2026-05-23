@@ -28,6 +28,7 @@ import {
 } from './lib/website_analyzer.mjs';
 import { captureSite, closeBrowser } from './lib/playwright_browser.mjs';
 import { lighthouseMobile } from './lib/lighthouse.mjs';
+import { startRun, reportProgress, endRun } from './lib/progress.mjs';
 
 const CONCURRENCY = parseInt(process.env.ENRICH_CONCURRENCY || '3', 10);
 const LIGHTHOUSE_LIMIT = pLimit(parseInt(process.env.LIGHTHOUSE_CONCURRENCY || '1', 10));
@@ -235,12 +236,15 @@ async function main() {
     return;
   }
   log.step(`Enriching ${candidates.length} Prospects (concurrency=${CONCURRENCY})`);
+  await startRun('enrich', candidates.length, `Enrich ${candidates.length} Prospects…`);
 
   const limit = pLimit(CONCURRENCY);
   let ok = 0, fail = 0;
+  let processed = 0;
 
   await Promise.all(candidates.map(p => limit(async () => {
     try {
+      await reportProgress({ current_label: p.firma, message: `Enriching: ${p.firma}` });
       await enrichOne(p);
       ok++;
     } catch (err) {
@@ -251,14 +255,19 @@ async function main() {
           enrichment: { ...(p.enrichment || {}), errors: [...(p.enrichment?.errors || []), { step: 'top-level', error: err.message }] },
         });
       } catch {}
+    } finally {
+      processed++;
+      await reportProgress({ processed, message: `${processed}/${candidates.length} fertig` });
     }
   })));
 
   log.ok(`Fertig in ${elapsed(startedAt)}: ${ok} ok, ${fail} failed`);
+  await endRun({ ok: fail === 0, message: `Enrich fertig: ${ok} ok, ${fail} failed` });
   await closeBrowser();
 }
 
-main().catch(err => {
+main().catch(async (err) => {
   log.error('Enrichment crashed', { error: err.message, stack: err.stack });
+  try { await endRun({ ok: false, message: 'Enrichment crashed: ' + err.message }); } catch {}
   closeBrowser().finally(() => process.exit(1));
 });

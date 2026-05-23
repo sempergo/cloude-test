@@ -12,6 +12,7 @@ dotenvConfig({ override: true });
 import { log, elapsed } from './lib/log.mjs';
 import { sb, updateProspect, getProspect } from './lib/supabase.mjs';
 import { auditWebsite, getSpent } from './lib/claude.mjs';
+import { startRun, reportProgress, endRun } from './lib/progress.mjs';
 
 const MAX_BUDGET_USD = parseFloat(process.env.MAX_LLM_BUDGET_USD || '10');
 
@@ -183,21 +184,25 @@ async function scorePhaseB({ id, topN }) {
 async function main() {
   const opts = parseArgs();
   const startedAt = Date.now();
+  await startRun('score', 0, 'Scoring startet…');
 
   const aCount = await scorePhaseA(opts);
   log.ok(`Phase A fertig: ${aCount} Prospects regelbasiert gescored`);
 
+  let bCount = 0;
   if (opts.skipLlm) {
     log.info('LLM-Phase übersprungen (--skip-llm)');
   } else {
-    const bCount = await scorePhaseB(opts);
+    bCount = await scorePhaseB(opts);
     log.ok(`Phase B fertig: ${bCount} Prospects via Vision-LLM auditiert  total cost: $${getSpent().toFixed(2)}`);
   }
 
   log.ok(`Scoring komplett in ${elapsed(startedAt)}`);
+  await endRun({ ok: true, message: `Scoring fertig: ${aCount} regel-gescored, ${bCount} LLM-auditiert ($${getSpent().toFixed(2)})` });
 }
 
-main().catch(err => {
+main().catch(async (err) => {
   log.error('Scoring crashed', { error: err.message, stack: err.stack });
+  try { await endRun({ ok: false, message: 'Scoring crashed: ' + err.message }); } catch {}
   process.exit(1);
 });

@@ -96,21 +96,33 @@ export async function captureSite(url, opts = {}) {
     // Kleine Pause für Lazy-Load-Content
     await page.waitForTimeout(800);
 
-    // Bis ans Seitenende scrollen, damit Lazy-Load-Bilder reinkommen
+    // Bis ans Seitenende scrollen (mit hartem Cap, damit Infinite-Scroll-Seiten nicht hängen)
     try {
-      await page.evaluate(async () => {
-        await new Promise((resolve) => {
-          const distance = 600;
-          const interval = setInterval(() => {
-            window.scrollBy(0, distance);
-            if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 10) {
-              clearInterval(interval);
-              window.scrollTo(0, 0);
-              setTimeout(resolve, 400);
-            }
-          }, 150);
-        });
-      });
+      await Promise.race([
+        page.evaluate(async () => {
+          await new Promise((resolve) => {
+            const distance = 800;
+            let iterations = 0;
+            const maxIterations = 25; // max 25 * 800px = 20.000px scroll-distance
+            let lastHeight = 0;
+            let stuckCount = 0;
+            const interval = setInterval(() => {
+              const h = document.body.scrollHeight;
+              window.scrollBy(0, distance);
+              iterations++;
+              if (h === lastHeight) stuckCount++; else stuckCount = 0;
+              lastHeight = h;
+              const reachedBottom = (window.innerHeight + window.scrollY) >= h - 10;
+              if (reachedBottom || iterations >= maxIterations || stuckCount >= 3) {
+                clearInterval(interval);
+                window.scrollTo(0, 0);
+                setTimeout(resolve, 300);
+              }
+            }, 120);
+          });
+        }),
+        new Promise((resolve) => setTimeout(resolve, 8000)), // harter 8s-Cap
+      ]);
     } catch (e) { /* ignore */ }
 
     result.html = await page.content();
@@ -121,15 +133,31 @@ export async function captureSite(url, opts = {}) {
       document.documentElement?.scrollHeight || 0,
     ));
     const viewport = page.viewportSize();
+    // Claude Vision-API erlaubt max 8000px je Dimension → wir bleiben unter 7500px
+    const MAX_SCREENSHOT_HEIGHT = 7500;
     result.viewport = { ...viewport, contentHeight: fullHeight };
 
-    // Echter Full-Page-Screenshot. JPEG quality 70 hält Files klein (200-500KB typisch).
-    // Bei sehr langen Seiten wird automatisch über Scrolling capturet.
-    result.screenshot = await page.screenshot({
-      type: 'jpeg',
-      quality,
-      fullPage: true,
-    });
+    // JPEG quality 70 hält Files klein (200-500KB typisch).
+    if (fullHeight <= MAX_SCREENSHOT_HEIGHT) {
+      // Kürzere Seiten: echter Full-Page-Screenshot
+      result.screenshot = await page.screenshot({
+        type: 'jpeg',
+        quality,
+        fullPage: true,
+      });
+    } else {
+      // Sehr lange Seiten: erweitere Viewport auf MAX_HEIGHT, screenshot vom Viewport
+      // (capturet die obersten 7500px des Renderings, inkl. Lazy-Load-Content)
+      await page.setViewportSize({ width: viewport.width, height: MAX_SCREENSHOT_HEIGHT });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(400);
+      result.screenshot = await page.screenshot({
+        type: 'jpeg',
+        quality,
+        fullPage: false,
+      });
+      result.viewport.clippedTo = MAX_SCREENSHOT_HEIGHT;
+    }
 
     result.ok = true;
     return result;

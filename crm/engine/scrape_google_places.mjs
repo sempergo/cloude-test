@@ -22,6 +22,7 @@ import {
   isPremiumCandidate,
   extractCity,
 } from './lib/google_places.mjs';
+import { startRun, reportProgress, endRun, setTotal } from './lib/progress.mjs';
 
 function parseArgs() {
   const args = process.argv.slice(2);
@@ -114,6 +115,7 @@ async function main() {
   const { stadt, radius } = parseArgs();
   const startedAt = Date.now();
   log.step(`Scraping startet: stadt="${stadt}" radius=${radius}m`);
+  await startRun('scrape', 0, `Suche Restaurants in ${stadt}…`);
 
   // 1. Suche
   const places = await searchRestaurants(stadt, { radius });
@@ -122,6 +124,7 @@ async function main() {
   // 2. Premium-Filter
   const candidates = places.filter(isPremiumCandidate);
   log.info(`Nach Premium-Filter (rating≥4.0, reviews≥20): ${candidates.length}`);
+  await setTotal(candidates.length);
 
   // 3. Pro Treffer: Dedup + Details + Upsert
   let inserted = 0;
@@ -133,6 +136,7 @@ async function main() {
   for (let i = 0; i < candidates.length; i++) {
     const place = candidates[i];
     const tag = `[${i + 1}/${candidates.length}]`;
+    await reportProgress({ processed: i, current_label: place.name, message: `Scraping ${i+1}/${candidates.length}` });
     try {
       // Skip wenn als disqualifiziert markiert
       const disq = await isDisqualifiedProspect(place.place_id);
@@ -183,9 +187,11 @@ async function main() {
   log.info(`  ↷ ${skippedDisqualified} disqualifiziert (skipped)`);
   log.info(`  ↷ ${skippedWarmLead} bereits warmer Lead (skipped)`);
   if (failed) log.warn(`  ✗ ${failed} fehlgeschlagen`);
+  await endRun({ ok: true, message: `Scrape fertig: +${inserted} neu, ${skippedExisting} doppelt, ${skippedWarmLead} schon warm` });
 }
 
-main().catch(err => {
+main().catch(async (err) => {
   log.error('Scraper crashed', { error: err.message, stack: err.stack });
+  try { await endRun({ ok: false, message: 'Scraper crashed: ' + err.message }); } catch {}
   process.exit(1);
 });

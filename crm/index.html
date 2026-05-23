@@ -437,6 +437,27 @@
     </div>
   </div>
 
+  <!-- ENGINE STATUS BAR (live progress) -->
+  <div id="engine-status-bar" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-50 rounded-xl border border-amber-500/30 bg-zinc-950/95 backdrop-blur-md shadow-2xl px-4 py-3 transition-opacity">
+    <div class="flex items-center gap-3">
+      <div id="esb-icon" class="shrink-0 w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center">
+        <svg class="w-4 h-4 text-amber-300 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p id="esb-title" class="text-xs font-semibold text-zinc-100">Lead Engine läuft…</p>
+        <p id="esb-message" class="text-[11px] text-zinc-400 truncate"></p>
+      </div>
+      <div id="esb-counter" class="shrink-0 text-xs font-bold text-amber-300 tabular-nums"></div>
+    </div>
+    <!-- Progress Bar -->
+    <div class="mt-2 h-1 rounded-full bg-zinc-800 overflow-hidden">
+      <div id="esb-progress" class="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-300" style="width:0%"></div>
+    </div>
+  </div>
+
   <!-- LIGHTBOX (Screenshot full-size, kein neuer Tab nötig) -->
   <div id="lightbox" class="hidden fixed inset-0 z-[60] bg-zinc-950/95 backdrop-blur-sm flex items-center justify-center p-6 cursor-zoom-out" onclick="closeLightbox(event)">
     <button onclick="closeLightbox(event)" class="absolute top-4 right-4 p-2 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-200 transition-colors z-10">
@@ -768,6 +789,9 @@ async function onSignedIn() {
   await Promise.all([loadLeads(), loadActivities()]);
   render();
   subscribeRealtime();
+  // Engine-Status: laden + live abonnieren
+  loadEngineStatus();
+  subscribeEngineStatus();
   setInterval(render, 60_000);
   // Keep-warm ping verhindert Supabase Free-Tier Cold-Starts
   setInterval(keepWarm, 45_000);
@@ -2946,6 +2970,103 @@ function scheduleEngineRender() {
   if (_engineRenderPending) return;
   _engineRenderPending = true;
   setTimeout(() => { _engineRenderPending = false; renderEngine(); }, 250);
+}
+
+// =============================================================
+// ENGINE STATUS BAR — live progress aus engine_status Tabelle
+// =============================================================
+const KIND_LABELS = {
+  scrape: 'Scraping Restaurants',
+  enrich: 'Website-Enrichment',
+  score:  'AI-Scoring',
+};
+
+let _statusHideTimer = null;
+
+function renderEngineStatus(status) {
+  const bar = document.getElementById('engine-status-bar');
+  if (!bar || !status) return;
+
+  const titleEl = document.getElementById('esb-title');
+  const messageEl = document.getElementById('esb-message');
+  const counterEl = document.getElementById('esb-counter');
+  const progressEl = document.getElementById('esb-progress');
+  const iconEl = document.getElementById('esb-icon');
+
+  if (status.active) {
+    clearTimeout(_statusHideTimer);
+    bar.classList.remove('hidden');
+    bar.style.opacity = '1';
+    // Border / Icon Color: amber while running
+    bar.classList.remove('border-emerald-500/30', 'border-red-500/30');
+    bar.classList.add('border-amber-500/30');
+    iconEl.classList.remove('bg-emerald-500/15', 'border-emerald-500/30', 'bg-red-500/15', 'border-red-500/30');
+    iconEl.classList.add('bg-amber-500/15', 'border-amber-500/30');
+    iconEl.innerHTML = `<svg class="w-4 h-4 text-amber-300 animate-spin" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>`;
+    titleEl.textContent = KIND_LABELS[status.kind] || 'Engine läuft…';
+    titleEl.className = 'text-xs font-semibold text-zinc-100';
+    counterEl.className = 'shrink-0 text-xs font-bold text-amber-300 tabular-nums';
+    progressEl.className = 'h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-300';
+  } else {
+    // Done — green for 6s then fade out
+    const isFail = (status.message || '').toLowerCase().includes('fail') || (status.message || '').toLowerCase().includes('crash');
+    if (isFail) {
+      bar.classList.remove('border-amber-500/30', 'border-emerald-500/30');
+      bar.classList.add('border-red-500/30');
+      iconEl.classList.remove('bg-amber-500/15', 'border-amber-500/30', 'bg-emerald-500/15', 'border-emerald-500/30');
+      iconEl.classList.add('bg-red-500/15', 'border-red-500/30');
+      iconEl.innerHTML = `<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>`;
+      titleEl.textContent = (KIND_LABELS[status.kind] || 'Engine') + ' fehlgeschlagen';
+      counterEl.className = 'shrink-0 text-xs font-bold text-red-400 tabular-nums';
+      progressEl.className = 'h-full bg-red-500/60';
+    } else {
+      bar.classList.remove('border-amber-500/30', 'border-red-500/30');
+      bar.classList.add('border-emerald-500/30');
+      iconEl.classList.remove('bg-amber-500/15', 'border-amber-500/30', 'bg-red-500/15', 'border-red-500/30');
+      iconEl.classList.add('bg-emerald-500/15', 'border-emerald-500/30');
+      iconEl.innerHTML = `<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+      titleEl.textContent = (KIND_LABELS[status.kind] || 'Engine') + ' fertig';
+      counterEl.className = 'shrink-0 text-xs font-bold text-emerald-400 tabular-nums';
+      progressEl.className = 'h-full bg-emerald-500';
+    }
+    bar.classList.remove('hidden');
+    bar.style.opacity = '1';
+    clearTimeout(_statusHideTimer);
+    _statusHideTimer = setTimeout(() => {
+      bar.style.opacity = '0';
+      setTimeout(() => bar.classList.add('hidden'), 400);
+    }, 8000);
+  }
+
+  // Common fields
+  messageEl.textContent = status.current_label || status.message || '';
+  if (status.total > 0) {
+    counterEl.textContent = `${status.processed || 0}/${status.total}`;
+    progressEl.style.width = Math.round(100 * (status.processed || 0) / status.total) + '%';
+  } else {
+    counterEl.textContent = '';
+    progressEl.style.width = status.active ? '5%' : '100%';
+  }
+}
+
+async function loadEngineStatus() {
+  try {
+    const { data } = await sb.from('engine_status').select('*').eq('id', 1).maybeSingle();
+    if (data) renderEngineStatus(data);
+  } catch (err) {
+    console.warn('[engineStatus] load failed', err);
+  }
+}
+
+function subscribeEngineStatus() {
+  sb.channel('engine-status-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'engine_status' }, (payload) => {
+      if (payload.new) renderEngineStatus(payload.new);
+    })
+    .subscribe();
 }
 
 // =============================================================
