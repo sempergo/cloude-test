@@ -108,10 +108,13 @@ async function enrichOneProspect(prospect) {
   const enrichment = { ...(prospect.enrichment || {}) };
   enrichment.errors = enrichment.errors || [];
 
+  // Status nicht downgrade — wenn schon 'scored'/'kontaktiert'/etc., bleibt das
+  const finalStatus = prospect.prospect_status === 'new' ? 'enriched' : prospect.prospect_status;
+
   if (!prospect.website) {
     enrichment.no_website = true;
     await updateProspect(prospect.id, {
-      enrichment, prospect_status: 'enriched',
+      enrichment, prospect_status: finalStatus,
       enriched_at: new Date().toISOString(),
     });
     return;
@@ -171,16 +174,24 @@ async function enrichOneProspect(prospect) {
 
   await updateProspect(prospect.id, {
     enrichment, screenshot_desktop: desktopUrl, screenshot_mobile: mobileUrl,
-    prospect_status: 'enriched', enriched_at: new Date().toISOString(),
+    prospect_status: finalStatus, enriched_at: new Date().toISOString(),
   });
 }
 
 async function handleEnrichJob(job) {
-  // Enrichment auf ALLE Prospects mit Status 'new'
-  const { data: prospects } = await sb.from('prospects')
-    .select('*').eq('prospect_status', 'new').is('deleted_at', null);
+  // payload.force = true → enrichet ALLE (außer promoted/disqualifiziert)
+  // sonst nur Prospects mit Status 'new'
+  const force = !!job.payload?.force;
+  let q = sb.from('prospects').select('*').is('deleted_at', null);
+  if (force) {
+    q = q.not('prospect_status', 'in', '(promoted,disqualifiziert)');
+  } else {
+    q = q.eq('prospect_status', 'new');
+  }
+  const { data: prospects } = await q;
   const list = prospects || [];
-  await startRun('enrich', list.length, `Enriche ${list.length} neue Prospects…`);
+  const label = force ? `Re-Enriche ${list.length} Prospects (force)…` : `Enriche ${list.length} neue Prospects…`;
+  await startRun('enrich', list.length, label);
 
   let ok = 0, fail = 0;
   for (let i = 0; i < list.length; i++) {
@@ -190,7 +201,7 @@ async function handleEnrichJob(job) {
     catch (e) { fail++; log.error(`enrich ${p.firma}: ${e.message}`); }
   }
   await reportProgress({ processed: list.length });
-  return { total: list.length, ok, failed: fail };
+  return { total: list.length, ok, failed: fail, force };
 }
 
 function ruleScore(prospect) {

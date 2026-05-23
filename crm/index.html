@@ -201,6 +201,10 @@
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               <span id="engine-enrich-label">Enrich Neue</span>
             </button>
+            <button onclick="triggerForceEnrichJob()" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-medium text-xs flex items-center gap-1.5 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15M20 20l-5-5"/></svg>
+              Alle neu enrichen
+            </button>
             <p class="ml-auto text-[10px] text-zinc-500 self-center">Watcher muss laufen: <code class="px-1 py-0.5 rounded bg-zinc-900 text-zinc-400">node watch.mjs</code></p>
           </div>
         </div>
@@ -3158,6 +3162,16 @@ async function triggerEnrichJob() {
   });
   if (error) { toast('Job nicht angelegt: ' + error.message); return; }
   toast('✓ Enrich-Job in Queue — schaut alle Prospects mit Status "neu" an');
+}
+
+async function triggerForceEnrichJob() {
+  const count = state.prospects.filter(p => !['promoted','disqualifiziert'].includes(p.prospect_status)).length;
+  if (!confirm(`${count} Prospects neu enrichen?\n\nDas überschreibt alle Screenshots mit cookie-bereinigten Versionen.\nDauer: ca. ${Math.ceil(count * 8 / 60)} Min.`)) return;
+  const { error } = await sb.from('engine_jobs').insert({
+    kind: 'enrich', payload: { force: true }, created_by: 'CRM',
+  });
+  if (error) { toast('Job nicht angelegt: ' + error.message); return; }
+  toast(`✓ Re-Enrich-Job in Queue (${count} Prospects)`);
 }
 
 async function triggerAuditJob(prospectId) {
