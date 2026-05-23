@@ -484,6 +484,20 @@ async function withTimeout(promise, ms, label) {
   finally { clearTimeout(timer); }
 }
 
+// Auto-retry für Free-Tier Cold-Starts:
+// Erst kurzer Timeout — wenn DB wach ist, kommt's sofort.
+// Bei Timeout: Toast "Server wacht auf…" und länger warten.
+async function withRetry(label, fn) {
+  try {
+    return await withTimeout(fn(), 6000, label);
+  } catch (err) {
+    if (!/keine Antwort/.test(err?.message || '')) throw err;
+    console.warn(`[${label}] cold-start detected, retrying…`);
+    toast('Server wacht auf…');
+    return await withTimeout(fn(), 30000, label + ' (retry)');
+  }
+}
+
 const state = {
   authed: false,
   leads: [],
@@ -549,12 +563,12 @@ async function onSignedIn() {
   subscribeRealtime();
   setInterval(render, 60_000);
   // Keep-warm ping verhindert Supabase Free-Tier Cold-Starts
-  setInterval(keepWarm, 90_000);
+  setInterval(keepWarm, 45_000);
 }
 
 async function keepWarm() {
   try {
-    await withTimeout(sb.from('leads').select('id', { count: 'exact', head: true }).limit(1), 8000, 'keepWarm');
+    await withTimeout(sb.from('leads').select('id', { count: 'exact', head: true }).limit(1), 30000, 'keepWarm');
   } catch (err) {
     console.warn('[keepWarm] failed', err?.message || err);
   }
@@ -610,9 +624,8 @@ async function loadNotes(leadId) {
 async function createLead(fields) {
   console.log('[createLead] start', fields);
   try {
-    const { data, error } = await withTimeout(
-      sb.from('leads').insert(fields).select().single(),
-      25000, 'createLead'
+    const { data, error } = await withRetry('createLead', () =>
+      sb.from('leads').insert(fields).select().single()
     );
     if (error) { console.error('[createLead] error', error); toast('Konnte Lead nicht anlegen: ' + error.message); return null; }
     console.log('[createLead] inserted', data?.id);
@@ -628,9 +641,8 @@ async function createLead(fields) {
 
 async function updateLead(id, patch) {
   try {
-    const { data, error } = await withTimeout(
-      sb.from('leads').update(patch).eq('id', id).select().single(),
-      25000, 'updateLead'
+    const { data, error } = await withRetry('updateLead', () =>
+      sb.from('leads').update(patch).eq('id', id).select().single()
     );
     if (error) { console.error('[updateLead]', error); toast('Speichern fehlgeschlagen: ' + error.message); return null; }
     const i = state.leads.findIndex(l => l.id === id);
@@ -663,9 +675,8 @@ async function deleteNote(noteId, leadId) {
 async function createActivity(fields) {
   console.log('[createActivity] start', fields);
   try {
-    const { data, error } = await withTimeout(
-      sb.from('activities').insert(fields).select().single(),
-      25000, 'createActivity'
+    const { data, error } = await withRetry('createActivity', () =>
+      sb.from('activities').insert(fields).select().single()
     );
     if (error) { console.error('[createActivity] error', error); toast('Aktivität nicht angelegt: ' + error.message); return null; }
     console.log('[createActivity] inserted', data?.id);
@@ -680,9 +691,8 @@ async function createActivity(fields) {
 
 async function updateActivity(id, patch) {
   try {
-    const { data, error } = await withTimeout(
-      sb.from('activities').update(patch).eq('id', id).select().single(),
-      25000, 'updateActivity'
+    const { data, error } = await withRetry('updateActivity', () =>
+      sb.from('activities').update(patch).eq('id', id).select().single()
     );
     if (error) { console.error('[updateActivity]', error); toast('Aktivität nicht gespeichert: ' + error.message); return null; }
     const i = state.activities.findIndex(a => a.id === id);
