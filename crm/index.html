@@ -88,6 +88,17 @@
         <span class="font-semibold text-sm tracking-tight hidden sm:inline">semp — CRM</span>
       </div>
 
+      <!-- VIEW SWITCH -->
+      <div id="view-switch" class="inline-flex rounded-lg border border-zinc-800 p-0.5 bg-zinc-900/50 shrink-0">
+        <button id="view-leads-btn" class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors bg-zinc-800 text-zinc-100" onclick="switchView('leads')">Leads</button>
+        <button id="view-engine-btn" class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors text-zinc-400 hover:text-zinc-200" onclick="switchView('engine')">
+          <span class="inline-flex items-center gap-1.5">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Engine
+          </span>
+        </button>
+      </div>
+
       <div class="flex-1 max-w-xl mx-auto relative">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input type="text" id="search-input" placeholder="Suchen… (drücke /)"
@@ -123,6 +134,9 @@
   <!-- MAIN -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24">
 
+    <!-- ========================= LEADS VIEW ========================= -->
+    <div id="leads-view">
+
     <section id="alerts" class="mb-6 sm:mb-8"></section>
 
     <section class="mb-5">
@@ -156,6 +170,62 @@
         </button>
       </div>
     </section>
+
+    </div><!-- /#leads-view -->
+
+    <!-- ========================= ENGINE VIEW ========================= -->
+    <div id="engine-view" class="hidden">
+      <section class="mb-6 sm:mb-8">
+        <div class="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent px-5 sm:px-6 py-5">
+          <div class="flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-amber-300/70 uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Lead Engine
+              </p>
+              <p class="text-lg font-semibold text-zinc-100 mt-1">Cold Leads — automatisch geprüft</p>
+              <p class="text-xs text-zinc-400 mt-1">Gescraped, enriched, gescored. Top-Prospects mit AI-bewerteten Pain-Points.</p>
+            </div>
+            <div class="text-right shrink-0">
+              <p id="engine-count" class="text-2xl font-bold text-amber-300 tabular-nums">0</p>
+              <p class="text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5">Prospects</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter-Chips -->
+      <section class="mb-4">
+        <div id="engine-filter-tabs" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+      </section>
+
+      <!-- Toolbar (Sort + Stadt) -->
+      <section class="mb-4 flex flex-wrap items-center gap-2">
+        <select id="engine-sort" class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 focus:outline-none focus:border-zinc-700">
+          <option value="score_desc">Score ↓</option>
+          <option value="score_asc">Score ↑</option>
+          <option value="updated_desc">Zuletzt geändert</option>
+          <option value="firma_asc">Firma A-Z</option>
+        </select>
+        <select id="engine-stadt" class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 focus:outline-none focus:border-zinc-700">
+          <option value="">Alle Städte</option>
+        </select>
+        <p id="engine-list-count" class="text-xs text-zinc-500 ml-auto"></p>
+      </section>
+
+      <!-- Prospect-Liste -->
+      <section>
+        <div id="prospect-list" class="grid gap-3"></div>
+        <div id="prospect-list-empty" class="hidden text-center py-20">
+          <div class="inline-block p-4 rounded-2xl bg-zinc-900 border border-zinc-800 mb-4">
+            <svg class="w-8 h-8 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7h18M3 12h18M3 17h18"/></svg>
+          </div>
+          <p class="text-zinc-400 mb-1">Noch keine Prospects</p>
+          <p class="text-sm text-zinc-500 mb-2">Starte die Engine-Pipeline im Terminal:</p>
+          <code class="text-xs text-zinc-400 bg-zinc-900 px-3 py-1.5 rounded-md inline-block">cd crm/engine && node scrape_google_places.mjs --stadt "Frankfurt"</code>
+        </div>
+      </section>
+    </div><!-- /#engine-view -->
 
   </main>
 
@@ -265,6 +335,107 @@
 
     </div>
   </aside>
+
+  <!-- PROSPECT DETAIL PANEL (Engine) -->
+  <aside id="prospect-detail" class="hidden fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[640px] z-40 bg-zinc-950 border-l border-zinc-900 shadow-2xl flex flex-col">
+    <div class="px-5 py-4 border-b border-zinc-900 flex items-start gap-3 shrink-0">
+      <div class="flex-1 min-w-0">
+        <p id="pd-firma" class="text-lg font-semibold truncate"></p>
+        <p id="pd-meta" class="text-xs text-zinc-500 mt-1"></p>
+      </div>
+      <button onclick="closeProspectDetail()" class="p-1.5 rounded-lg hover:bg-zinc-900 transition-colors shrink-0">
+        <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto scrollbar-thin">
+      <!-- Hero: Score + Hook -->
+      <div id="pd-hero" class="px-5 py-4 border-b border-zinc-900"></div>
+      <!-- Screenshots -->
+      <div id="pd-screenshots" class="px-5 py-4 border-b border-zinc-900"></div>
+      <!-- Pain Points -->
+      <div id="pd-pain" class="px-5 py-4 border-b border-zinc-900"></div>
+      <!-- Quick Actions -->
+      <div id="pd-actions" class="px-5 py-4 border-b border-zinc-900 grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+      <!-- Status / Owner -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Status</label>
+        <div id="pd-status-buttons" class="grid grid-cols-3 gap-1.5 mb-4"></div>
+        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Owner</label>
+        <div id="pd-owner-buttons" class="flex gap-1.5"></div>
+      </div>
+      <!-- Activities -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Aktivitäten</label>
+          <button onclick="addProspectActivity()" class="text-xs font-medium text-zinc-300 hover:text-white flex items-center gap-1 px-2 py-1 rounded-md hover:bg-zinc-900 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            Anruf / Termin
+          </button>
+        </div>
+        <div id="pd-activities" class="space-y-2"></div>
+      </div>
+      <!-- Notes -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Notizen</label>
+        <div class="flex gap-2 mb-3">
+          <input type="text" id="pd-note-input" placeholder="Schnellnotiz…" class="flex-1 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+          <button onclick="addProspectNote()" class="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm font-medium transition-colors">Hinzu</button>
+        </div>
+        <div id="pd-notes" class="space-y-2"></div>
+      </div>
+      <!-- Enrichment Details (collapsed) -->
+      <div class="px-5 py-4 border-b border-zinc-900">
+        <button onclick="toggleEnrichmentDetails()" class="w-full text-left flex items-center justify-between text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+          <span class="font-medium uppercase tracking-wider">Enrichment-Daten</span>
+          <svg id="pd-enrichment-chevron" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="pd-enrichment-body" class="hidden mt-3 text-xs text-zinc-400 font-mono whitespace-pre-wrap"></div>
+      </div>
+      <!-- Promote -->
+      <div class="px-5 py-4">
+        <button onclick="promoteProspect()" id="pd-promote-btn"
+          class="w-full px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          Als echten Lead übernehmen
+        </button>
+        <p class="text-[10px] text-zinc-500 mt-2 text-center">Activities + Notizen wandern mit.</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- PROSPECT ACTIVITY MODAL (simpel) -->
+  <div id="prospect-activity-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
+      <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
+        <h2 class="font-semibold text-sm">Neue Aktivität</h2>
+        <button onclick="closeProspectActivityModal()" class="p-1 rounded-md hover:bg-zinc-800 transition-colors">
+          <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Titel</label>
+          <input type="text" id="pa-titel" placeholder="Anruf / Termin / Aufgabe" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Wann</label>
+          <input type="datetime-local" id="pa-scheduled" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Notiz (optional)</label>
+          <textarea id="pa-note" rows="3" class="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-zinc-800 focus:border-zinc-700 focus:outline-none text-sm" placeholder="z.B. Gesprächsergebnis, Themen, …"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Owner</label>
+          <div id="pa-owner-buttons" class="flex gap-1.5"></div>
+        </div>
+      </div>
+      <div class="px-5 py-3 border-t border-zinc-800 flex justify-end gap-2">
+        <button onclick="closeProspectActivityModal()" class="px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-zinc-200 transition-colors">Abbrechen</button>
+        <button onclick="saveProspectActivity()" class="px-3 py-2 rounded-lg bg-white text-zinc-950 font-medium text-sm hover:bg-zinc-200 transition-colors">Speichern</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ADD LEAD MODAL -->
   <div id="add-lead-modal" class="hidden fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center px-4">
@@ -638,7 +809,8 @@ async function loadLeads() {
 }
 
 async function loadActivities() {
-  const { data, error } = await sb.from('activities').select('*').order('scheduled_at', { ascending: true, nullsFirst: false });
+  // Nur Lead-Activities laden (Prospect-Activities haben prospect_id != null und kommen in state.prospectActivities)
+  const { data, error } = await sb.from('activities').select('*').is('prospect_id', null).order('scheduled_at', { ascending: true, nullsFirst: false });
   if (error) { console.error('[loadActivities]', error); toast('Aktivitäten-Fehler: ' + error.message); return; }
   state.activities = data || [];
 }
@@ -756,6 +928,12 @@ function subscribeRealtime() {
       render();
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, (payload) => {
+      // Prospect-Activities laufen in eigenem State — hier nur Lead-Activities verarbeiten
+      const isProspectActivity = !!(payload.new?.prospect_id || payload.old?.prospect_id);
+      if (isProspectActivity) {
+        if (typeof handleProspectActivityRealtime === 'function') handleProspectActivityRealtime(payload);
+        return;
+      }
       if (payload.eventType === 'INSERT') {
         if (!state.activities.find(a => a.id === payload.new.id)) state.activities.push(payload.new);
       } else if (payload.eventType === 'UPDATE') {
@@ -767,6 +945,18 @@ function subscribeRealtime() {
       render();
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'notes' }, (payload) => {
+      const prospectId = payload.new?.prospect_id || payload.old?.prospect_id;
+      if (prospectId) {
+        // Prospect-Note
+        if (!state.prospectNotes[prospectId]) return;
+        if (payload.eventType === 'INSERT') {
+          if (!state.prospectNotes[prospectId].find(n => n.id === payload.new.id)) state.prospectNotes[prospectId].unshift(payload.new);
+        } else if (payload.eventType === 'DELETE') {
+          state.prospectNotes[prospectId] = state.prospectNotes[prospectId].filter(n => n.id !== payload.old.id);
+        }
+        if (state.view === 'engine' && state.selectedProspectId === prospectId) renderProspectNotes();
+        return;
+      }
       const leadId = payload.new?.lead_id || payload.old?.lead_id;
       if (!leadId || !state.notesByLead[leadId]) return;
       if (payload.eventType === 'INSERT') {
@@ -775,6 +965,21 @@ function subscribeRealtime() {
         state.notesByLead[leadId] = state.notesByLead[leadId].filter(n => n.id !== payload.old.id);
       }
       if (state.selectedLeadId === leadId) renderNotes();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'prospects' }, (payload) => {
+      if (payload.eventType === 'INSERT') {
+        if (!state.prospects.find(p => p.id === payload.new.id)) state.prospects.unshift(payload.new);
+      } else if (payload.eventType === 'UPDATE') {
+        const i = state.prospects.findIndex(p => p.id === payload.new.id);
+        if (i >= 0) state.prospects[i] = payload.new;
+        else state.prospects.unshift(payload.new);
+      } else if (payload.eventType === 'DELETE') {
+        state.prospects = state.prospects.filter(p => p.id !== payload.old.id);
+      }
+      if (state.view === 'engine') {
+        renderEngine();
+        if (state.selectedProspectId === (payload.new?.id || payload.old?.id)) renderProspectDetail();
+      }
     })
     .subscribe((status) => {
       state.rtConnected = (status === 'SUBSCRIBED');
@@ -2040,6 +2245,604 @@ window.addEventListener('unhandledrejection', (e) => {
   console.error('[window.unhandledrejection]', e.reason);
   const msg = e.reason?.message || e.reason?.toString?.() || 'unbekannt';
   try { toast('Promise-Fehler: ' + msg); } catch {}
+});
+
+// =============================================================
+// ENGINE (Cold-Lead-Pipeline)
+// =============================================================
+
+const PROSPECT_STATUS_LIST = [
+  { key: 'new',                 label: 'Neu',              color: 'bg-zinc-500/15 text-zinc-300 border-zinc-500/30' },
+  { key: 'enriched',            label: 'Enriched',         color: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
+  { key: 'scored',              label: 'Scored',           color: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
+  { key: 'kontaktiert',         label: 'Kontaktiert',      color: 'bg-sky-500/15 text-sky-300 border-sky-500/30' },
+  { key: 'interessiert',        label: 'Interessiert',     color: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
+  { key: 'nicht_interessiert',  label: 'Kein Interesse',   color: 'bg-zinc-700/30 text-zinc-400 border-zinc-700' },
+  { key: 'promoted',            label: 'Promoted',         color: 'bg-violet-500/15 text-violet-300 border-violet-500/30' },
+  { key: 'disqualifiziert',     label: 'Disqualifiziert',  color: 'bg-zinc-700/30 text-zinc-500 border-zinc-700' },
+];
+const PROSPECT_STATUS_MAP = Object.fromEntries(PROSPECT_STATUS_LIST.map(s => [s.key, s]));
+
+const ENGINE_FILTER_TABS = [
+  { key: 'active',              label: 'Aktiv' },             // alle außer promoted/disqualifiziert
+  ...PROSPECT_STATUS_LIST.map(s => ({ key: s.key, label: s.label })),
+];
+
+// State-Erweiterung
+Object.assign(state, {
+  view: 'leads',                       // 'leads' | 'engine'
+  prospects: [],
+  prospectActivities: [],
+  prospectNotes: {},                   // { prospectId: [notes...] }
+  selectedProspectId: null,
+  prospectFilter: 'active',
+  prospectSort: 'score_desc',
+  prospectStadt: '',
+  pendingProspectActivity: { owner: null },
+});
+
+// ---------- View Switching --------------------------------------------------
+function switchView(view) {
+  state.view = view;
+  const leadsView = document.getElementById('leads-view');
+  const engineView = document.getElementById('engine-view');
+  const leadsBtn = document.getElementById('view-leads-btn');
+  const engineBtn = document.getElementById('view-engine-btn');
+  const newLeadBtn = document.getElementById('new-lead-btn');
+
+  if (view === 'engine') {
+    leadsView?.classList.add('hidden');
+    engineView?.classList.remove('hidden');
+    leadsBtn?.classList.remove('bg-zinc-800', 'text-zinc-100');
+    leadsBtn?.classList.add('text-zinc-400');
+    engineBtn?.classList.add('bg-zinc-800', 'text-zinc-100');
+    engineBtn?.classList.remove('text-zinc-400');
+    if (newLeadBtn) newLeadBtn.classList.add('hidden');
+    closeLeadDetail();
+    loadProspectsIfNeeded();
+    renderEngine();
+  } else {
+    engineView?.classList.add('hidden');
+    leadsView?.classList.remove('hidden');
+    engineBtn?.classList.remove('bg-zinc-800', 'text-zinc-100');
+    engineBtn?.classList.add('text-zinc-400');
+    leadsBtn?.classList.add('bg-zinc-800', 'text-zinc-100');
+    leadsBtn?.classList.remove('text-zinc-400');
+    if (newLeadBtn) newLeadBtn.classList.remove('hidden');
+    closeProspectDetail();
+    render();
+  }
+}
+
+// ---------- Data Loaders ----------------------------------------------------
+async function loadProspects() {
+  const { data, error } = await sb
+    .from('prospects')
+    .select('*')
+    .is('deleted_at', null)
+    .order('llm_score', { ascending: false, nullsFirst: false });
+  if (error) { console.error('[loadProspects]', error); toast('Prospects-Fehler: ' + error.message); return; }
+  state.prospects = data || [];
+}
+
+async function loadProspectActivities() {
+  const { data, error } = await sb
+    .from('activities')
+    .select('*')
+    .not('prospect_id', 'is', null)
+    .order('scheduled_at', { ascending: true, nullsFirst: false });
+  if (error) { console.error('[loadProspectActivities]', error); toast('Engine-Activities-Fehler: ' + error.message); return; }
+  state.prospectActivities = data || [];
+}
+
+async function loadProspectNotes(prospectId) {
+  const { data, error } = await sb
+    .from('notes')
+    .select('*')
+    .eq('prospect_id', prospectId)
+    .order('created_at', { ascending: false });
+  if (error) { console.error('[loadProspectNotes]', error); return; }
+  state.prospectNotes[prospectId] = data || [];
+}
+
+let _engineLoaded = false;
+async function loadProspectsIfNeeded() {
+  if (_engineLoaded) return;
+  _engineLoaded = true;
+  await Promise.all([loadProspects(), loadProspectActivities()]);
+  renderEngine();
+}
+
+// ---------- Filtering & Rendering: List ------------------------------------
+function visibleProspects() {
+  let list = state.prospects.filter(p => !p.deleted_at);
+  if (state.prospectFilter === 'active') {
+    list = list.filter(p => !['promoted', 'disqualifiziert'].includes(p.prospect_status));
+  } else {
+    list = list.filter(p => p.prospect_status === state.prospectFilter);
+  }
+  if (state.prospectStadt) list = list.filter(p => p.stadt === state.prospectStadt);
+
+  // Search
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    list = list.filter(p =>
+      (p.firma || '').toLowerCase().includes(q) ||
+      (p.stadt || '').toLowerCase().includes(q) ||
+      (p.adresse || '').toLowerCase().includes(q)
+    );
+  }
+
+  // Sort
+  const score = p => p.llm_score ?? p.rule_score ?? -1;
+  switch (state.prospectSort) {
+    case 'score_asc':    list.sort((a, b) => score(a) - score(b)); break;
+    case 'updated_desc': list.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)); break;
+    case 'firma_asc':    list.sort((a, b) => (a.firma || '').localeCompare(b.firma || '', 'de')); break;
+    case 'score_desc':
+    default:             list.sort((a, b) => score(b) - score(a));
+  }
+  return list;
+}
+
+function scoreColor(score) {
+  if (score == null) return 'text-zinc-500 border-zinc-700 bg-zinc-900/50';
+  if (score >= 70) return 'text-red-300 border-red-500/40 bg-red-500/10';
+  if (score >= 40) return 'text-amber-300 border-amber-500/40 bg-amber-500/10';
+  return 'text-zinc-400 border-zinc-700 bg-zinc-900/50';
+}
+
+function renderEngineFilterTabs() {
+  const el = document.getElementById('engine-filter-tabs');
+  if (!el) return;
+  const counts = {};
+  for (const p of state.prospects.filter(p => !p.deleted_at)) {
+    counts[p.prospect_status] = (counts[p.prospect_status] || 0) + 1;
+    if (!['promoted', 'disqualifiziert'].includes(p.prospect_status)) {
+      counts.active = (counts.active || 0) + 1;
+    }
+  }
+  el.innerHTML = ENGINE_FILTER_TABS.map(t => {
+    const active = state.prospectFilter === t.key;
+    const count = counts[t.key] || 0;
+    return `
+      <button onclick="setProspectFilter('${t.key}')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${active ? 'bg-zinc-100 text-zinc-950' : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}">
+        ${escapeHtml(t.label)}${count ? ` <span class="ml-1 ${active ? 'text-zinc-600' : 'text-zinc-600'}">${count}</span>` : ''}
+      </button>`;
+  }).join('');
+}
+
+function renderEngineStadtFilter() {
+  const el = document.getElementById('engine-stadt');
+  if (!el) return;
+  const cities = [...new Set(state.prospects.map(p => p.stadt).filter(Boolean))].sort();
+  const current = state.prospectStadt;
+  el.innerHTML = `<option value="">Alle Städte (${cities.length})</option>` + cities.map(c =>
+    `<option value="${escapeHtml(c)}"${c === current ? ' selected' : ''}>${escapeHtml(c)}</option>`
+  ).join('');
+}
+
+function setProspectFilter(key) { state.prospectFilter = key; renderEngine(); }
+
+function renderProspectCard(p) {
+  const score = p.llm_score ?? p.rule_score;
+  const scoreCls = scoreColor(score);
+  const status = PROSPECT_STATUS_MAP[p.prospect_status] || PROSPECT_STATUS_LIST[0];
+  const e = p.enrichment || {};
+  const reviews = e.google_review_count;
+  const rating = e.google_rating;
+  const techBadge = (e.tech_stack && e.tech_stack[0]) ? e.tech_stack[0] : null;
+  const noWeb = e.no_website;
+  const thumb = p.screenshot_mobile || p.screenshot_desktop;
+  const pains = (p.pain_points || []).slice(0, 3);
+  const ownerBadgeHtml = ownerBadge(p.owner, 'sm');
+
+  return `
+    <button onclick="selectProspect('${p.id}')" class="text-left rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 hover:bg-zinc-900/70 transition-colors p-3 sm:p-4 flex gap-3 sm:gap-4 group">
+      <div class="shrink-0 w-24 sm:w-28 h-40 sm:h-44 rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800 relative">
+        ${thumb
+          ? `<img src="${escapeHtml(thumb)}" alt="" class="w-full h-full object-cover object-top" loading="lazy" onerror="this.style.display='none'" />`
+          : noWeb
+            ? `<div class="absolute inset-0 flex items-center justify-center text-[10px] text-zinc-500 text-center p-2">keine<br>Website</div>`
+            : `<div class="absolute inset-0 flex items-center justify-center text-zinc-700"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4-4a3 3 0 014 0l4 4M16 12l1-1a3 3 0 014 0l-1 1M4 4h16v16H4z"/></svg></div>`}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start gap-2 mb-1">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-sm text-zinc-100 truncate">${escapeHtml(p.firma)}</p>
+            <p class="text-[11px] text-zinc-500 truncate">
+              ${escapeHtml(p.stadt || '')}${rating ? ` · ⭐${rating} (${reviews||0})` : ''}${techBadge ? ` · ${escapeHtml(techBadge)}` : ''}
+            </p>
+          </div>
+          <div class="shrink-0 flex items-center gap-1.5">
+            ${ownerBadgeHtml}
+            <span class="inline-flex items-center justify-center min-w-[40px] px-1.5 py-0.5 rounded-md text-xs font-bold tabular-nums border ${scoreCls}">${score ?? '–'}</span>
+          </div>
+        </div>
+        ${p.sales_pitch_hook
+          ? `<p class="text-xs text-amber-200/80 italic mb-1.5 line-clamp-2">"${escapeHtml(p.sales_pitch_hook)}"</p>`
+          : ''}
+        ${pains.length > 0
+          ? `<ul class="text-[11px] text-zinc-400 space-y-0.5">${pains.map(pp => `<li class="line-clamp-1">• ${escapeHtml(pp)}</li>`).join('')}</ul>`
+          : `<p class="text-[11px] text-zinc-600 italic">${p.prospect_status === 'new' ? 'noch nicht enriched' : 'kein Audit'}</p>`}
+        <div class="flex items-center gap-1.5 mt-2">
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] border ${status.color}">${escapeHtml(status.label)}</span>
+        </div>
+      </div>
+    </button>`;
+}
+
+function renderEngine() {
+  const view = state.view;
+  if (view !== 'engine') return;
+
+  document.getElementById('engine-count').textContent = state.prospects.filter(p => !p.deleted_at).length;
+  renderEngineFilterTabs();
+  renderEngineStadtFilter();
+
+  const list = visibleProspects();
+  document.getElementById('engine-list-count').textContent = `${list.length} ${list.length === 1 ? 'Prospect' : 'Prospects'}`;
+
+  const el = document.getElementById('prospect-list');
+  const empty = document.getElementById('prospect-list-empty');
+  if (list.length === 0) {
+    el.innerHTML = '';
+    empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+    el.innerHTML = list.map(renderProspectCard).join('');
+  }
+}
+
+// ---------- Detail Panel ----------------------------------------------------
+async function selectProspect(id) {
+  state.selectedProspectId = id;
+  await loadProspectNotes(id);
+  renderProspectDetail();
+  document.getElementById('prospect-detail').classList.remove('hidden');
+}
+
+function closeProspectDetail() {
+  state.selectedProspectId = null;
+  document.getElementById('prospect-detail').classList.add('hidden');
+}
+
+function getSelectedProspect() {
+  return state.prospects.find(p => p.id === state.selectedProspectId);
+}
+
+function renderProspectDetail() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  const e = p.enrichment || {};
+  const score = p.llm_score ?? p.rule_score;
+  const status = PROSPECT_STATUS_MAP[p.prospect_status] || PROSPECT_STATUS_LIST[0];
+
+  // Header
+  document.getElementById('pd-firma').textContent = p.firma;
+  document.getElementById('pd-meta').innerHTML = [
+    p.stadt && escapeHtml(p.stadt),
+    e.google_rating && `⭐${e.google_rating} (${e.google_review_count || 0})`,
+    (e.tech_stack && e.tech_stack[0]) && escapeHtml(e.tech_stack[0]),
+  ].filter(Boolean).join(' · ');
+
+  // Hero: Score + Hook + Summary
+  document.getElementById('pd-hero').innerHTML = `
+    <div class="flex items-start gap-3">
+      <div class="shrink-0 w-16 h-16 rounded-2xl border ${scoreColor(score)} flex flex-col items-center justify-center font-bold">
+        <span class="text-2xl tabular-nums leading-none">${score ?? '–'}</span>
+        <span class="text-[9px] uppercase tracking-wider opacity-70 mt-0.5">${p.llm_score != null ? 'LLM' : 'Regel'}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        ${p.sales_pitch_hook ? `<p class="text-sm text-amber-200 italic mb-1">"${escapeHtml(p.sales_pitch_hook)}"</p>` : ''}
+        ${p.scoring_summary ? `<p class="text-xs text-zinc-400">${escapeHtml(p.scoring_summary)}</p>` : ''}
+      </div>
+    </div>`;
+
+  // Screenshots
+  const desktop = p.screenshot_desktop;
+  const mobile = p.screenshot_mobile;
+  document.getElementById('pd-screenshots').innerHTML = `
+    <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Website</label>
+    ${(desktop || mobile) ? `
+      <div class="grid grid-cols-3 gap-2">
+        ${desktop ? `<a href="${escapeHtml(desktop)}" target="_blank" class="col-span-2 block rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900"><img src="${escapeHtml(desktop)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top" /></a>` : ''}
+        ${mobile ? `<a href="${escapeHtml(mobile)}" target="_blank" class="block rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900"><img src="${escapeHtml(mobile)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top" /></a>` : ''}
+      </div>` : `<p class="text-xs text-zinc-500 italic">${e.no_website ? 'Keine eigene Website (nur Google-Profil).' : 'Noch keine Screenshots — bitte enrichment laufen lassen.'}</p>`}
+    ${p.website ? `<a href="${escapeHtml(p.website)}" target="_blank" class="text-xs text-zinc-400 hover:text-zinc-200 mt-2 inline-flex items-center gap-1">
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      ${escapeHtml(p.website)}
+    </a>` : ''}
+  `;
+
+  // Pain Points
+  const pains = p.pain_points || [];
+  document.getElementById('pd-pain').innerHTML = `
+    <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Pain Points</label>
+    ${pains.length > 0
+      ? `<ul class="space-y-1.5">${pains.map(pp => `<li class="text-xs text-zinc-300 flex gap-2"><span class="text-amber-400 shrink-0">•</span><span>${escapeHtml(pp)}</span></li>`).join('')}</ul>`
+      : `<p class="text-xs text-zinc-500 italic">Noch nicht via LLM auditiert.</p>`}`;
+
+  // Quick Actions
+  const phone = p.telefon ? normalizePhone(p.telefon) : null;
+  document.getElementById('pd-actions').innerHTML = [
+    p.website ? `<a href="${escapeHtml(p.website)}" target="_blank" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 text-center transition-colors">Website</a>` : '',
+    e.google_url ? `<a href="${escapeHtml(e.google_url)}" target="_blank" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 text-center transition-colors">Google</a>` : '',
+    phone ? `<a href="tel:${escapeHtml(phone)}" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 text-center transition-colors">Anrufen</a>` : '',
+    waLink(p.telefon) ? `<a href="${escapeHtml(waLink(p.telefon))}" target="_blank" class="px-3 py-2 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 text-xs text-emerald-300 text-center transition-colors">WhatsApp</a>` : '',
+  ].filter(Boolean).join('');
+
+  // Status
+  const isPromoted = p.prospect_status === 'promoted';
+  const statusButtons = PROSPECT_STATUS_LIST.filter(s => s.key !== 'promoted' || isPromoted).map(s => {
+    const isActive = s.key === p.prospect_status;
+    return `<button onclick="changeProspectStatus('${s.key}')" ${isPromoted ? 'disabled' : ''} class="px-2 py-1.5 rounded-md text-[11px] font-medium border transition-colors ${isActive ? s.color : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700'} ${isPromoted ? 'opacity-50 cursor-not-allowed' : ''}">${escapeHtml(s.label)}</button>`;
+  }).join('');
+  document.getElementById('pd-status-buttons').innerHTML = statusButtons;
+
+  // Owner
+  document.getElementById('pd-owner-buttons').innerHTML = ['Markus', 'Robin'].map(o => {
+    const isActive = p.owner === o;
+    const cls = isActive ? OWNERS[o].active : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700';
+    return `<button onclick="changeProspectOwner('${o}')" class="px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${cls}">${o}</button>`;
+  }).join('') + `<button onclick="changeProspectOwner(null)" class="px-2 py-1.5 rounded-md text-xs text-zinc-500 hover:text-zinc-300 transition-colors">– entfernen</button>`;
+
+  // Activities
+  renderProspectActivities();
+  // Notes
+  renderProspectNotes();
+
+  // Enrichment-Block (gefaltet)
+  const enrichmentBody = document.getElementById('pd-enrichment-body');
+  enrichmentBody.textContent = JSON.stringify(e, null, 2);
+
+  // Promote-Button
+  const promoteBtn = document.getElementById('pd-promote-btn');
+  if (isPromoted) {
+    promoteBtn.disabled = true;
+    promoteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    promoteBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Bereits als Lead übernommen`;
+  } else {
+    promoteBtn.disabled = false;
+    promoteBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+  }
+}
+
+function renderProspectActivities() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  const list = state.prospectActivities.filter(a => a.prospect_id === p.id);
+  const el = document.getElementById('pd-activities');
+  if (list.length === 0) {
+    el.innerHTML = `<p class="text-xs text-zinc-500 italic">Noch keine Aktivitäten.</p>`;
+    return;
+  }
+  list.sort((a, b) => {
+    const da = a.done_at ? 1 : 0;
+    const db = b.done_at ? 1 : 0;
+    if (da !== db) return da - db;
+    return new Date(a.scheduled_at || a.created_at) - new Date(b.scheduled_at || b.created_at);
+  });
+  el.innerHTML = list.map(a => {
+    const done = !!a.done_at;
+    const when = a.scheduled_at ? formatScheduled(a.scheduled_at) : '';
+    const ownerHtml = ownerBadge(a.owner, 'xs');
+    return `
+      <div class="flex items-start gap-2 p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800">
+        <button onclick="toggleProspectActivityDone('${a.id}')" class="shrink-0 mt-0.5 w-4 h-4 rounded border ${done ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-700 hover:border-zinc-500'} flex items-center justify-center transition-colors">
+          ${done ? `<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>` : ''}
+        </button>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs ${done ? 'text-zinc-500 line-through' : 'text-zinc-200'} font-medium">${escapeHtml(a.titel)} ${ownerHtml}</p>
+          ${when ? `<p class="text-[10px] text-zinc-500">${escapeHtml(when)}</p>` : ''}
+          ${a.note ? `<p class="text-[11px] text-zinc-400 mt-1 whitespace-pre-wrap">${escapeHtml(a.note)}</p>` : ''}
+        </div>
+        <button onclick="deleteProspectActivity('${a.id}')" class="shrink-0 p-1 text-zinc-600 hover:text-red-400 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>`;
+  }).join('');
+}
+
+function renderProspectNotes() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  const list = state.prospectNotes[p.id] || [];
+  const el = document.getElementById('pd-notes');
+  if (list.length === 0) {
+    el.innerHTML = `<p class="text-xs text-zinc-500 italic">Noch keine Notizen.</p>`;
+    return;
+  }
+  el.innerHTML = list.map(n => `
+    <div class="p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800">
+      <p class="text-xs text-zinc-300 whitespace-pre-wrap">${escapeHtml(n.content)}</p>
+      <div class="flex items-center justify-between mt-1">
+        <p class="text-[10px] text-zinc-500">${escapeHtml(formatDateTime(n.created_at))}</p>
+        <button onclick="deleteProspectNote('${n.id}')" class="text-[10px] text-zinc-600 hover:text-red-400 transition-colors">löschen</button>
+      </div>
+    </div>`).join('');
+}
+
+function toggleEnrichmentDetails() {
+  const body = document.getElementById('pd-enrichment-body');
+  const chev = document.getElementById('pd-enrichment-chevron');
+  if (body.classList.contains('hidden')) {
+    body.classList.remove('hidden');
+    chev.style.transform = 'rotate(180deg)';
+  } else {
+    body.classList.add('hidden');
+    chev.style.transform = '';
+  }
+}
+
+// ---------- Mutations ------------------------------------------------------
+async function changeProspectStatus(newStatus) {
+  const p = getSelectedProspect();
+  if (!p) return;
+  if (p.prospect_status === 'promoted') { toast('Bereits promotet'); return; }
+  const { data, error } = await sb.from('prospects').update({ prospect_status: newStatus }).eq('id', p.id).select().single();
+  if (error) { toast('Status nicht gespeichert: ' + error.message); return; }
+  const i = state.prospects.findIndex(x => x.id === p.id);
+  if (i >= 0) state.prospects[i] = data;
+  renderProspectDetail();
+  renderEngine();
+}
+
+async function changeProspectOwner(owner) {
+  const p = getSelectedProspect();
+  if (!p) return;
+  const { data, error } = await sb.from('prospects').update({ owner }).eq('id', p.id).select().single();
+  if (error) { toast('Owner nicht gespeichert: ' + error.message); return; }
+  const i = state.prospects.findIndex(x => x.id === p.id);
+  if (i >= 0) state.prospects[i] = data;
+  renderProspectDetail();
+  renderEngine();
+}
+
+async function addProspectNote() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  const input = document.getElementById('pd-note-input');
+  const content = (input.value || '').trim();
+  if (!content) return;
+  const { data, error } = await sb.from('notes').insert({ prospect_id: p.id, content }).select().single();
+  if (error) { toast('Notiz nicht gespeichert: ' + error.message); return; }
+  if (!state.prospectNotes[p.id]) state.prospectNotes[p.id] = [];
+  state.prospectNotes[p.id].unshift(data);
+  input.value = '';
+  renderProspectNotes();
+}
+
+async function deleteProspectNote(noteId) {
+  const p = getSelectedProspect();
+  if (!p) return;
+  if (!confirm('Notiz löschen?')) return;
+  const { error } = await sb.from('notes').delete().eq('id', noteId);
+  if (error) { toast('Notiz nicht gelöscht: ' + error.message); return; }
+  state.prospectNotes[p.id] = (state.prospectNotes[p.id] || []).filter(n => n.id !== noteId);
+  renderProspectNotes();
+}
+
+function addProspectActivity() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  document.getElementById('pa-titel').value = '';
+  document.getElementById('pa-scheduled').value = toLocalInputValue(new Date(Date.now() + 24 * 3600 * 1000).toISOString());
+  document.getElementById('pa-note').value = '';
+  state.pendingProspectActivity = { owner: p.owner || null };
+  renderProspectActivityOwnerButtons();
+  document.getElementById('prospect-activity-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('pa-titel').focus(), 50);
+}
+
+function closeProspectActivityModal() {
+  document.getElementById('prospect-activity-modal').classList.add('hidden');
+}
+
+function renderProspectActivityOwnerButtons() {
+  const current = state.pendingProspectActivity.owner;
+  document.getElementById('pa-owner-buttons').innerHTML = ['Markus', 'Robin'].map(o => {
+    const isActive = current === o;
+    const cls = isActive ? OWNERS[o].active : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700';
+    return `<button type="button" onclick="setPendingActivityOwner('${o}')" class="px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${cls}">${o}</button>`;
+  }).join('') + `<button type="button" onclick="setPendingActivityOwner(null)" class="px-2 py-1.5 rounded-md text-xs text-zinc-500 hover:text-zinc-300 transition-colors">– keiner</button>`;
+}
+function setPendingActivityOwner(owner) {
+  state.pendingProspectActivity.owner = owner;
+  renderProspectActivityOwnerButtons();
+}
+
+async function saveProspectActivity() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  const titel = (document.getElementById('pa-titel').value || '').trim();
+  if (!titel) { toast('Titel fehlt'); return; }
+  const scheduled = fromLocalInputValue(document.getElementById('pa-scheduled').value);
+  const note = (document.getElementById('pa-note').value || '').trim() || null;
+  const fields = {
+    prospect_id: p.id,
+    titel,
+    scheduled_at: scheduled,
+    note,
+    owner: state.pendingProspectActivity.owner,
+  };
+  const { data, error } = await sb.from('activities').insert(fields).select().single();
+  if (error) { toast('Aktivität nicht gespeichert: ' + error.message); return; }
+  if (!state.prospectActivities.find(a => a.id === data.id)) state.prospectActivities.push(data);
+  closeProspectActivityModal();
+  renderProspectActivities();
+}
+
+async function toggleProspectActivityDone(activityId) {
+  const a = state.prospectActivities.find(x => x.id === activityId);
+  if (!a) return;
+  const newDone = a.done_at ? null : new Date().toISOString();
+  const { data, error } = await sb.from('activities').update({ done_at: newDone }).eq('id', activityId).select().single();
+  if (error) { toast('Update fehlgeschlagen: ' + error.message); return; }
+  const i = state.prospectActivities.findIndex(x => x.id === activityId);
+  if (i >= 0) state.prospectActivities[i] = data;
+  renderProspectActivities();
+}
+
+async function deleteProspectActivity(activityId) {
+  if (!confirm('Aktivität löschen?')) return;
+  const { error } = await sb.from('activities').delete().eq('id', activityId);
+  if (error) { toast('Nicht gelöscht: ' + error.message); return; }
+  state.prospectActivities = state.prospectActivities.filter(a => a.id !== activityId);
+  renderProspectActivities();
+}
+
+// ---------- Promote ---------------------------------------------------------
+async function promoteProspect() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  if (p.prospect_status === 'promoted') { toast('Bereits promotet'); return; }
+  if (!confirm(`"${p.firma}" als echten Lead übernehmen?\n\nAlle Aktivitäten und Notizen wandern mit.`)) return;
+
+  const btn = document.getElementById('pd-promote-btn');
+  btn.disabled = true;
+  btn.classList.add('opacity-50');
+  try {
+    const { data, error } = await sb.rpc('promote_prospect_to_lead', { p_prospect_id: p.id });
+    if (error) throw error;
+    const newLeadId = data;
+    toast('✓ Als Lead übernommen');
+
+    // Reload state
+    await Promise.all([loadLeads(), loadActivities(), loadProspects(), loadProspectActivities()]);
+
+    // Close detail, switch to Leads view, open new lead
+    closeProspectDetail();
+    switchView('leads');
+    setTimeout(() => selectLead(newLeadId), 100);
+  } catch (err) {
+    console.error('[promote]', err);
+    toast('Promote fehlgeschlagen: ' + (err?.message || err));
+    btn.disabled = false;
+    btn.classList.remove('opacity-50');
+  }
+}
+
+// ---------- Realtime Routing ------------------------------------------------
+function handleProspectActivityRealtime(payload) {
+  if (payload.eventType === 'INSERT') {
+    if (!state.prospectActivities.find(a => a.id === payload.new.id)) state.prospectActivities.push(payload.new);
+  } else if (payload.eventType === 'UPDATE') {
+    const i = state.prospectActivities.findIndex(a => a.id === payload.new.id);
+    if (i >= 0) state.prospectActivities[i] = payload.new;
+    else state.prospectActivities.push(payload.new);
+  } else if (payload.eventType === 'DELETE') {
+    state.prospectActivities = state.prospectActivities.filter(a => a.id !== payload.old.id);
+  }
+  if (state.view === 'engine' && state.selectedProspectId) renderProspectActivities();
+}
+
+// ---------- Sort/Stadt change handlers --------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const sortEl = document.getElementById('engine-sort');
+  if (sortEl) sortEl.addEventListener('change', e => { state.prospectSort = e.target.value; renderEngine(); });
+  const stadtEl = document.getElementById('engine-stadt');
+  if (stadtEl) stadtEl.addEventListener('change', e => { state.prospectStadt = e.target.value; renderEngine(); });
 });
 
 // =============================================================

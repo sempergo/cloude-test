@@ -1,0 +1,23 @@
+{
+  "name": "semp-crm-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cold-Lead-Engine: Scraping, Enrichment, Scoring für SEMP Studios",
+  "scripts": {
+    "scrape": "node scrape_google_places.mjs",
+    "enrich": "node enrich_prospects.mjs",
+    "score": "node score_prospects.mjs",
+    "pipeline": "node scrape_google_places.mjs && node enrich_prospects.mjs && node score_prospects.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "dotenv": "^16.4.5",
+    "p-limit": "^6.1.0",
+    "playwright": "^1.48.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
