@@ -16,7 +16,8 @@
 //   7. Lighthouse via PSI API (parallel zu Screenshots, mit p-limit(1))
 //   8. Status auf 'enriched', alle Daten in DB
 
-import 'dotenv/config';
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ override: true });
 import pLimit from 'p-limit';
 import { log, elapsed, sleep } from './lib/log.mjs';
 import { sb, updateProspect, uploadScreenshot, getProspect } from './lib/supabase.mjs';
@@ -33,30 +34,33 @@ const LIGHTHOUSE_LIMIT = pLimit(parseInt(process.env.LIGHTHOUSE_CONCURRENCY || '
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const out = { id: null, force: false };
+  const out = { id: null, force: false, limit: null };
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--id') out.id = args[++i];
     else if (args[i] === '--force') out.force = true;
+    else if (args[i] === '--limit') out.limit = parseInt(args[++i], 10);
     else if (args[i] === '--help' || args[i] === '-h') {
-      console.log('Usage: node enrich_prospects.mjs [--id <uuid>] [--force]');
+      console.log('Usage: node enrich_prospects.mjs [--id <uuid>] [--force] [--limit N]');
       process.exit(0);
     }
   }
   return out;
 }
 
-async function loadCandidates({ id, force }) {
+async function loadCandidates({ id, force, limit }) {
   if (id) {
     const p = await getProspect(id);
     return p ? [p] : [];
   }
   const statuses = force ? ['new', 'enriched', 'scored'] : ['new'];
-  const { data, error } = await sb
+  let query = sb
     .from('prospects')
     .select('*')
     .in('prospect_status', statuses)
     .is('deleted_at', null)
     .order('created_at', { ascending: true });
+  if (limit && limit > 0) query = query.limit(limit);
+  const { data, error } = await query;
   if (error) throw error;
   return data || [];
 }
@@ -196,12 +200,14 @@ async function enrichOne(prospect) {
     enrichment.errors.push({ step: 'html', error: 'no html available' });
   }
 
-  // 4. Lighthouse (parallel zu HTML-Analyse möglich, hier seriell der Einfachheit halber)
-  try {
-    const lh = await LIGHTHOUSE_LIMIT(() => lighthouseMobile(url));
-    enrichment.lighthouse = lh;
-  } catch (e) {
-    enrichment.errors.push({ step: 'lighthouse', error: e.message });
+  // 4. Lighthouse (kann via SKIP_LIGHTHOUSE=1 ausgeschaltet werden)
+  if (process.env.SKIP_LIGHTHOUSE !== '1') {
+    try {
+      const lh = await LIGHTHOUSE_LIMIT(() => lighthouseMobile(url));
+      enrichment.lighthouse = lh;
+    } catch (e) {
+      enrichment.errors.push({ step: 'lighthouse', error: e.message });
+    }
   }
 
   enrichment.enriched_in_ms = Date.now() - startedAt;

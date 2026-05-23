@@ -12,7 +12,8 @@
 //   5. Dedup: gegen prospects (google_place_id) UND gegen leads (firma fuzzy)
 //   6. UPSERT in prospects
 
-import 'dotenv/config';
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ override: true });
 import { log, elapsed, sleep } from './lib/log.mjs';
 import { sb } from './lib/supabase.mjs';
 import {

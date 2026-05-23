@@ -354,8 +354,8 @@
       <div id="pd-screenshots" class="px-5 py-4 border-b border-zinc-900"></div>
       <!-- Pain Points -->
       <div id="pd-pain" class="px-5 py-4 border-b border-zinc-900"></div>
-      <!-- Quick Actions -->
-      <div id="pd-actions" class="px-5 py-4 border-b border-zinc-900 grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+      <!-- Kontakt (Telefon/Email/Adresse) -->
+      <div id="pd-actions" class="px-5 py-4 border-b border-zinc-900"></div>
       <!-- Status / Owner -->
       <div class="px-5 py-4 border-b border-zinc-900">
         <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Status</label>
@@ -2563,14 +2563,53 @@ function renderProspectDetail() {
       ? `<ul class="space-y-1.5">${pains.map(pp => `<li class="text-xs text-zinc-300 flex gap-2"><span class="text-amber-400 shrink-0">•</span><span>${escapeHtml(pp)}</span></li>`).join('')}</ul>`
       : `<p class="text-xs text-zinc-500 italic">Noch nicht via LLM auditiert.</p>`}`;
 
-  // Quick Actions
+  // Contact-Block: Telefon/Email/Adresse sichtbar + Quick-Actions
   const phone = p.telefon ? normalizePhone(p.telefon) : null;
-  document.getElementById('pd-actions').innerHTML = [
-    p.website ? `<a href="${escapeHtml(p.website)}" target="_blank" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 text-center transition-colors">Website</a>` : '',
-    e.google_url ? `<a href="${escapeHtml(e.google_url)}" target="_blank" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 text-center transition-colors">Google</a>` : '',
-    phone ? `<a href="tel:${escapeHtml(phone)}" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 text-center transition-colors">Anrufen</a>` : '',
-    waLink(p.telefon) ? `<a href="${escapeHtml(waLink(p.telefon))}" target="_blank" class="px-3 py-2 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 text-xs text-emerald-300 text-center transition-colors">WhatsApp</a>` : '',
-  ].filter(Boolean).join('');
+  const contactRows = [];
+  if (p.telefon) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2 border-b border-zinc-800/60">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515L10 7l-2 2a11 11 0 005 5l2-2 2.485.78A2 2 0 0119 14.72V17a2 2 0 01-2 2h-1C9.716 19 5 14.284 5 8V7"/></svg>
+          <a href="tel:${escapeHtml(phone || p.telefon)}" class="text-sm text-zinc-100 hover:text-emerald-300 transition-colors tabular-nums truncate">${escapeHtml(p.telefon)}</a>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <a href="tel:${escapeHtml(phone || p.telefon)}" class="px-2 py-1 rounded-md bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 text-[10px] font-medium text-emerald-300 transition-colors">Anrufen</a>
+          ${waLink(p.telefon) ? `<a href="${escapeHtml(waLink(p.telefon))}" target="_blank" class="px-2 py-1 rounded-md bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 text-[10px] font-medium text-emerald-300 transition-colors">WA</a>` : ''}
+          <button onclick="navigator.clipboard.writeText('${escapeHtml(p.telefon)}'); toast('Telefon kopiert')" class="p-1 rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-colors" title="Kopieren">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </button>
+        </div>
+      </div>`);
+  }
+  if (p.email) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2 border-b border-zinc-800/60">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <a href="mailto:${escapeHtml(p.email)}" class="text-sm text-zinc-100 hover:text-emerald-300 transition-colors truncate">${escapeHtml(p.email)}</a>
+        </div>
+        <button onclick="navigator.clipboard.writeText('${escapeHtml(p.email)}'); toast('Email kopiert')" class="shrink-0 p-1 rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-colors" title="Kopieren">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        </button>
+      </div>`);
+  }
+  if (p.adresse) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="text-sm text-zinc-300 truncate">${escapeHtml(p.adresse)}</span>
+        </div>
+        ${e.google_url ? `<a href="${escapeHtml(e.google_url)}" target="_blank" class="shrink-0 px-2 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-[10px] font-medium text-zinc-200 transition-colors">Maps</a>` : ''}
+      </div>`);
+  }
+
+  document.getElementById('pd-actions').innerHTML = `
+    <label class="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Kontakt</label>
+    ${contactRows.length > 0
+      ? `<div class="rounded-lg border border-zinc-800 bg-zinc-900/40 px-3">${contactRows.join('')}</div>`
+      : `<p class="text-xs text-zinc-500 italic">Keine Kontaktdaten gefunden.</p>`}`;
 
   // Status
   const isPromoted = p.prospect_status === 'promoted';

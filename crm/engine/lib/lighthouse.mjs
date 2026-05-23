@@ -1,6 +1,9 @@
 // Google PageSpeed Insights API (gibt uns Lighthouse-Scores).
 // Kostenlos, Rate-Limit ~1 req/sec.
 
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ override: true });
+
 import { log, withRetry } from './log.mjs';
 
 const PSI_URL = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';

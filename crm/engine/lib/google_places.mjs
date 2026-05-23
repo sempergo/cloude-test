@@ -1,6 +1,9 @@
 // Google Places API: Grid-Search + Place Details + Retry.
 // Wir nutzen die "Nearby Search" mit Grid-Pattern, weil ein einzelner Search nur max 60 Treffer liefert.
 
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ override: true });
+
 import { log, withRetry, sleep } from './log.mjs';
 
 const PLACES_KEY = process.env.GOOGLE_PLACES_KEY;

@@ -1,6 +1,9 @@
 // Anthropic Claude Vision für Website-Audit.
 // Nutzt Tool-Use für garantiert valides JSON-Output und Prompt-Caching für Cost-Reduction.
 
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ override: true });
+
 import Anthropic from '@anthropic-ai/sdk';
 import { log, withRetry } from './log.mjs';
 

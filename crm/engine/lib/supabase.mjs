@@ -1,6 +1,9 @@
 // Supabase Service-Role-Client + Storage-Helper.
 // Service-Role-Key bypasst RLS — nur für Server-Side-Scripts, niemals im Browser.
 
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ override: true });
+
 import { createClient } from '@supabase/supabase-js';
 import { log } from './log.mjs';
 

@@ -96,31 +96,40 @@ export async function captureSite(url, opts = {}) {
     // Kleine Pause für Lazy-Load-Content
     await page.waitForTimeout(800);
 
+    // Bis ans Seitenende scrollen, damit Lazy-Load-Bilder reinkommen
+    try {
+      await page.evaluate(async () => {
+        await new Promise((resolve) => {
+          const distance = 600;
+          const interval = setInterval(() => {
+            window.scrollBy(0, distance);
+            if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 10) {
+              clearInterval(interval);
+              window.scrollTo(0, 0);
+              setTimeout(resolve, 400);
+            }
+          }, 150);
+        });
+      });
+    } catch (e) { /* ignore */ }
+
     result.html = await page.content();
     result.finalUrl = page.url();
 
-    // Full-page Screenshot, dann ggf. clippen
     const fullHeight = await page.evaluate(() => Math.max(
       document.body?.scrollHeight || 0,
       document.documentElement?.scrollHeight || 0,
     ));
-    const clipHeight = Math.min(fullHeight, maxClipHeight);
     const viewport = page.viewportSize();
-    result.viewport = { ...viewport, contentHeight: fullHeight, clippedTo: clipHeight };
+    result.viewport = { ...viewport, contentHeight: fullHeight };
 
-    if (clipHeight > 0 && clipHeight < fullHeight) {
-      result.screenshot = await page.screenshot({
-        type: 'jpeg',
-        quality,
-        clip: { x: 0, y: 0, width: viewport.width, height: clipHeight },
-      });
-    } else {
-      result.screenshot = await page.screenshot({
-        type: 'jpeg',
-        quality,
-        fullPage: true,
-      });
-    }
+    // Echter Full-Page-Screenshot. JPEG quality 70 hält Files klein (200-500KB typisch).
+    // Bei sehr langen Seiten wird automatisch über Scrolling capturet.
+    result.screenshot = await page.screenshot({
+      type: 'jpeg',
+      quality,
+      fullPage: true,
+    });
 
     result.ok = true;
     return result;

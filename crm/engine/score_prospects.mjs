@@ -7,7 +7,8 @@
 //   node score_prospects.mjs --skip-llm       # nur Regel-Scoring, kein LLM
 //   node score_prospects.mjs --top-n 50       # max N Prospects via LLM auditieren
 
-import 'dotenv/config';
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig({ override: true });
 import { log, elapsed } from './lib/log.mjs';
 import { sb, updateProspect, getProspect } from './lib/supabase.mjs';
 import { auditWebsite, getSpent } from './lib/claude.mjs';
