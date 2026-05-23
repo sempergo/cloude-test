@@ -172,9 +172,15 @@ async function enrichOneProspect(prospect) {
     } catch (e) { enrichment.errors.push({ step: 'htmlAnalysis', error: e.message }); }
   }
 
+  // Regel-Score direkt mitberechnen (kostet nichts, nur Logik)
+  const rs = ruleScore({ ...prospect, enrichment });
+
   await updateProspect(prospect.id, {
     enrichment, screenshot_desktop: desktopUrl, screenshot_mobile: mobileUrl,
-    prospect_status: finalStatus, enriched_at: new Date().toISOString(),
+    prospect_status: finalStatus === 'new' ? 'scored' : finalStatus,
+    enriched_at: new Date().toISOString(),
+    rule_score: rs,
+    scored_at: new Date().toISOString(),
   });
 }
 
