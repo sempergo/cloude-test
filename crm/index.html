@@ -2496,10 +2496,18 @@ function renderEngine() {
 
 // ---------- Detail Panel ----------------------------------------------------
 async function selectProspect(id) {
-  state.selectedProspectId = id;
-  await loadProspectNotes(id);
-  renderProspectDetail();
-  document.getElementById('prospect-detail').classList.remove('hidden');
+  console.log('[selectProspect]', id);
+  try {
+    state.selectedProspectId = id;
+    // Sofort einblenden (auch wenn Notes noch lädt) — verhindert "wirkt wie passiert nichts"
+    document.getElementById('prospect-detail').classList.remove('hidden');
+    renderProspectDetail();
+    await loadProspectNotes(id);
+    renderProspectNotes();
+  } catch (err) {
+    console.error('[selectProspect] error', err);
+    toast('Konnte Prospect nicht öffnen: ' + (err?.message || err));
+  }
 }
 
 function closeProspectDetail() {
