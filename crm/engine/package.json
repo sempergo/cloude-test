@@ -15,7 +15,8 @@
     "@supabase/supabase-js": "^2.45.4",
     "dotenv": "^16.4.5",
     "p-limit": "^6.1.0",
-    "playwright": "^1.48.0"
+    "playwright": "^1.48.0",
+    "sharp": "^0.34.5"
   },
   "engines": {
     "node": ">=20"

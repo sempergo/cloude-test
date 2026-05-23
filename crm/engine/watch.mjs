@@ -214,7 +214,23 @@ async function fetchAsBase64(url) {
   try {
     const r = await fetch(url);
     if (!r.ok) return null;
-    return Buffer.from(await r.arrayBuffer()).toString('base64');
+    let buf = Buffer.from(await r.arrayBuffer());
+    // Claude Vision API erlaubt max 8000px je Dimension → resize wenn nötig
+    try {
+      const sharp = (await import('sharp')).default;
+      const meta = await sharp(buf).metadata();
+      const MAX = 7500;
+      if ((meta.height || 0) > MAX || (meta.width || 0) > MAX) {
+        log.info(`  resize screenshot ${meta.width}×${meta.height} → max ${MAX}px`);
+        buf = await sharp(buf)
+          .resize({ width: MAX, height: MAX, fit: 'inside', withoutEnlargement: true })
+          .jpeg({ quality: 75 })
+          .toBuffer();
+      }
+    } catch (e) {
+      log.warn('sharp resize failed (sending original)', { error: e.message });
+    }
+    return buf.toString('base64');
   } catch { return null; }
 }
 
