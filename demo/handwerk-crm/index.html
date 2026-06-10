@@ -1,0 +1,2010 @@
+<!doctype html>
+<html lang="de" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#fafafa" />
+  <title>Handwerk CRM — Demo</title>
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23f59e0b'/><text x='16' y='22' text-anchor='middle' font-family='Inter,sans-serif' font-weight='800' font-size='16' fill='%23fff'>h</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#fff8eb',
+              100: '#feebc7',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              900: '#78350f',
+            },
+          },
+          animation: {
+            'pulse-soft': 'pulse-soft 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fade-in': 'fade-in 0.3s ease-out',
+            'slide-up': 'slide-up 0.4s ease-out',
+          },
+          keyframes: {
+            'pulse-soft': {
+              '0%, 100%': { boxShadow: '0 0 0 0 rgba(245, 158, 11, 0.3)' },
+              '50%': { boxShadow: '0 0 0 8px rgba(245, 158, 11, 0)' },
+            },
+            'fade-in': { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+            'slide-up': { '0%': { opacity: 0, transform: 'translateY(8px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html, body { font-family: 'Inter', system-ui, sans-serif; background: #fafafa; color: #18181b; }
+    body { -webkit-font-smoothing: antialiased; }
+    input, textarea, select, button { font-family: inherit; }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(0.4); cursor: pointer; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #e4e4e7; border-radius: 3px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #d4d4d8; }
+    .card-shadow { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03), 0 1px 3px 0 rgba(0,0,0,0.05); }
+    .card-shadow-lg { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -1px rgba(0,0,0,0.04); }
+    .card-shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02); }
+  </style>
+</head>
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+
+<!-- ============================ APP ============================ -->
+<div id="app" class="min-h-screen flex flex-col">
+
+  <!-- TOP BAR -->
+  <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-lg border-b border-zinc-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="w-7 h-7 rounded-lg bg-brand-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">h</div>
+        <span class="font-semibold text-sm tracking-tight hidden sm:inline">Handwerk CRM</span>
+      </div>
+
+      <!-- VIEW SWITCH -->
+      <div id="view-switch" class="inline-flex rounded-lg border border-zinc-200 p-0.5 bg-zinc-100 shrink-0">
+        <button id="view-leads-btn" class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors bg-white text-zinc-900 shadow-sm" onclick="switchView('leads')">Leads</button>
+        <button id="view-engine-btn" class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors text-zinc-500 hover:text-zinc-900" onclick="switchView('engine')">
+          <span class="inline-flex items-center gap-1.5">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Engine
+          </span>
+        </button>
+      </div>
+
+      <div class="flex-1 max-w-xl mx-auto relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="search-input" placeholder="Suchen…"
+          class="w-full pl-9 pr-3 py-2 rounded-lg bg-white border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm placeholder:text-zinc-400 transition-colors" />
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="hidden sm:flex items-center gap-1.5 px-2 py-1 text-xs text-emerald-600">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-soft"></span>
+          <span>live</span>
+        </div>
+        <button id="new-lead-btn" onclick="openAddLead()"
+          class="px-3 py-2 rounded-lg bg-zinc-900 text-white font-medium text-sm hover:bg-zinc-800 transition-colors flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">Neuer Lead</span>
+        </button>
+        <button class="p-2 rounded-lg hover:bg-zinc-100 transition-colors">
+          <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24">
+
+    <!-- ========================= LEADS VIEW ========================= -->
+    <div id="leads-view">
+
+      <section id="alerts" class="mb-6 sm:mb-8"></section>
+
+      <section class="mb-5">
+        <div id="filter-tabs" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+      </section>
+
+      <section id="pipeline-summary" class="mb-5"></section>
+
+      <section class="mb-3 flex items-center justify-between gap-3">
+        <p id="list-count" class="text-xs text-zinc-500"></p>
+        <div class="inline-flex rounded-lg border border-zinc-200 p-0.5 bg-zinc-100">
+          <button id="view-cards" class="p-1.5 rounded-md transition-colors bg-white shadow-sm text-zinc-900" title="Karten-Ansicht" onclick="setViewMode('cards')">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          </button>
+          <button id="view-list" class="p-1.5 rounded-md transition-colors text-zinc-500" title="Listen-Ansicht" onclick="setViewMode('list')">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <div id="lead-list"></div>
+      </section>
+
+    </div><!-- /#leads-view -->
+
+    <!-- ========================= ENGINE VIEW ========================= -->
+    <div id="engine-view" class="hidden">
+      <section class="mb-6 sm:mb-8">
+        <div class="rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 via-brand-50/50 to-white px-5 sm:px-6 py-5 card-shadow">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-brand-700 uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Lead Engine
+              </p>
+              <p class="text-lg font-semibold text-zinc-900 mt-1">Cold Leads — automatisch geprüft</p>
+              <p class="text-xs text-zinc-600 mt-1">Gescraped, enriched, gescored. Top-Prospects mit AI-bewerteten Pain-Points.</p>
+            </div>
+            <div class="text-right shrink-0">
+              <p id="engine-count" class="text-2xl font-bold text-brand-600 tabular-nums">0</p>
+              <p class="text-[10px] text-zinc-500 uppercase tracking-wider mt-0.5">Prospects</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="openScrapeModal()" class="px-3 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-sm">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              Neue Leads ziehen
+            </button>
+            <button onclick="toast('Enrich-Job in Queue')" class="px-3 py-2 rounded-lg bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-700 font-medium text-xs flex items-center gap-1.5 transition-colors shadow-sm">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              Enrich Neue
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-4">
+        <div id="engine-filter-tabs" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+      </section>
+
+      <section class="mb-4 flex flex-wrap items-center gap-2">
+        <select id="engine-sort" class="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 text-xs text-zinc-700 focus:outline-none focus:border-zinc-400" onchange="state.prospectSort = this.value; renderEngine()">
+          <option value="score_desc">Score ↓</option>
+          <option value="score_asc">Score ↑</option>
+          <option value="updated_desc">Zuletzt geändert</option>
+          <option value="firma_asc">Firma A-Z</option>
+        </select>
+        <select id="engine-stadt" class="px-3 py-1.5 rounded-lg bg-white border border-zinc-200 text-xs text-zinc-700 focus:outline-none focus:border-zinc-400" onchange="state.prospectStadt = this.value; renderEngine()">
+          <option value="">Alle Städte</option>
+        </select>
+        <p id="engine-list-count" class="text-xs text-zinc-500 ml-auto"></p>
+      </section>
+
+      <section>
+        <div id="prospect-list" class="grid gap-3"></div>
+      </section>
+    </div><!-- /#engine-view -->
+
+  </main>
+
+  <!-- LEAD DETAIL PANEL -->
+  <aside id="lead-detail" class="hidden fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[520px] z-40 bg-white border-l border-zinc-200 card-shadow-xl flex flex-col animate-slide-up">
+    <div class="px-5 py-4 border-b border-zinc-200 flex items-start gap-3 shrink-0">
+      <div class="flex-1 min-w-0">
+        <p id="detail-firma" class="text-lg font-semibold truncate"></p>
+        <p id="detail-meta" class="text-xs text-zinc-500 mt-1"></p>
+      </div>
+      <button onclick="closeLeadDetail()" class="p-1.5 rounded-lg hover:bg-zinc-100 transition-colors shrink-0">
+        <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto scrollbar-thin">
+      <div class="px-5 py-4 border-b border-zinc-200">
+        <label class="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Status</label>
+        <div id="detail-status-buttons" class="grid grid-cols-3 gap-1.5"></div>
+      </div>
+
+      <div class="px-5 py-4 border-b border-zinc-200">
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Angebot</label>
+          <span id="detail-angebot-display" class="text-lg font-semibold text-emerald-600 tabular-nums"></span>
+        </div>
+        <div class="relative">
+          <input type="text" id="detail-angebotspreis" inputmode="decimal" placeholder="z.B. 1.500"
+            class="w-full pl-3 pr-9 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm tabular-nums transition-colors" />
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">€</span>
+        </div>
+      </div>
+
+      <div class="px-5 py-4 border-b border-zinc-200">
+        <label class="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-3">Kontakt</label>
+        <div id="detail-contact" class="rounded-lg border border-zinc-200 bg-zinc-50/50 px-3"></div>
+      </div>
+
+      <div class="px-5 py-4 border-b border-zinc-200">
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Aktivitäten</label>
+          <button onclick="openActivityModal()" class="text-xs font-medium text-zinc-700 hover:text-zinc-900 flex items-center gap-1 px-2 py-1 rounded-md hover:bg-zinc-100 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            Neu
+          </button>
+        </div>
+        <div id="activities-open" class="space-y-2"></div>
+      </div>
+
+      <div class="px-5 py-4 border-b border-zinc-200">
+        <label class="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Notizen</label>
+        <div class="flex gap-2 mb-3">
+          <input type="text" id="detail-note-input" placeholder="Schnellnotiz…" class="flex-1 px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+          <button onclick="addNoteFromDetail()" class="px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-medium transition-colors">Hinzu</button>
+        </div>
+        <div id="detail-notes" class="space-y-2"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- PROSPECT DETAIL PANEL -->
+  <aside id="prospect-detail" class="hidden fixed inset-0 sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[640px] z-40 bg-white border-l border-zinc-200 card-shadow-xl flex flex-col animate-slide-up">
+    <div class="px-5 py-4 border-b border-zinc-200 flex items-start gap-3 shrink-0">
+      <div class="flex-1 min-w-0">
+        <p id="pd-firma" class="text-lg font-semibold truncate"></p>
+        <p id="pd-meta" class="text-xs text-zinc-500 mt-1"></p>
+      </div>
+      <button onclick="closeProspectDetail()" class="p-1.5 rounded-lg hover:bg-zinc-100 transition-colors shrink-0">
+        <svg class="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto scrollbar-thin">
+      <div id="pd-hero" class="px-5 py-4 border-b border-zinc-200"></div>
+      <div id="pd-screenshots" class="px-5 py-4 border-b border-zinc-200"></div>
+      <div id="pd-pain" class="px-5 py-4 border-b border-zinc-200"></div>
+      <div id="pd-contact" class="px-5 py-4 border-b border-zinc-200"></div>
+      <div class="px-5 py-4 border-b border-zinc-200">
+        <label class="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Status</label>
+        <div id="pd-status-buttons" class="grid grid-cols-3 gap-1.5"></div>
+      </div>
+      <div class="px-5 py-4">
+        <button onclick="promoteProspect()" id="pd-promote-btn"
+          class="w-full px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          Als echten Lead übernehmen
+        </button>
+        <p class="text-[10px] text-zinc-500 mt-2 text-center">Activities + Notizen wandern mit.</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ACTIVITY MODAL -->
+  <div id="activity-modal" class="hidden fixed inset-0 z-50 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-white border border-zinc-200 rounded-2xl card-shadow-xl">
+      <div class="px-5 py-4 border-b border-zinc-200 flex items-center justify-between">
+        <h2 class="font-semibold text-sm">Neue Aktivität</h2>
+        <button onclick="closeActivityModal()" class="p-1 rounded-md hover:bg-zinc-100 transition-colors">
+          <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Titel</label>
+          <input type="text" id="am-titel" placeholder="z.B. Call mit Inhaber" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Wann</label>
+          <input type="datetime-local" id="am-scheduled" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Notiz (optional)</label>
+          <textarea id="am-note" rows="3" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" placeholder="z.B. Themen, Vorbereitung, …"></textarea>
+        </div>
+      </div>
+      <div class="px-5 py-3 border-t border-zinc-200 flex justify-end gap-2">
+        <button onclick="closeActivityModal()" class="px-3 py-2 rounded-lg text-sm text-zinc-600 hover:text-zinc-900 transition-colors">Abbrechen</button>
+        <button onclick="saveActivity()" class="px-3 py-2 rounded-lg bg-zinc-900 text-white font-medium text-sm hover:bg-zinc-800 transition-colors">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD LEAD MODAL -->
+  <div id="add-lead-modal" class="hidden fixed inset-0 z-50 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-white border border-zinc-200 rounded-2xl card-shadow-xl">
+      <div class="px-5 py-4 border-b border-zinc-200 flex items-center justify-between">
+        <h2 class="font-semibold">Neuer Lead</h2>
+        <button onclick="closeAddLead()" class="p-1 rounded-md hover:bg-zinc-100 transition-colors">
+          <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Firma *</label>
+          <input type="text" id="al-firma" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Branche</label>
+          <input type="text" id="al-branche" placeholder="z.B. Schreinerei" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Telefon</label>
+          <input type="tel" id="al-telefon" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">E-Mail</label>
+          <input type="email" id="al-email" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+      </div>
+      <div class="px-5 py-3 border-t border-zinc-200 flex justify-end gap-2">
+        <button onclick="closeAddLead()" class="px-3 py-2 rounded-lg text-sm text-zinc-600 hover:text-zinc-900 transition-colors">Abbrechen</button>
+        <button onclick="saveNewLead()" class="px-3 py-2 rounded-lg bg-zinc-900 text-white font-medium text-sm hover:bg-zinc-800 transition-colors">Anlegen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRAPE MODAL -->
+  <div id="scrape-modal" class="hidden fixed inset-0 z-50 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-white border border-zinc-200 rounded-2xl card-shadow-xl">
+      <div class="px-5 py-4 border-b border-zinc-200 flex items-center justify-between">
+        <h2 class="font-semibold text-sm">Neue Leads ziehen</h2>
+        <button onclick="closeScrapeModal()" class="p-1 rounded-md hover:bg-zinc-100 transition-colors">
+          <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-5 space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Stadt</label>
+          <input type="text" id="sc-stadt" value="Frankfurt" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Branche</label>
+          <select id="sc-branche" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm">
+            <option>Schreiner / Tischler</option>
+            <option>Elektriker</option>
+            <option>Klempner / Installateur</option>
+            <option>Maler</option>
+            <option>Dachdecker</option>
+            <option>KFZ-Werkstatt</option>
+            <option>Heizungsbauer</option>
+            <option>Garten- und Landschaftsbau</option>
+            <option>Pool-Bau</option>
+            <option>Fliesenleger</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-zinc-600 mb-1.5">Radius (in Meter)</label>
+          <input type="number" id="sc-radius" value="3000" step="500" min="500" max="10000" class="w-full px-3 py-2 rounded-lg bg-zinc-50 border border-zinc-200 focus:border-zinc-400 focus:outline-none text-sm" />
+        </div>
+      </div>
+      <div class="px-5 py-3 border-t border-zinc-200 flex justify-end gap-2">
+        <button onclick="closeScrapeModal()" class="px-3 py-2 rounded-lg text-sm text-zinc-600 hover:text-zinc-900 transition-colors">Abbrechen</button>
+        <button onclick="startFakeScrape()" class="px-3 py-2 rounded-lg bg-brand-500 text-white font-medium text-sm hover:bg-brand-600 transition-colors shadow-sm">Job starten</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENGINE STATUS BAR -->
+  <div id="engine-status-bar" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-md z-50 rounded-xl border border-brand-200 bg-white card-shadow-xl px-4 py-3 transition-opacity">
+    <div class="flex items-center gap-3">
+      <div id="esb-icon" class="shrink-0 w-8 h-8 rounded-lg bg-brand-50 border border-brand-200 flex items-center justify-center">
+        <svg class="w-4 h-4 text-brand-600 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p id="esb-title" class="text-xs font-semibold text-zinc-900">Lead Engine läuft…</p>
+        <p id="esb-message" class="text-[11px] text-zinc-500 truncate"></p>
+      </div>
+      <div id="esb-counter" class="shrink-0 text-xs font-bold text-brand-600 tabular-nums"></div>
+    </div>
+    <div class="mt-2 h-1 rounded-full bg-zinc-100 overflow-hidden">
+      <div id="esb-progress" class="h-full bg-gradient-to-r from-brand-500 to-brand-400 transition-all duration-300" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] bg-zinc-900 text-white text-sm font-medium px-4 py-2.5 rounded-lg card-shadow-xl"></div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="hidden fixed inset-0 z-[60] bg-zinc-900/95 backdrop-blur-sm flex items-center justify-center p-6 cursor-zoom-out" onclick="closeLightbox(event)">
+    <button onclick="closeLightbox(event)" class="absolute top-4 right-4 p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors z-10">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" />
+  </div>
+
+</div>
+
+<script>
+// =============================================================
+// CONFIG & DUMMY DATA
+// =============================================================
+const OWNERS = {
+  Markus: { initial: 'M', label: 'Markus', badge: 'bg-teal-100 text-teal-700 border-teal-300' },
+  Robin:  { initial: 'R', label: 'Robin',  badge: 'bg-pink-100 text-pink-700 border-pink-300' },
+};
+
+const STATUS_LIST = [
+  { key: 'in_arbeit',   label: 'In Arbeit',   color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+  { key: 'gesendet',    label: 'Gesendet',    color: 'bg-sky-50 text-sky-700 border-sky-200' },
+  { key: 'nachfass',    label: 'Nachfass',    color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  { key: 'verhandlung', label: 'Verhandlung', color: 'bg-violet-50 text-violet-700 border-violet-200' },
+  { key: 'gewonnen',    label: 'Gewonnen',    color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  { key: 'verloren',    label: 'Verloren',    color: 'bg-zinc-100 text-zinc-500 border-zinc-200' },
+];
+const STATUS_MAP = Object.fromEntries(STATUS_LIST.map(s => [s.key, s]));
+
+const FILTER_TABS = [
+  { key: 'aktiv',       label: 'Aktiv' },
+  ...STATUS_LIST.map(s => ({ key: s.key, label: s.label })),
+  { key: 'archiv',      label: 'Archiv' },
+];
+
+const PROSPECT_STATUS_LIST = [
+  { key: 'new',                 label: 'Neu',              color: 'bg-zinc-100 text-zinc-600 border-zinc-200' },
+  { key: 'enriched',            label: 'Enriched',         color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  { key: 'scored',              label: 'Scored',           color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  { key: 'kontaktiert',         label: 'Kontaktiert',      color: 'bg-sky-50 text-sky-700 border-sky-200' },
+  { key: 'interessiert',        label: 'Interessiert',     color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  { key: 'nicht_interessiert',  label: 'Kein Interesse',   color: 'bg-zinc-100 text-zinc-500 border-zinc-200' },
+  { key: 'promoted',            label: 'Promoted',         color: 'bg-violet-50 text-violet-700 border-violet-200' },
+];
+const PROSPECT_STATUS_MAP = Object.fromEntries(PROSPECT_STATUS_LIST.map(s => [s.key, s]));
+
+const ENGINE_FILTER_TABS = [
+  { key: 'active', label: 'Aktiv' },
+  ...PROSPECT_STATUS_LIST.map(s => ({ key: s.key, label: s.label })),
+];
+
+// ---------- DUMMY LEADS (15) ------------------------------------------------
+const HANDWERK_LEADS = [
+  // IN_ARBEIT (4)
+  {
+    id: 'l01', firma: 'Schreinerei Holzwerk', branche: 'Schreinerei', kontaktperson: 'Tobias Brenner',
+    telefon: '+49 69 7654321', email: 'kontakt@holzwerk-frankfurt.de',
+    website_url: 'https://www.holzwerk-frankfurt.de', alte_website: 'https://www.holzwerk-frankfurt.de',
+    status: 'in_arbeit', angebotspreis: null,
+    created_at: '2026-05-15T09:30:00Z', updated_at: '2026-05-22T14:15:00Z',
+  },
+  {
+    id: 'l02', firma: 'Tischlerei Eichberg', branche: 'Tischlerei', kontaktperson: 'Marcus Eichberg',
+    telefon: '+49 69 3456789', email: 'info@tischlerei-eichberg.de',
+    website_url: 'https://eichberg-moebel.de', alte_website: 'https://eichberg-moebel.de',
+    status: 'in_arbeit', angebotspreis: null,
+    created_at: '2026-05-18T11:20:00Z', updated_at: '2026-05-23T10:00:00Z',
+  },
+  {
+    id: 'l03', firma: 'Pool Premium Wiesbaden', branche: 'Pool-Bau', kontaktperson: 'Florian Bach',
+    telefon: '+49 611 654321', email: 'fb@pool-premium.de',
+    website_url: 'https://pool-premium-wiesbaden.de', alte_website: 'https://pool-premium-wiesbaden.de',
+    status: 'in_arbeit', angebotspreis: 7500,
+    created_at: '2026-05-19T16:40:00Z', updated_at: '2026-05-23T09:10:00Z',
+  },
+  {
+    id: 'l04', firma: 'Innenausbau Steinbach', branche: 'Innenausbau', kontaktperson: 'Lisa Steinbach',
+    telefon: '+49 69 8675309', email: 'ls@steinbach-innenausbau.de',
+    website_url: 'https://steinbach-innenausbau.de', alte_website: 'https://steinbach-innenausbau.de',
+    status: 'in_arbeit', angebotspreis: 4200,
+    created_at: '2026-05-20T08:15:00Z', updated_at: '2026-05-23T17:30:00Z',
+  },
+  // GESENDET (3)
+  {
+    id: 'l05', firma: 'Klempnerei Bachmann', branche: 'Klempnerei', kontaktperson: 'Andreas Bachmann',
+    telefon: '+49 69 5544332', email: 'bachmann@klempnerei-bachmann.de',
+    website_url: 'https://klempnerei-bachmann.de', alte_website: 'https://klempnerei-bachmann.de',
+    status: 'gesendet', angebotspreis: 2900,
+    created_at: '2026-05-10T10:00:00Z', updated_at: '2026-05-21T15:45:00Z',
+  },
+  {
+    id: 'l06', firma: 'Dachdeckerei Wagner & Sohn', branche: 'Dachdecker', kontaktperson: 'Michael Wagner',
+    telefon: '+49 69 9988776', email: 'info@dach-wagner.de',
+    website_url: 'https://dach-wagner-frankfurt.de', alte_website: 'https://dach-wagner-frankfurt.de',
+    status: 'gesendet', angebotspreis: 3500,
+    created_at: '2026-05-12T13:20:00Z', updated_at: '2026-05-22T11:00:00Z',
+  },
+  {
+    id: 'l07', firma: 'Fliesenleger Köhler', branche: 'Fliesenleger', kontaktperson: 'Daniel Köhler',
+    telefon: '+49 69 7766554', email: 'daniel@fliesen-koehler.de',
+    website_url: 'https://fliesen-koehler-meister.de', alte_website: 'https://fliesen-koehler-meister.de',
+    status: 'gesendet', angebotspreis: 2400,
+    created_at: '2026-05-14T09:00:00Z', updated_at: '2026-05-21T16:20:00Z',
+  },
+  // NACHFASS (3)
+  {
+    id: 'l08', firma: 'Maler Hoffmann', branche: 'Malerei', kontaktperson: 'Stefan Hoffmann',
+    telefon: '+49 69 2233445', email: 'hoffmann@maler-hoffmann.de',
+    website_url: 'https://maler-hoffmann.de', alte_website: 'https://maler-hoffmann.de',
+    status: 'nachfass', angebotspreis: 1800,
+    created_at: '2026-05-06T14:00:00Z', updated_at: '2026-05-21T10:00:00Z',
+  },
+  {
+    id: 'l09', firma: 'Elektro Schäfer GmbH', branche: 'Elektriker', kontaktperson: 'Klaus Schäfer',
+    telefon: '+49 69 1122334', email: 'k.schaefer@elektro-schaefer.de',
+    website_url: 'https://elektro-schaefer-frankfurt.de', alte_website: 'https://elektro-schaefer-frankfurt.de',
+    status: 'nachfass', angebotspreis: 3200,
+    created_at: '2026-05-08T11:30:00Z', updated_at: '2026-05-20T14:45:00Z',
+  },
+  {
+    id: 'l10', firma: 'KFZ-Werkstatt Drei Brüder', branche: 'KFZ-Werkstatt', kontaktperson: 'Murat Yilmaz',
+    telefon: '+49 69 4433221', email: 'info@dreibrueder-kfz.de',
+    website_url: 'https://dreibrueder-werkstatt.de', alte_website: 'https://dreibrueder-werkstatt.de',
+    status: 'nachfass', angebotspreis: 2700,
+    created_at: '2026-05-09T10:15:00Z', updated_at: '2026-05-22T08:30:00Z',
+  },
+  // VERHANDLUNG (2)
+  {
+    id: 'l11', firma: 'Heizungstechnik Schmitt', branche: 'Heizungsbau', kontaktperson: 'Bernhard Schmitt',
+    telefon: '+49 69 1234567', email: 'schmitt@heizung-schmitt.de',
+    website_url: 'https://heizung-schmitt.de', alte_website: 'https://heizung-schmitt.de',
+    status: 'verhandlung', angebotspreis: 4800,
+    created_at: '2026-05-02T09:00:00Z', updated_at: '2026-05-22T16:00:00Z',
+  },
+  {
+    id: 'l12', firma: 'Garten- und Landschaftsbau Müller', branche: 'GaLaBau', kontaktperson: 'Petra Müller',
+    telefon: '+49 69 8765432', email: 'p.mueller@galabau-mueller.de',
+    website_url: 'https://galabau-mueller.de', alte_website: 'https://galabau-mueller.de',
+    status: 'verhandlung', angebotspreis: 5400,
+    created_at: '2026-05-04T13:00:00Z', updated_at: '2026-05-23T11:30:00Z',
+  },
+  // GEWONNEN (2)
+  {
+    id: 'l13', firma: 'Bodenleger Frankfurt-Süd', branche: 'Bodenleger', kontaktperson: 'Ahmet Demir',
+    telefon: '+49 69 9876543', email: 'ahmet@bodenleger-fra-sued.de',
+    website_url: 'https://bodenleger-frankfurt-sued.de', alte_website: 'https://bodenleger-frankfurt-sued.de',
+    status: 'gewonnen', angebotspreis: 3100,
+    created_at: '2026-04-22T10:00:00Z', updated_at: '2026-05-18T15:00:00Z',
+  },
+  {
+    id: 'l14', firma: 'Schlosserei Weber', branche: 'Schlosserei', kontaktperson: 'Frank Weber',
+    telefon: '+49 69 2345678', email: 'fweber@schlosserei-weber.de',
+    website_url: 'https://schlosserei-weber.de', alte_website: 'https://schlosserei-weber.de',
+    status: 'gewonnen', angebotspreis: 2600,
+    created_at: '2026-04-28T11:00:00Z', updated_at: '2026-05-15T14:00:00Z',
+  },
+  // VERLOREN (1)
+  {
+    id: 'l15', firma: 'Kachelofen-Manufaktur Lehmann', branche: 'Ofenbau', kontaktperson: 'Otto Lehmann',
+    telefon: '+49 69 3344556', email: 'otto@kachelofen-lehmann.de',
+    website_url: 'https://kachelofen-lehmann-frankfurt.de', alte_website: 'https://kachelofen-lehmann-frankfurt.de',
+    status: 'verloren', angebotspreis: 4500,
+    created_at: '2026-04-15T09:30:00Z', updated_at: '2026-05-10T11:00:00Z',
+  },
+];
+
+const now = () => new Date().toISOString();
+const dateOffset = (days, hours = 0) => new Date(Date.now() + days*86400_000 + hours*3600_000).toISOString();
+
+// ---------- DUMMY ACTIVITIES ------------------------------------------------
+const HANDWERK_ACTIVITIES = [
+  // Lead l01 — Schreinerei Holzwerk
+  { id: 'a01', lead_id: 'l01', titel: 'Erstgespräch vorbereiten', scheduled_at: dateOffset(-2, 3), done_at: dateOffset(-2, 4), owner: 'Markus', note: 'Inhaber wollte konkrete Beispiele aus der Schreinerei-Branche sehen. Briefing für Konzept zusammen.' },
+  { id: 'a02', lead_id: 'l01', titel: 'Konzept-Call', scheduled_at: dateOffset(1, 5), done_at: null, owner: 'Markus', note: 'Hero + Galerie + Anfrageformular. Stilrichtung: warm, naturholz.' },
+
+  // Lead l02 — Tischlerei Eichberg
+  { id: 'a03', lead_id: 'l02', titel: 'Vor-Ort-Termin Werkstatt', scheduled_at: dateOffset(2, 2), done_at: null, owner: 'Robin', note: 'Fotos für die Website machen — Werkstatt, Projektbeispiele, Eichberg in Action.' },
+
+  // Lead l03 — Pool Premium
+  { id: 'a04', lead_id: 'l03', titel: 'Walk-In Termin', scheduled_at: dateOffset(0, 1), done_at: null, owner: 'Markus' },
+  { id: 'a05', lead_id: 'l03', titel: 'Mood-Boards vorbereiten', scheduled_at: dateOffset(-3, 2), done_at: dateOffset(-3, 3), owner: 'Markus', note: '3 Stilrichtungen: Premium dunkel, Naturstein hell, Mediterran. Inhaber tendierte zu Naturstein.' },
+
+  // Lead l04 — Innenausbau Steinbach
+  { id: 'a06', lead_id: 'l04', titel: 'Webseite-Mockup zeigen', scheduled_at: dateOffset(0, 3), done_at: null, owner: 'Robin', note: '15-Min Call. Mockup ist fertig, Frau Steinbach soll Feedback zur Hero geben.' },
+
+  // Lead l05 — Klempnerei Bachmann
+  { id: 'a07', lead_id: 'l05', titel: 'WA-Nachricht', scheduled_at: dateOffset(-1, -2), done_at: dateOffset(-1, -1), owner: 'Markus', note: 'Angebot per WhatsApp + Mail verschickt. 3 Pakete: Basis, Plus, Premium.' },
+  { id: 'a08', lead_id: 'l05', titel: 'Nachfassen Angebot', scheduled_at: dateOffset(3, 2), done_at: null, owner: 'Markus' },
+
+  // Lead l06 — Dachdeckerei Wagner & Sohn
+  { id: 'a09', lead_id: 'l06', titel: 'Call: Angebots-Detail klären', scheduled_at: dateOffset(2, 4), done_at: null, owner: 'Robin' },
+
+  // Lead l07 — Fliesenleger Köhler
+  { id: 'a10', lead_id: 'l07', titel: 'Follow-up Mail', scheduled_at: dateOffset(-5, 0), done_at: dateOffset(-5, 1), owner: 'Markus' },
+  { id: 'a11', lead_id: 'l07', titel: 'Nachfass Anruf', scheduled_at: dateOffset(4, 3), done_at: null, owner: 'Markus' },
+
+  // Lead l08 — Maler Hoffmann
+  { id: 'a12', lead_id: 'l08', titel: 'Anruf — Status Angebot', scheduled_at: dateOffset(-1, 0), done_at: null, owner: 'Robin', note: 'Überfällig — Hoffmann meldet sich nicht zurück, dringend nochmal versuchen.' },
+
+  // Lead l09 — Elektro Schäfer
+  { id: 'a13', lead_id: 'l09', titel: 'Vorschlag B2-Variante', scheduled_at: dateOffset(0, 4), done_at: null, owner: 'Markus', note: 'Schäfer wollte günstigere Variante sehen. Mockup mit reduziertem Scope.' },
+
+  // Lead l10 — KFZ Drei Brüder
+  { id: 'a14', lead_id: 'l10', titel: 'Anruf', scheduled_at: dateOffset(0, 6), done_at: null, owner: 'Robin' },
+
+  // Lead l11 — Heizungstechnik Schmitt
+  { id: 'a15', lead_id: 'l11', titel: 'Vertrags-Call', scheduled_at: dateOffset(1, 3), done_at: null, owner: 'Markus', note: 'Letzte Detail-Verhandlung. Zahlungs-Plan + Wartung-Add-On finalisieren.' },
+
+  // Lead l12 — GaLaBau Müller
+  { id: 'a16', lead_id: 'l12', titel: 'Demo der Galerie-Funktion', scheduled_at: dateOffset(2, 5), done_at: null, owner: 'Robin', note: 'Frau Müller ist begeistert, will noch die Vorher/Nachher-Galerie sehen.' },
+
+  // Lead l13 — Bodenleger (gewonnen, ältere Tasks)
+  { id: 'a17', lead_id: 'l13', titel: 'Website live geschaltet', scheduled_at: dateOffset(-5, 0), done_at: dateOffset(-5, 2), owner: 'Markus', note: 'Launch erfolgreich. Bodenleger-fra-sued.de ist live.' },
+
+  // Lead l14 — Schlosserei Weber (gewonnen)
+  { id: 'a18', lead_id: 'l14', titel: 'Übergabe + Schulung', scheduled_at: dateOffset(-8, 0), done_at: dateOffset(-8, 2), owner: 'Robin', note: 'Frank zeigt sehr zufrieden. Wartungsvertrag für 12 Monate angefragt.' },
+];
+
+// ---------- DUMMY NOTES (per lead) ------------------------------------------
+const HANDWERK_NOTES = {
+  l01: [
+    { id: 'n01a', lead_id: 'l01', content: 'Tobias möchte unbedingt eine Anfrage-Funktion direkt auf der Startseite. Aktuell verliert er Anrufe weil seine Website nur eine Telefonnummer hat.', created_at: dateOffset(-3, 0) },
+    { id: 'n01b', lead_id: 'l01', content: 'Konkurrenz-Recherche: Holzmanufaktur Schäfer und Brenner Möbel haben moderne Sites. Holzwerk muss visuell konkurrieren.', created_at: dateOffset(-1, 0) },
+  ],
+  l03: [
+    { id: 'n03a', lead_id: 'l03', content: 'Florian: "Wenn die Site fertig ist, will ich sofort online buchbar sein für Beratungstermine. Aktuell sind das 30+ Telefonate pro Woche."', created_at: dateOffset(-2, 0) },
+  ],
+  l05: [
+    { id: 'n05a', lead_id: 'l05', content: 'Angebot 2.900 € verschickt — Basis-Paket. Bachmann hat 3 Tage Zeit zum Antworten, dann nachhaken.', created_at: dateOffset(-1, 0) },
+  ],
+  l08: [
+    { id: 'n08a', lead_id: 'l08', content: '⚠ Hoffmann meldet sich seit 6 Tagen nicht. Mail + WA gesendet. Letzter Versuch sonst auf "verloren" setzen.', created_at: dateOffset(-1, 0) },
+  ],
+  l11: [
+    { id: 'n11a', lead_id: 'l11', content: 'Verhandlung läuft gut. Schmitt will 10% Rabatt, wir geben 5% + Wartung-Add-On gratis für 6 Monate.', created_at: dateOffset(-2, 0) },
+    { id: 'n11b', lead_id: 'l11', content: 'Schmitt-Sohn übernimmt nächstes Jahr die Geschäftsführung — möchte moderne digitale Infrastruktur. Großes Potenzial für mehr.', created_at: dateOffset(-5, 0) },
+  ],
+  l12: [
+    { id: 'n12a', lead_id: 'l12', content: 'Frau Müller ist sehr interessiert. Hat über Empfehlung von Schlosserei Weber von uns gehört.', created_at: dateOffset(-3, 0) },
+  ],
+  l13: [
+    { id: 'n13a', lead_id: 'l13', content: '✓ Deal: 3.100 € + Wartung 50 €/Monat. Website live seit 18.05.', created_at: dateOffset(-5, 0) },
+  ],
+  l14: [
+    { id: 'n14a', lead_id: 'l14', content: '✓ Schlosserei Weber gewonnen. 2.600 € Setup. Empfehlung von Bodenleger Demir.', created_at: dateOffset(-8, 0) },
+  ],
+};
+
+// ---------- DUMMY PROSPECTS (Engine, 12) -----------------------------------
+// Mix aus mit/ohne Website, verschiedenen Scores, verschiedenen Status
+const SCREENSHOT_PLACEHOLDERS = {
+  carpentry_old:    'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=800&q=80',
+  workshop_dusty:   'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80',
+  pool_modern:      'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&q=80',
+  electrician_old:  'https://images.unsplash.com/photo-1565608438257-fac3c27beb36?w=800&q=80',
+  hvac_template:    'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80',
+  paint_classic:    'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80',
+  garden_old:       'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80',
+  roofer_template:  'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80',
+  tile_outdated:    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+  metal_classic:    'https://images.unsplash.com/photo-1551041777-ed5ee21276c8?w=800&q=80',
+};
+
+const HANDWERK_PROSPECTS = [
+  {
+    id: 'p01', firma: 'Holzmanufaktur Reichert', branche: 'Schreinerei', stadt: 'Frankfurt',
+    adresse: 'Hanauer Landstraße 142, 60314 Frankfurt am Main',
+    telefon: '+49 69 4400112', email: 'info@holzmanufaktur-reichert.de',
+    website: 'https://www.holzmanufaktur-reichert.de',
+    google_place_id: 'p01', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.carpentry_old,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.carpentry_old,
+    enrichment: { google_rating: 4.8, google_review_count: 287, tech_stack: ['wordpress', 'elementor'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2019 },
+    rule_score: 60, llm_score: 78,
+    sales_pitch_hook: 'Eure Website wirkt seit 2019 nicht aktualisiert — die Konkurrenz im Stadtteil hat 3 modernere Sites und überholt euch bei Anfragen.',
+    pain_points: [
+      'Keine Online-Anfrage-Funktion — Inhaber verlieren ca. 40% der Interessenten die abends/am Wochenende kommen.',
+      'Galerie zeigt nur 4 Beispiel-Projekte ohne klare Kategorisierung. Mobile sind die Bilder pixelig.',
+      'Footer Copyright 2019 + keine Hinweise auf aktuelle Auftragsannahme oder Lieferzeiten.',
+      'Reviews mit 4.8★ (287 Stück) werden nirgendwo auf der Site gezeigt — verschenktes Trust-Signal.',
+    ],
+    scoring_summary: 'Etablierte Schreinerei mit starkem Ruf, aber veralteter Web-Präsenz. Großes Conversion-Leakage.',
+    prospect_status: 'scored', owner: 'Markus',
+    created_at: dateOffset(-7, 0), updated_at: dateOffset(-2, 0),
+  },
+  {
+    id: 'p02', firma: 'Elektrotechnik Burger', branche: 'Elektriker', stadt: 'Frankfurt',
+    adresse: 'Berger Straße 88, 60316 Frankfurt am Main',
+    telefon: '+49 69 4400334', email: 'kontakt@elektrotechnik-burger.de',
+    website: 'https://elektrotechnik-burger-frankfurt.de',
+    google_place_id: 'p02', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.electrician_old,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.electrician_old,
+    enrichment: { google_rating: 4.6, google_review_count: 156, tech_stack: ['jimdo'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2021 },
+    rule_score: 55, llm_score: 72,
+    sales_pitch_hook: 'Auf Jimdo-Template und ohne Notfall-Hotline-CTA verliert ihr Notdienst-Anfragen direkt an die nächste Werkstatt.',
+    pain_points: [
+      'Jimdo-Template, fühlt sich an wie 200 andere Elektriker-Sites — nichts hebt euch ab.',
+      'Notfall-Service ist erwähnt, aber keine prominent platzierte Notfall-Hotline-CTA.',
+      'Kein Kontaktformular für Angebotsanfragen — User müssen anrufen oder E-Mail-Programm öffnen.',
+    ],
+    scoring_summary: 'Solide Bewertungen aber generische Site verschenkt jeden Tag Notdienst-Anfragen.',
+    prospect_status: 'kontaktiert', owner: 'Robin',
+    created_at: dateOffset(-9, 0), updated_at: dateOffset(-1, 0),
+  },
+  {
+    id: 'p03', firma: 'Sanitär Vogel', branche: 'Klempnerei', stadt: 'Offenbach',
+    adresse: 'Kaiserstraße 24, 63065 Offenbach am Main',
+    telefon: '+49 69 8800556', email: 'info@sanitaer-vogel.de',
+    website: null,
+    google_place_id: 'p03', screenshot_desktop: null, screenshot_mobile: null,
+    enrichment: { google_rating: 4.5, google_review_count: 92, no_website: true, google_url: 'https://goo.gl/maps/test' },
+    rule_score: 50, llm_score: null,
+    sales_pitch_hook: null,
+    pain_points: [],
+    scoring_summary: null,
+    prospect_status: 'enriched', owner: null,
+    created_at: dateOffset(-5, 0), updated_at: dateOffset(-3, 0),
+  },
+  {
+    id: 'p04', firma: 'Wellness-Pool Krause', branche: 'Pool-Bau', stadt: 'Wiesbaden',
+    adresse: 'Wilhelmstraße 6, 65183 Wiesbaden',
+    telefon: '+49 611 778899', email: 'krause@wellness-pool.de',
+    website: 'https://wellness-pool-krause.de',
+    google_place_id: 'p04', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.pool_modern,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.pool_modern,
+    enrichment: { google_rating: 4.9, google_review_count: 412, tech_stack: ['wix'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2022 },
+    rule_score: 50, llm_score: 80,
+    sales_pitch_hook: 'Premium-Pool-Kunden buchen heute online. Eure Wix-Site mit Telefon-Only-Buchung kostet euch jährlich 5-stellig.',
+    pain_points: [
+      'Wix-Template-Look — passt nicht zur Premium-Positionierung (5-stellige Pool-Aufträge).',
+      'Beratungs-Termine nur via Telefon — Premium-Kunden erwarten Online-Buchung.',
+      'Beautiful Projekt-Galerie fehlt komplett. Bei 12k-50k-Aufträgen ist visuelle Überzeugung Pflicht.',
+      'Reviews 4.9★ (412 Stück!) sind nirgendwo prominent auf der Site.',
+    ],
+    scoring_summary: 'Außerordentliche Reviews, hohes Preissegment, aber Web-Auftritt unterhalb Kundenstand.',
+    prospect_status: 'interessiert', owner: 'Markus',
+    created_at: dateOffset(-12, 0), updated_at: dateOffset(0, -2),
+  },
+  {
+    id: 'p05', firma: 'Maler-Meister Friedrich', branche: 'Malerei', stadt: 'Frankfurt',
+    adresse: 'Schweizer Straße 65, 60594 Frankfurt am Main',
+    telefon: '+49 69 1234890', email: 'meister@maler-friedrich.de',
+    website: 'https://maler-friedrich.de',
+    google_place_id: 'p05', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.paint_classic,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.paint_classic,
+    enrichment: { google_rating: 4.4, google_review_count: 67, tech_stack: ['wordpress'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2020 },
+    rule_score: 45, llm_score: 65,
+    sales_pitch_hook: 'Saisongeschäft + alte WordPress-Site = ihr seid in Google nicht oben wenn die Saison startet. Ergo: weniger Anfragen wenn alle anrufen.',
+    pain_points: [
+      'SEO ist mau — keine lokalen Keywords ("Maler Frankfurt Sachsenhausen") strategisch eingebaut.',
+      'Vor-Ort-Termin-Buchung läuft nur per Telefon → in der Saison (Frühjahr) komplett überlastet.',
+      'Stockfoto-Hero passt nicht zu eurem handwerklichen Selbstverständnis.',
+    ],
+    scoring_summary: 'Familienbetrieb mit guten Reviews aber Sichtbarkeit verschenkt jede Saison einen 5-stelligen Betrag.',
+    prospect_status: 'scored', owner: 'Robin',
+    created_at: dateOffset(-6, 0), updated_at: dateOffset(-1, 0),
+  },
+  {
+    id: 'p06', firma: 'Heizungs-Profi Kessler', branche: 'Heizungsbau', stadt: 'Hanau',
+    adresse: 'Hauptstraße 102, 63450 Hanau',
+    telefon: '+49 6181 998877', email: 'service@heizung-kessler.de',
+    website: 'https://heizung-kessler-hanau.de',
+    google_place_id: 'p06', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.hvac_template,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.hvac_template,
+    enrichment: { google_rating: 4.7, google_review_count: 224, tech_stack: ['wordpress', 'elementor'], has_pdf_menu: true, has_booking_widget: false, copyright_year: 2021 },
+    rule_score: 65, llm_score: 82,
+    sales_pitch_hook: 'Förderungs-Anträge sind euer Türöffner — eure Site hat dazu nichts. Konkurrenz nimmt euch jeden Tag warme Leads weg.',
+    pain_points: [
+      'Heizungsförderung (BEG, KfW) ist DAS Top-Suchvolumen 2026 — eure Site hat keine eigene Förderungs-Page.',
+      'Speisekarte-PDF (Preisliste) auf Mobile unleserlich, lädt 5+ Sekunden.',
+      'Notfall-Heizungs-Ausfall: keine 24/7-Hotline prominent. User landen dann beim Wettbewerb.',
+      'Reviews mit 4.7★ (224 Stück) komplett unsichtbar auf der Startseite.',
+    ],
+    scoring_summary: 'Hohes Volumen + gute Reviews. Förderungs-Thema ist DAS 5-stellige Sales-Topic 2026.',
+    prospect_status: 'kontaktiert', owner: 'Markus',
+    created_at: dateOffset(-10, 0), updated_at: dateOffset(0, -1),
+  },
+  {
+    id: 'p07', firma: 'Dachprofi Lippert', branche: 'Dachdecker', stadt: 'Frankfurt',
+    adresse: 'Eschersheimer Landstraße 314, 60320 Frankfurt am Main',
+    telefon: '+49 69 5566778', email: 'kontakt@dachprofi-lippert.de',
+    website: 'https://dachprofi-lippert.de',
+    google_place_id: 'p07', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.roofer_template,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.roofer_template,
+    enrichment: { google_rating: 4.5, google_review_count: 134, tech_stack: ['jimdo'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2020 },
+    rule_score: 50, llm_score: null,
+    sales_pitch_hook: null,
+    pain_points: [],
+    scoring_summary: null,
+    prospect_status: 'enriched', owner: null,
+    created_at: dateOffset(-4, 0), updated_at: dateOffset(-2, 0),
+  },
+  {
+    id: 'p08', firma: 'Fliesen-Center Frankfurt-Nord', branche: 'Fliesenleger', stadt: 'Frankfurt',
+    adresse: 'Friedberger Landstraße 88, 60389 Frankfurt am Main',
+    telefon: '+49 69 4477889', email: 'info@fliesen-center-frankfurt.de',
+    website: 'https://fliesen-center-frankfurt-nord.de',
+    google_place_id: 'p08', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.tile_outdated,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.tile_outdated,
+    enrichment: { google_rating: 4.3, google_review_count: 78, tech_stack: ['wordpress'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2018 },
+    rule_score: 60, llm_score: 75,
+    sales_pitch_hook: 'Eure Galerie ist die wichtigste Conversion-Asset — und sie sieht aus wie 2010. Da bricht jeder Premium-Kunde ab.',
+    pain_points: [
+      'Galerie mit 6 (!) Beispielen, alle aus 2018-2019. Mobile pixelig.',
+      'Footer Copyright 2018 — User halten euch für Karteileiche.',
+      'Keine Online-Anfrage, kein Konfigurator für Stein/Naturstein-Auswahl.',
+    ],
+    scoring_summary: 'Solide Bewertungen, aber visuelle Präsentation hinter handwerklichem Können zurück.',
+    prospect_status: 'scored', owner: null,
+    created_at: dateOffset(-8, 0), updated_at: dateOffset(-2, 0),
+  },
+  {
+    id: 'p09', firma: 'GaLaBau Hartmann', branche: 'GaLaBau', stadt: 'Bad Homburg',
+    adresse: 'Friedrichstraße 18, 61348 Bad Homburg vor der Höhe',
+    telefon: '+49 6172 887766', email: 'kontakt@galabau-hartmann.de',
+    website: 'https://galabau-hartmann-badhomburg.de',
+    google_place_id: 'p09', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.garden_old,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.garden_old,
+    enrichment: { google_rating: 4.9, google_review_count: 308, tech_stack: ['squarespace'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2022 },
+    rule_score: 35, llm_score: 58,
+    sales_pitch_hook: 'In Bad Homburg habt ihr die High-End-Klientel — eure Site sieht aber aus wie ein Standard-GaLaBauer aus Hofheim.',
+    pain_points: [
+      'Squarespace-Template — kein Differenzierungs-Faktor zum Wettbewerb.',
+      'Premium-Standort Bad Homburg = Premium-Kundschaft. Site reflektiert das nicht.',
+      'Keine Vorher-/Nachher-Galerie, keine Referenz-Projekte. Bei 6-stelligen Aufträgen kritisch.',
+    ],
+    scoring_summary: 'Top-Reviews, Top-Standort, aber Web-Auftritt verschenkt Premium-Positionierung.',
+    prospect_status: 'kontaktiert', owner: 'Markus',
+    created_at: dateOffset(-11, 0), updated_at: dateOffset(-1, 0),
+  },
+  {
+    id: 'p10', firma: 'Schlosserei Metalldesign Stein', branche: 'Schlosserei', stadt: 'Frankfurt',
+    adresse: 'Mainzer Landstraße 215, 60326 Frankfurt am Main',
+    telefon: '+49 69 9933221', email: 'stein@metalldesign-frankfurt.de',
+    website: 'https://metalldesign-stein.de',
+    google_place_id: 'p10', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.metal_classic,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.metal_classic,
+    enrichment: { google_rating: 4.7, google_review_count: 196, tech_stack: ['wordpress'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2021 },
+    rule_score: 45, llm_score: null,
+    sales_pitch_hook: null,
+    pain_points: [],
+    scoring_summary: null,
+    prospect_status: 'enriched', owner: null,
+    created_at: dateOffset(-6, 0), updated_at: dateOffset(-3, 0),
+  },
+  {
+    id: 'p11', firma: 'KFZ-Service Bender', branche: 'KFZ-Werkstatt', stadt: 'Frankfurt',
+    adresse: 'Stresemannallee 110, 60596 Frankfurt am Main',
+    telefon: '+49 69 1199887', email: 'service@kfz-bender.de',
+    website: null,
+    google_place_id: 'p11', screenshot_desktop: null, screenshot_mobile: null,
+    enrichment: { google_rating: 4.6, google_review_count: 145, no_website: true, google_url: 'https://goo.gl/maps/test2' },
+    rule_score: 50, llm_score: null,
+    sales_pitch_hook: 'Keine Website + 145 Reviews = ihr verschenkt jede Online-Suche an die Konkurrenz.',
+    pain_points: [
+      'Komplett ohne Website — TÜV-Termin-Sucher landen bei euch nur durch Google-Maps.',
+      'Reviews mit 4.6★ (145) sind euer größtes Asset, niemand sieht sie kontextualisiert.',
+      'Keine Online-Termin-Buchung — bei Werkstätten heute Standard.',
+    ],
+    scoring_summary: 'Etablierte Werkstatt komplett offline. Quick Win mit hohem Impact möglich.',
+    prospect_status: 'scored', owner: null,
+    created_at: dateOffset(-3, 0), updated_at: dateOffset(-1, 0),
+  },
+  {
+    id: 'p12', firma: 'Tischlerei Junker', branche: 'Tischlerei', stadt: 'Frankfurt',
+    adresse: 'Berger Straße 240, 60385 Frankfurt am Main',
+    telefon: '+49 69 5500443', email: 'junker@tischlerei-junker.de',
+    website: 'https://tischlerei-junker.de',
+    google_place_id: 'p12', screenshot_desktop: SCREENSHOT_PLACEHOLDERS.workshop_dusty,
+    screenshot_mobile: SCREENSHOT_PLACEHOLDERS.workshop_dusty,
+    enrichment: { google_rating: 4.8, google_review_count: 372, tech_stack: ['wordpress', 'elementor'], has_pdf_menu: false, has_booking_widget: false, copyright_year: 2020 },
+    rule_score: 55, llm_score: 85,
+    sales_pitch_hook: 'Eure Reviews (4.8★, 372 Stück) sind unter den Top-3 in Frankfurt — eure Website kennt das aber nicht und verschenkt jeden Tag warme Anfragen.',
+    pain_points: [
+      'Hero zeigt Stockfoto-Werkstatt statt eurer beeindruckenden Beispielmöbel.',
+      '372 Reviews mit 4.8★ — Top-3 Frankfurter Tischler — auf Site komplett unsichtbar.',
+      'Keine Online-Anfrage-Funktion für Möbel-Custom-Aufträge. Kunden müssen vorbei kommen oder anrufen.',
+      'Galerie hat nur 8 Bilder, alle gleich beleuchtet, keine Stilkategorien (Modern, Klassisch, Loft).',
+    ],
+    scoring_summary: 'Frankfurter Top-Tischlerei mit massivem Conversion-Potenzial. Größter Lead in der Engine derzeit.',
+    prospect_status: 'interessiert', owner: 'Markus',
+    created_at: dateOffset(-14, 0), updated_at: dateOffset(0, -3),
+  },
+];
+
+// =============================================================
+// STATE
+// =============================================================
+const state = {
+  leads: HANDWERK_LEADS.map(l => ({ ...l, deleted_at: null })),
+  activities: [...HANDWERK_ACTIVITIES],
+  notesByLead: { ...HANDWERK_NOTES },
+  prospects: HANDWERK_PROSPECTS.map(p => ({ ...p, deleted_at: null })),
+  selectedLeadId: null,
+  selectedProspectId: null,
+  filter: 'aktiv',
+  search: '',
+  viewMode: 'cards',
+  view: 'leads',
+  prospectFilter: 'active',
+  prospectSort: 'score_desc',
+  prospectStadt: '',
+  pendingActivityLeadId: null,
+};
+
+// =============================================================
+// HELPERS
+// =============================================================
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const eurFmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+const dtfDateTime = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+const dtfDate = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const dtfWeekday = new Intl.DateTimeFormat('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+function formatEur(n) { return (n == null || isNaN(n)) ? '' : eurFmt.format(Number(n)); }
+function formatDateTime(iso) { return iso ? dtfDateTime.format(new Date(iso)) : ''; }
+function formatScheduled(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = d.getTime() - now.getTime();
+  const diffMin = Math.round(diffMs / 60000);
+  const diffH = Math.round(diffMs / 3600000);
+  if (Math.abs(diffMin) < 60) return diffMin >= 0 ? `in ${diffMin} Min` : `vor ${-diffMin} Min`;
+  if (Math.abs(diffH) < 24) return diffH >= 0 ? `in ${diffH} Std` : `vor ${-diffH} Std`;
+  return dtfWeekday.format(d);
+}
+
+function normalizePhone(raw) {
+  if (!raw) return '';
+  return raw.replace(/[\s()\/-]/g, '').replace(/^00/, '+');
+}
+function waLink(raw) {
+  const p = normalizePhone(raw);
+  return p ? `https://wa.me/${p.replace('+','')}` : '';
+}
+
+function ownerBadge(owner, size = 'sm') {
+  if (!owner || !OWNERS[owner]) return '';
+  const o = OWNERS[owner];
+  const cls = size === 'xs'
+    ? `inline-flex items-center justify-center w-4 h-4 rounded text-[9px] font-bold border ${o.badge}`
+    : `inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-bold border ${o.badge}`;
+  return `<span class="${cls}" title="Owner: ${o.label}">${o.initial}</span>`;
+}
+
+function activityState(a) {
+  if (a.done_at) return 'done';
+  if (!a.scheduled_at) return 'unscheduled';
+  const t = new Date(a.scheduled_at).getTime();
+  const now = Date.now();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tomorrow = today.getTime() + 86400_000;
+  const weekEnd = today.getTime() + 7*86400_000;
+  if (t < now) return 'overdue';
+  if (t < tomorrow) return 'today';
+  if (t < weekEnd) return 'thisweek';
+  return 'future';
+}
+
+function isLeadClosed(l) { return ['gewonnen', 'verloren'].includes(l.status); }
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+// =============================================================
+// VIEW SWITCHING
+// =============================================================
+function switchView(view) {
+  state.view = view;
+  const leadsView = document.getElementById('leads-view');
+  const engineView = document.getElementById('engine-view');
+  const leadsBtn = document.getElementById('view-leads-btn');
+  const engineBtn = document.getElementById('view-engine-btn');
+
+  if (view === 'engine') {
+    leadsView.classList.add('hidden');
+    engineView.classList.remove('hidden');
+    leadsBtn.className = 'px-2.5 py-1 rounded-md text-xs font-medium transition-colors text-zinc-500 hover:text-zinc-900';
+    engineBtn.className = 'px-2.5 py-1 rounded-md text-xs font-medium transition-colors bg-white text-zinc-900 shadow-sm';
+    closeLeadDetail();
+    renderEngine();
+  } else {
+    engineView.classList.add('hidden');
+    leadsView.classList.remove('hidden');
+    leadsBtn.className = 'px-2.5 py-1 rounded-md text-xs font-medium transition-colors bg-white text-zinc-900 shadow-sm';
+    engineBtn.className = 'px-2.5 py-1 rounded-md text-xs font-medium transition-colors text-zinc-500 hover:text-zinc-900';
+    closeProspectDetail();
+    render();
+  }
+}
+
+// =============================================================
+// LEADS — FILTERING & RENDER
+// =============================================================
+function visibleLeads() {
+  let list = state.leads.filter(l => !l.deleted_at);
+
+  if (state.filter === 'aktiv') {
+    list = list.filter(l => !isLeadClosed(l));
+  } else if (state.filter === 'archiv') {
+    list = list.filter(l => !!l.deleted_at);
+  } else {
+    list = list.filter(l => l.status === state.filter);
+  }
+
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    list = list.filter(l =>
+      (l.firma || '').toLowerCase().includes(q) ||
+      (l.kontaktperson || '').toLowerCase().includes(q) ||
+      (l.branche || '').toLowerCase().includes(q) ||
+      (l.telefon || '').includes(q)
+    );
+  }
+
+  // Sort: open leads by next activity, others by updated_at
+  list.sort((a, b) => {
+    const na = nextOpenActivity(a.id);
+    const nb = nextOpenActivity(b.id);
+    if (na && nb) return new Date(na.scheduled_at) - new Date(nb.scheduled_at);
+    if (na) return -1;
+    if (nb) return 1;
+    return new Date(b.updated_at) - new Date(a.updated_at);
+  });
+
+  return list;
+}
+
+function activitiesOfLead(leadId) { return state.activities.filter(a => a.lead_id === leadId); }
+function openActivitiesOfLead(leadId) { return activitiesOfLead(leadId).filter(a => !a.done_at); }
+function nextOpenActivity(leadId) {
+  const open = openActivitiesOfLead(leadId).filter(a => a.scheduled_at).sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+  return open[0];
+}
+
+function render() {
+  renderAlerts();
+  renderFilterTabs();
+  renderPipelineSummary();
+  renderLeadList();
+  if (state.selectedLeadId) renderLeadDetail();
+}
+
+function renderAlerts() {
+  const activeIds = new Set(state.leads.filter(l => !l.deleted_at && !isLeadClosed(l)).map(l => l.id));
+  const opens = state.activities.filter(a => !a.done_at && activeIds.has(a.lead_id));
+  const overdue = opens.filter(a => activityState(a) === 'overdue').sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+  const today = opens.filter(a => activityState(a) === 'today').sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+  const week = opens.filter(a => activityState(a) === 'thisweek').sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+
+  const el = document.getElementById('alerts');
+
+  if (overdue.length === 0 && today.length === 0 && week.length === 0) {
+    el.innerHTML = `
+      <div class="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6 flex items-center gap-4 card-shadow">
+        <div class="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+          <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <div>
+          <p class="font-semibold text-sm text-zinc-900">Alles im grünen Bereich</p>
+          <p class="text-xs text-zinc-500">Keine überfälligen oder anstehenden Aufgaben.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const card = (kind, title, items, accent) => {
+    if (items.length === 0) return '';
+    const colors = {
+      red: 'border-red-200 bg-red-50/40 text-red-700',
+      amber: 'border-amber-200 bg-amber-50/40 text-amber-700',
+      sky: 'border-sky-200 bg-sky-50/40 text-sky-700',
+    };
+    const colors2 = {
+      red: 'text-red-600',
+      amber: 'text-amber-600',
+      sky: 'text-sky-600',
+    };
+    const visible = items.slice(0, 5);
+    return `
+      <div class="rounded-2xl border ${colors[accent]} p-5 card-shadow">
+        <div class="flex items-center justify-between mb-3">
+          <p class="font-semibold text-sm ${colors2[accent]}">${escapeHtml(title)}</p>
+          <span class="text-2xl font-bold ${colors2[accent]} tabular-nums">${items.length}</span>
+        </div>
+        <ul class="space-y-1.5">
+          ${visible.map(a => {
+            const lead = state.leads.find(l => l.id === a.lead_id);
+            return `
+              <li class="flex items-center justify-between gap-2 text-xs cursor-pointer hover:bg-white/60 -mx-2 px-2 py-1 rounded" onclick="selectLead('${a.lead_id}')">
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium text-zinc-900 truncate">${escapeHtml(a.titel)}</p>
+                  <p class="text-[11px] text-zinc-500 truncate">${escapeHtml(lead?.firma || '')}</p>
+                </div>
+                <span class="shrink-0 inline-flex items-center gap-1">
+                  ${ownerBadge(a.owner, 'xs')}
+                  <span class="text-zinc-500 text-[11px]">${escapeHtml(formatScheduled(a.scheduled_at))}</span>
+                </span>
+              </li>`;
+          }).join('')}
+        </ul>
+        ${items.length > 5 ? `<p class="text-[10px] text-zinc-400 mt-2">+ ${items.length - 5} weitere</p>` : ''}
+      </div>`;
+  };
+
+  el.innerHTML = `
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      ${card('overdue', 'Überfällig', overdue, 'red')}
+      ${card('today', 'Heute fällig', today, 'amber')}
+      ${card('week', 'Diese Woche', week, 'sky')}
+    </div>`;
+}
+
+function renderFilterTabs() {
+  const all = state.leads.filter(l => !l.deleted_at);
+  const counts = {
+    aktiv: all.filter(l => !isLeadClosed(l)).length,
+    archiv: 0,
+  };
+  for (const s of STATUS_LIST) counts[s.key] = all.filter(l => l.status === s.key).length;
+
+  document.getElementById('filter-tabs').innerHTML = FILTER_TABS.map(t => {
+    const active = state.filter === t.key;
+    const count = counts[t.key] || 0;
+    return `
+      <button onclick="setFilter('${t.key}')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${active ? 'bg-zinc-900 text-white shadow-sm' : 'bg-white text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 border border-zinc-200'}">
+        ${escapeHtml(t.label)}${count ? ` <span class="ml-1 ${active ? 'text-zinc-300' : 'text-zinc-400'}">${count}</span>` : ''}
+      </button>`;
+  }).join('');
+}
+
+function setFilter(key) { state.filter = key; render(); }
+
+function renderPipelineSummary() {
+  const el = document.getElementById('pipeline-summary');
+  const all = state.leads.filter(l => !l.deleted_at);
+  let leadsInFilter;
+  let label, sublabel, accent;
+
+  if (state.filter === 'aktiv') {
+    leadsInFilter = all.filter(l => !isLeadClosed(l));
+    label = 'Pipeline'; sublabel = `${leadsInFilter.length} aktive Deals`; accent = 'sky';
+  } else if (state.filter === 'archiv') {
+    el.innerHTML = ''; return;
+  } else {
+    leadsInFilter = all.filter(l => l.status === state.filter);
+    label = STATUS_MAP[state.filter]?.label || state.filter;
+    sublabel = `${leadsInFilter.length} ${leadsInFilter.length === 1 ? 'Deal' : 'Deals'}`;
+    accent = state.filter === 'gewonnen' ? 'emerald'
+           : state.filter === 'verloren' ? 'zinc'
+           : state.filter === 'verhandlung' ? 'violet'
+           : state.filter === 'nachfass' ? 'amber'
+           : 'sky';
+  }
+
+  const total = leadsInFilter.reduce((acc, l) => acc + (Number(l.angebotspreis) || 0), 0);
+  if (leadsInFilter.length === 0) { el.innerHTML = ''; return; }
+
+  const palettes = {
+    emerald: { bg: 'from-emerald-50 to-white', ring: 'border-emerald-200', big: 'text-emerald-600' },
+    violet:  { bg: 'from-violet-50 to-white',  ring: 'border-violet-200',  big: 'text-violet-600' },
+    amber:   { bg: 'from-amber-50 to-white',   ring: 'border-amber-200',   big: 'text-amber-600' },
+    sky:     { bg: 'from-sky-50 to-white',     ring: 'border-sky-200',     big: 'text-sky-600' },
+    zinc:    { bg: 'from-zinc-50 to-white',    ring: 'border-zinc-200',    big: 'text-zinc-600' },
+  };
+  const p = palettes[accent] || palettes.sky;
+
+  const withPrice = leadsInFilter.filter(l => l.angebotspreis != null && Number(l.angebotspreis) > 0).length;
+  const hint = total === 0
+    ? `noch kein Angebotspreis hinterlegt`
+    : `${withPrice} mit Preis · ${leadsInFilter.length - withPrice} ohne`;
+  const isWon = state.filter === 'gewonnen';
+
+  el.innerHTML = `
+    <div class="rounded-2xl border ${p.ring} bg-gradient-to-br ${p.bg} px-5 sm:px-6 py-5 flex items-center justify-between gap-4 card-shadow">
+      <div class="min-w-0">
+        <p class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">${escapeHtml(label)}</p>
+        <p class="text-xs text-zinc-500 mt-0.5">${escapeHtml(sublabel)} · ${escapeHtml(hint)}</p>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="text-2xl sm:text-3xl font-bold ${p.big} tabular-nums">${escapeHtml(formatEur(total) || '0 €')}</p>
+        ${isWon && total > 0 ? `<p class="text-[10px] text-emerald-600 mt-0.5">🎉 Let's go</p>` : ''}
+      </div>
+    </div>`;
+}
+
+function renderLeadList() {
+  const list = visibleLeads();
+  document.getElementById('list-count').textContent = `${list.length} ${list.length === 1 ? 'Lead' : 'Leads'}`;
+  const el = document.getElementById('lead-list');
+  if (state.viewMode === 'list') {
+    el.innerHTML = renderLeadsAsList(list);
+  } else {
+    el.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">${list.map(renderLeadCard).join('')}</div>`;
+  }
+}
+
+function setViewMode(mode) {
+  state.viewMode = mode;
+  document.getElementById('view-cards').className = `p-1.5 rounded-md transition-colors ${mode === 'cards' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500'}`;
+  document.getElementById('view-list').className = `p-1.5 rounded-md transition-colors ${mode === 'list' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500'}`;
+  renderLeadList();
+}
+
+function renderLeadCard(l) {
+  const status = STATUS_MAP[l.status] || STATUS_LIST[0];
+  const next = nextOpenActivity(l.id);
+  const aState = next ? activityState(next) : null;
+  const indicators = {
+    overdue:  'bg-red-50 text-red-700 border-red-200',
+    today:    'bg-amber-50 text-amber-700 border-amber-200',
+    thisweek: 'bg-sky-50 text-sky-700 border-sky-200',
+    future:   'bg-zinc-50 text-zinc-600 border-zinc-200',
+  };
+  const indicator = aState ? indicators[aState] || indicators.future : '';
+
+  return `
+    <button onclick="selectLead('${l.id}')" class="text-left rounded-2xl border border-zinc-200 hover:border-zinc-300 bg-white p-4 transition-colors card-shadow hover:card-shadow-lg group flex flex-col gap-3">
+      <div class="flex items-start gap-2">
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-sm text-zinc-900 truncate group-hover:text-zinc-700">${escapeHtml(l.firma)}</p>
+          <p class="text-[11px] text-zinc-500 truncate mt-0.5">
+            ${escapeHtml(l.kontaktperson || '')}${l.branche ? ` · ${escapeHtml(l.branche)}` : ''}
+          </p>
+        </div>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium border ${status.color}">${escapeHtml(status.label)}</span>
+      </div>
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-xs text-zinc-700 tabular-nums">
+          ${l.angebotspreis ? `<span class="font-semibold text-emerald-600">${formatEur(l.angebotspreis)}</span>` : '<span class="text-zinc-400">— kein Angebot —</span>'}
+        </p>
+        ${next ? `
+          <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-medium border ${indicator}">
+            ${ownerBadge(next.owner, 'xs')}
+            <span>${escapeHtml(next.titel)}</span>
+            <span class="text-zinc-500">·</span>
+            <span>${escapeHtml(formatScheduled(next.scheduled_at))}</span>
+          </div>` : '<span class="text-[10px] text-zinc-400">keine Aktivität</span>'}
+      </div>
+    </button>`;
+}
+
+function renderLeadsAsList(list) {
+  return `
+    <div class="rounded-2xl border border-zinc-200 bg-white overflow-hidden card-shadow">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-zinc-50 border-b border-zinc-200">
+            <tr class="text-left text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
+              <th class="px-4 py-3">Firma</th>
+              <th class="px-4 py-3">Kontakt</th>
+              <th class="px-4 py-3">Status</th>
+              <th class="px-4 py-3 text-right">Angebot</th>
+              <th class="px-4 py-3">Nächste Aktivität</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100">
+            ${list.map(l => {
+              const status = STATUS_MAP[l.status] || STATUS_LIST[0];
+              const next = nextOpenActivity(l.id);
+              const aState = next ? activityState(next) : null;
+              return `
+                <tr class="hover:bg-zinc-50 cursor-pointer transition-colors" onclick="selectLead('${l.id}')">
+                  <td class="px-4 py-3">
+                    <p class="font-medium text-zinc-900">${escapeHtml(l.firma)}</p>
+                    <p class="text-xs text-zinc-500">${escapeHtml(l.branche || '')}</p>
+                  </td>
+                  <td class="px-4 py-3">
+                    <p class="text-zinc-700">${escapeHtml(l.kontaktperson || '')}</p>
+                    <p class="text-xs text-zinc-500">${escapeHtml(l.telefon || '')}</p>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium border ${status.color}">${escapeHtml(status.label)}</span>
+                  </td>
+                  <td class="px-4 py-3 text-right tabular-nums">
+                    ${l.angebotspreis ? `<span class="font-semibold text-emerald-600">${formatEur(l.angebotspreis)}</span>` : '<span class="text-zinc-400">—</span>'}
+                  </td>
+                  <td class="px-4 py-3">
+                    ${next ? `
+                      <div class="inline-flex items-center gap-1.5 text-xs">
+                        ${ownerBadge(next.owner, 'xs')}
+                        <span class="text-zinc-700">${escapeHtml(next.titel)}</span>
+                        <span class="text-zinc-400">·</span>
+                        <span class="text-zinc-500">${escapeHtml(formatScheduled(next.scheduled_at))}</span>
+                      </div>` : '<span class="text-xs text-zinc-400">—</span>'}
+                  </td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// =============================================================
+// LEAD DETAIL
+// =============================================================
+function selectLead(id) {
+  state.selectedLeadId = id;
+  renderLeadDetail();
+  document.getElementById('lead-detail').classList.remove('hidden');
+}
+
+function closeLeadDetail() {
+  state.selectedLeadId = null;
+  document.getElementById('lead-detail').classList.add('hidden');
+}
+
+function getSelectedLead() {
+  return state.leads.find(l => l.id === state.selectedLeadId);
+}
+
+function renderLeadDetail() {
+  const l = getSelectedLead();
+  if (!l) return;
+
+  document.getElementById('detail-firma').textContent = l.firma;
+  document.getElementById('detail-meta').textContent = [
+    l.branche, l.kontaktperson,
+  ].filter(Boolean).join(' · ');
+
+  document.getElementById('detail-angebotspreis').value = l.angebotspreis || '';
+  document.getElementById('detail-angebot-display').textContent = l.angebotspreis ? formatEur(l.angebotspreis) : '';
+
+  // Status buttons
+  document.getElementById('detail-status-buttons').innerHTML = STATUS_LIST.map(s => {
+    const isActive = s.key === l.status;
+    return `<button onclick="changeStatus('${s.key}')" class="px-2.5 py-2 rounded-md text-[11px] font-medium border transition-colors ${isActive ? s.color + ' font-semibold' : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300'}">${escapeHtml(s.label)}</button>`;
+  }).join('');
+
+  // Contact block
+  const phone = l.telefon ? normalizePhone(l.telefon) : null;
+  const contactRows = [];
+  if (l.telefon) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2.5 border-b border-zinc-200">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515L10 7l-2 2a11 11 0 005 5l2-2 2.485.78A2 2 0 0119 14.72V17a2 2 0 01-2 2h-1C9.716 19 5 14.284 5 8V7"/></svg>
+          <a href="tel:${escapeHtml(phone)}" class="text-sm text-zinc-900 hover:text-emerald-600 transition-colors tabular-nums truncate">${escapeHtml(l.telefon)}</a>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <a href="tel:${escapeHtml(phone)}" class="px-2 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-[10px] font-semibold text-emerald-700 transition-colors">Anrufen</a>
+          ${waLink(l.telefon) ? `<a href="${escapeHtml(waLink(l.telefon))}" target="_blank" rel="noopener" class="px-2 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-[10px] font-semibold text-emerald-700 transition-colors">WA</a>` : ''}
+        </div>
+      </div>`);
+  }
+  if (l.email) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2.5 border-b border-zinc-200">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <a href="mailto:${escapeHtml(l.email)}" class="text-sm text-zinc-900 hover:text-emerald-600 transition-colors truncate">${escapeHtml(l.email)}</a>
+        </div>
+      </div>`);
+  }
+  if (l.website_url) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2.5">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <a href="${escapeHtml(l.website_url)}" target="_blank" rel="noopener" class="text-sm text-zinc-900 hover:text-emerald-600 transition-colors truncate">${escapeHtml(l.website_url.replace(/^https?:\/\//, ''))}</a>
+        </div>
+      </div>`);
+  }
+  document.getElementById('detail-contact').innerHTML = contactRows.join('');
+
+  // Activities
+  renderActivitiesForDetail();
+
+  // Notes
+  renderNotesForDetail();
+}
+
+function renderActivitiesForDetail() {
+  const l = getSelectedLead();
+  if (!l) return;
+  const list = activitiesOfLead(l.id).sort((a, b) => {
+    const da = a.done_at ? 1 : 0, db = b.done_at ? 1 : 0;
+    if (da !== db) return da - db;
+    return new Date(a.scheduled_at || a.created_at) - new Date(b.scheduled_at || b.created_at);
+  });
+  const el = document.getElementById('activities-open');
+  if (list.length === 0) {
+    el.innerHTML = `<p class="text-xs text-zinc-400 italic">Noch keine Aktivitäten.</p>`;
+    return;
+  }
+  el.innerHTML = list.map(a => {
+    const done = !!a.done_at;
+    const aState = activityState(a);
+    const overdueRing = aState === 'overdue' && !done ? 'ring-1 ring-red-200' : '';
+    return `
+      <div class="flex items-start gap-2 p-3 rounded-lg bg-zinc-50/70 border border-zinc-200 ${overdueRing}">
+        <button onclick="toggleActivityDone('${a.id}')" class="shrink-0 mt-0.5 w-4 h-4 rounded border ${done ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-300 hover:border-zinc-500'} flex items-center justify-center transition-colors">
+          ${done ? `<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>` : ''}
+        </button>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs ${done ? 'text-zinc-400 line-through' : 'text-zinc-900'} font-medium">${escapeHtml(a.titel)} ${ownerBadge(a.owner, 'xs')}</p>
+          ${a.scheduled_at ? `<p class="text-[10px] text-zinc-500">${escapeHtml(formatScheduled(a.scheduled_at))}</p>` : ''}
+          ${a.note ? `<p class="text-[11px] text-zinc-600 mt-1.5 whitespace-pre-wrap">${escapeHtml(a.note)}</p>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderNotesForDetail() {
+  const l = getSelectedLead();
+  if (!l) return;
+  const list = (state.notesByLead[l.id] || []).slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const el = document.getElementById('detail-notes');
+  if (list.length === 0) {
+    el.innerHTML = `<p class="text-xs text-zinc-400 italic">Noch keine Notizen.</p>`;
+    return;
+  }
+  el.innerHTML = list.map(n => `
+    <div class="p-3 rounded-lg bg-zinc-50/70 border border-zinc-200">
+      <p class="text-xs text-zinc-700 whitespace-pre-wrap leading-relaxed">${escapeHtml(n.content)}</p>
+      <p class="text-[10px] text-zinc-400 mt-1.5">${escapeHtml(formatDateTime(n.created_at))}</p>
+    </div>`).join('');
+}
+
+function changeStatus(newStatus) {
+  const l = getSelectedLead();
+  if (!l) return;
+  l.status = newStatus;
+  l.updated_at = now();
+  renderLeadDetail();
+  render();
+  toast(`Status: ${STATUS_MAP[newStatus].label}`);
+}
+
+function toggleActivityDone(activityId) {
+  const a = state.activities.find(x => x.id === activityId);
+  if (!a) return;
+  a.done_at = a.done_at ? null : now();
+  renderActivitiesForDetail();
+  render();
+}
+
+function addNoteFromDetail() {
+  const l = getSelectedLead();
+  if (!l) return;
+  const input = document.getElementById('detail-note-input');
+  const content = (input.value || '').trim();
+  if (!content) return;
+  const note = { id: 'n' + Math.random().toString(36).slice(2), lead_id: l.id, content, created_at: now() };
+  if (!state.notesByLead[l.id]) state.notesByLead[l.id] = [];
+  state.notesByLead[l.id].unshift(note);
+  input.value = '';
+  renderNotesForDetail();
+  toast('Notiz hinzugefügt');
+}
+
+// Save angebotspreis on blur
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'detail-angebotspreis') {
+    const l = getSelectedLead();
+    if (!l) return;
+    const raw = e.target.value.replace(/[^\d,.]/g, '').replace(',', '.');
+    const val = parseFloat(raw);
+    l.angebotspreis = isNaN(val) ? null : val;
+    l.updated_at = now();
+    document.getElementById('detail-angebot-display').textContent = l.angebotspreis ? formatEur(l.angebotspreis) : '';
+    render();
+  }
+});
+
+// =============================================================
+// ENGINE — PROSPECTS
+// =============================================================
+function visibleProspects() {
+  let list = state.prospects.filter(p => !p.deleted_at);
+  if (state.prospectFilter === 'active') {
+    list = list.filter(p => !['promoted', 'nicht_interessiert'].includes(p.prospect_status));
+  } else {
+    list = list.filter(p => p.prospect_status === state.prospectFilter);
+  }
+  if (state.prospectStadt) list = list.filter(p => p.stadt === state.prospectStadt);
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    list = list.filter(p =>
+      (p.firma || '').toLowerCase().includes(q) ||
+      (p.stadt || '').toLowerCase().includes(q) ||
+      (p.branche || '').toLowerCase().includes(q)
+    );
+  }
+
+  const score = p => p.llm_score ?? p.rule_score ?? -1;
+  switch (state.prospectSort) {
+    case 'score_asc':    list.sort((a, b) => score(a) - score(b)); break;
+    case 'updated_desc': list.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)); break;
+    case 'firma_asc':    list.sort((a, b) => (a.firma || '').localeCompare(b.firma || '', 'de')); break;
+    default:             list.sort((a, b) => score(b) - score(a));
+  }
+  return list;
+}
+
+function scoreColor(score) {
+  if (score == null) return 'text-zinc-400 border-zinc-200 bg-white';
+  if (score >= 70) return 'text-red-700 border-red-300 bg-red-50';
+  if (score >= 40) return 'text-amber-700 border-amber-300 bg-amber-50';
+  return 'text-zinc-500 border-zinc-200 bg-white';
+}
+
+function renderEngine() {
+  document.getElementById('engine-count').textContent = state.prospects.filter(p => !p.deleted_at).length;
+  renderEngineFilterTabs();
+  renderEngineStadtFilter();
+
+  const list = visibleProspects();
+  document.getElementById('engine-list-count').textContent = `${list.length} ${list.length === 1 ? 'Prospect' : 'Prospects'}`;
+  document.getElementById('prospect-list').innerHTML = list.map(renderProspectCard).join('');
+}
+
+function renderEngineFilterTabs() {
+  const counts = {};
+  for (const p of state.prospects.filter(p => !p.deleted_at)) {
+    counts[p.prospect_status] = (counts[p.prospect_status] || 0) + 1;
+    if (!['promoted', 'nicht_interessiert'].includes(p.prospect_status)) {
+      counts.active = (counts.active || 0) + 1;
+    }
+  }
+  document.getElementById('engine-filter-tabs').innerHTML = ENGINE_FILTER_TABS.map(t => {
+    const active = state.prospectFilter === t.key;
+    const count = counts[t.key] || 0;
+    return `
+      <button onclick="state.prospectFilter='${t.key}'; renderEngine()" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${active ? 'bg-zinc-900 text-white shadow-sm' : 'bg-white text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 border border-zinc-200'}">
+        ${escapeHtml(t.label)}${count ? ` <span class="ml-1 ${active ? 'text-zinc-300' : 'text-zinc-400'}">${count}</span>` : ''}
+      </button>`;
+  }).join('');
+}
+
+function renderEngineStadtFilter() {
+  const el = document.getElementById('engine-stadt');
+  const cities = [...new Set(state.prospects.map(p => p.stadt).filter(Boolean))].sort();
+  const current = state.prospectStadt;
+  el.innerHTML = `<option value="">Alle Städte (${cities.length})</option>` + cities.map(c =>
+    `<option value="${escapeHtml(c)}"${c === current ? ' selected' : ''}>${escapeHtml(c)}</option>`
+  ).join('');
+}
+
+function renderProspectCard(p) {
+  const score = p.llm_score ?? p.rule_score;
+  const scoreCls = scoreColor(score);
+  const status = PROSPECT_STATUS_MAP[p.prospect_status] || PROSPECT_STATUS_LIST[0];
+  const e = p.enrichment || {};
+  const techBadge = (e.tech_stack && e.tech_stack[0]) ? e.tech_stack[0] : null;
+  const noWeb = e.no_website;
+  const thumb = p.screenshot_mobile || p.screenshot_desktop;
+  const pains = (p.pain_points || []).slice(0, 3);
+  const canAudit = !p.llm_score && !e.no_website;
+
+  return `
+    <div class="rounded-2xl border border-zinc-200 hover:border-zinc-300 bg-white p-4 transition-colors card-shadow hover:card-shadow-lg flex gap-3 sm:gap-4 group relative">
+      <button type="button" onclick="selectProspect('${p.id}')" class="absolute inset-0 z-0" aria-label="open"></button>
+      <div class="shrink-0 w-24 sm:w-28 h-40 sm:h-44 rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200 relative pointer-events-none">
+        ${thumb
+          ? `<img src="${escapeHtml(thumb)}" alt="" class="w-full h-full object-cover object-top" loading="lazy" onerror="this.style.display='none'" />`
+          : noWeb
+            ? `<div class="absolute inset-0 flex flex-col items-center justify-center text-zinc-400 p-2">
+                <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"/></svg>
+                <span class="text-[10px] text-center">keine<br>Website</span>
+              </div>`
+            : `<div class="absolute inset-0 flex items-center justify-center text-zinc-300"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4-4a3 3 0 014 0l4 4M16 12l1-1a3 3 0 014 0l-1 1M4 4h16v16H4z"/></svg></div>`}
+      </div>
+      <div class="flex-1 min-w-0 pointer-events-none">
+        <div class="flex items-start gap-2 mb-1.5">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-sm text-zinc-900 truncate">${escapeHtml(p.firma)}</p>
+            <p class="text-[11px] text-zinc-500 truncate mt-0.5">
+              ${escapeHtml(p.stadt || '')}${e.google_rating ? ` · ⭐${e.google_rating} (${e.google_review_count||0})` : ''}${techBadge ? ` · ${escapeHtml(techBadge)}` : ''}
+            </p>
+          </div>
+          <div class="shrink-0 flex items-center gap-1.5">
+            ${ownerBadge(p.owner, 'sm')}
+            <span class="inline-flex items-center justify-center min-w-[40px] px-1.5 py-1 rounded-md text-xs font-bold tabular-nums border ${scoreCls}">${score ?? '–'}</span>
+          </div>
+        </div>
+        ${p.sales_pitch_hook
+          ? `<p class="text-xs text-zinc-700 italic mb-2 line-clamp-2 leading-relaxed">"${escapeHtml(p.sales_pitch_hook)}"</p>`
+          : ''}
+        ${pains.length > 0
+          ? `<ul class="text-[11px] text-zinc-600 space-y-0.5">${pains.map(pp => `<li class="line-clamp-1">• ${escapeHtml(pp)}</li>`).join('')}</ul>`
+          : `<p class="text-[11px] text-zinc-400 italic">${p.prospect_status === 'new' ? 'noch nicht enriched' : 'noch nicht via LLM auditiert'}</p>`}
+        <div class="flex items-center gap-1.5 mt-2.5">
+          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border ${status.color}">${escapeHtml(status.label)}</span>
+        </div>
+      </div>
+      ${canAudit ? `
+        <button type="button" onclick="event.stopPropagation(); triggerFakeAudit('${p.id}')" class="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-md bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 text-[11px] font-semibold flex items-center gap-1 transition-colors pointer-events-auto card-shadow">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          AI Audit
+        </button>` : ''}
+    </div>`;
+}
+
+// =============================================================
+// PROSPECT DETAIL
+// =============================================================
+function selectProspect(id) {
+  state.selectedProspectId = id;
+  renderProspectDetail();
+  document.getElementById('prospect-detail').classList.remove('hidden');
+}
+function closeProspectDetail() {
+  state.selectedProspectId = null;
+  document.getElementById('prospect-detail').classList.add('hidden');
+}
+function getSelectedProspect() {
+  return state.prospects.find(p => p.id === state.selectedProspectId);
+}
+
+function renderProspectDetail() {
+  const p = getSelectedProspect();
+  if (!p) return;
+  const e = p.enrichment || {};
+  const score = p.llm_score ?? p.rule_score;
+  const status = PROSPECT_STATUS_MAP[p.prospect_status] || PROSPECT_STATUS_LIST[0];
+  const canRunAudit = p.prospect_status !== 'new' && !e.no_website;
+
+  document.getElementById('pd-firma').textContent = p.firma;
+  document.getElementById('pd-meta').innerHTML = [
+    p.stadt && escapeHtml(p.stadt),
+    e.google_rating && `⭐${e.google_rating} (${e.google_review_count || 0})`,
+    (e.tech_stack && e.tech_stack[0]) && escapeHtml(e.tech_stack[0]),
+  ].filter(Boolean).join(' · ');
+
+  document.getElementById('pd-hero').innerHTML = `
+    <div class="flex items-start gap-3">
+      <div class="shrink-0 w-16 h-16 rounded-2xl border-2 ${scoreColor(score)} flex flex-col items-center justify-center font-bold">
+        <span class="text-2xl tabular-nums leading-none">${score ?? '–'}</span>
+        <span class="text-[9px] uppercase tracking-wider opacity-70 mt-0.5">${p.llm_score != null ? 'LLM' : 'Regel'}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        ${p.sales_pitch_hook ? `<p class="text-sm text-zinc-900 italic font-medium leading-snug">"${escapeHtml(p.sales_pitch_hook)}"</p>` : ''}
+        ${p.scoring_summary ? `<p class="text-xs text-zinc-600 mt-1.5">${escapeHtml(p.scoring_summary)}</p>` : ''}
+        ${canRunAudit ? `
+          <button type="button" onclick="triggerFakeAudit('${p.id}')" class="mt-3 px-3 py-1.5 rounded-md bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            ${p.llm_score == null ? 'AI Audit starten' : 'AI Audit erneut'}
+          </button>` : ''}
+      </div>
+    </div>`;
+
+  const desktop = p.screenshot_desktop, mobile = p.screenshot_mobile;
+  document.getElementById('pd-screenshots').innerHTML = `
+    <label class="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Website</label>
+    ${(desktop || mobile) ? `
+      <div class="grid grid-cols-3 gap-2">
+        ${desktop ? `<button type="button" onclick="openLightbox('${escapeHtml(desktop)}')" class="col-span-2 block rounded-lg overflow-hidden border border-zinc-200 bg-zinc-50 cursor-zoom-in"><img src="${escapeHtml(desktop)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top pointer-events-none" /></button>` : ''}
+        ${mobile ? `<button type="button" onclick="openLightbox('${escapeHtml(mobile)}')" class="block rounded-lg overflow-hidden border border-zinc-200 bg-zinc-50 cursor-zoom-in"><img src="${escapeHtml(mobile)}" alt="" loading="lazy" class="w-full max-h-80 object-cover object-top pointer-events-none" /></button>` : ''}
+      </div>` : `<p class="text-xs text-zinc-500 italic">${e.no_website ? 'Keine eigene Website (nur Google-Profil).' : 'Noch keine Screenshots.'}</p>`}
+    ${p.website ? `<a href="${escapeHtml(p.website)}" target="_blank" rel="noopener" class="text-xs text-zinc-500 hover:text-zinc-900 mt-2 inline-flex items-center gap-1 transition-colors">
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      ${escapeHtml(p.website)}
+    </a>` : ''}`;
+
+  const pains = p.pain_points || [];
+  document.getElementById('pd-pain').innerHTML = `
+    <label class="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Pain Points</label>
+    ${pains.length > 0
+      ? `<ul class="space-y-2">${pains.map(pp => `<li class="text-xs text-zinc-700 flex gap-2 leading-relaxed"><span class="text-brand-500 shrink-0 mt-0.5">●</span><span>${escapeHtml(pp)}</span></li>`).join('')}</ul>`
+      : `<p class="text-xs text-zinc-400 italic">Noch nicht via LLM auditiert.</p>`}`;
+
+  const phone = p.telefon ? normalizePhone(p.telefon) : null;
+  const contactRows = [];
+  if (p.telefon) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2.5 border-b border-zinc-200">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515L10 7l-2 2a11 11 0 005 5l2-2 2.485.78A2 2 0 0119 14.72V17a2 2 0 01-2 2h-1C9.716 19 5 14.284 5 8V7"/></svg>
+          <a href="tel:${escapeHtml(phone)}" class="text-sm text-zinc-900 hover:text-emerald-600 transition-colors tabular-nums truncate">${escapeHtml(p.telefon)}</a>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <a href="tel:${escapeHtml(phone)}" class="px-2 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-[10px] font-semibold text-emerald-700 transition-colors">Anrufen</a>
+          ${waLink(p.telefon) ? `<a href="${escapeHtml(waLink(p.telefon))}" target="_blank" rel="noopener" class="px-2 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-[10px] font-semibold text-emerald-700 transition-colors">WA</a>` : ''}
+        </div>
+      </div>`);
+  }
+  if (p.email) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2.5 border-b border-zinc-200">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <a href="mailto:${escapeHtml(p.email)}" class="text-sm text-zinc-900 hover:text-emerald-600 transition-colors truncate">${escapeHtml(p.email)}</a>
+        </div>
+      </div>`);
+  }
+  if (p.adresse) {
+    contactRows.push(`
+      <div class="flex items-center justify-between gap-3 py-2.5">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <svg class="w-4 h-4 text-zinc-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="text-sm text-zinc-700 truncate">${escapeHtml(p.adresse)}</span>
+        </div>
+      </div>`);
+  }
+  document.getElementById('pd-contact').innerHTML = `
+    <label class="block text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">Kontakt</label>
+    ${contactRows.length > 0
+      ? `<div class="rounded-lg border border-zinc-200 bg-zinc-50/50 px-3">${contactRows.join('')}</div>`
+      : `<p class="text-xs text-zinc-500 italic">Keine Kontaktdaten gefunden.</p>`}`;
+
+  const isPromoted = p.prospect_status === 'promoted';
+  document.getElementById('pd-status-buttons').innerHTML = PROSPECT_STATUS_LIST.map(s => {
+    const isActive = s.key === p.prospect_status;
+    return `<button onclick="changeProspectStatus('${s.key}')" ${isPromoted ? 'disabled' : ''} class="px-2 py-1.5 rounded-md text-[11px] font-medium border transition-colors ${isActive ? s.color + ' font-semibold' : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300'} ${isPromoted ? 'opacity-50 cursor-not-allowed' : ''}">${escapeHtml(s.label)}</button>`;
+  }).join('');
+
+  const promoteBtn = document.getElementById('pd-promote-btn');
+  if (isPromoted) {
+    promoteBtn.disabled = true;
+    promoteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    promoteBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Bereits als Lead übernommen`;
+  } else {
+    promoteBtn.disabled = false;
+    promoteBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    promoteBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Als echten Lead übernehmen`;
+  }
+}
+
+function changeProspectStatus(newStatus) {
+  const p = getSelectedProspect();
+  if (!p || p.prospect_status === 'promoted') return;
+  p.prospect_status = newStatus;
+  p.updated_at = now();
+  renderProspectDetail();
+  renderEngine();
+  toast(`Status: ${PROSPECT_STATUS_MAP[newStatus].label}`);
+}
+
+function promoteProspect() {
+  const p = getSelectedProspect();
+  if (!p || p.prospect_status === 'promoted') return;
+  if (!confirm(`"${p.firma}" als echten Lead übernehmen?`)) return;
+
+  const newLead = {
+    id: 'l' + Math.random().toString(36).slice(2),
+    firma: p.firma,
+    branche: p.branche,
+    kontaktperson: null,
+    telefon: p.telefon,
+    email: p.email,
+    website_url: p.website,
+    alte_website: p.website,
+    status: 'in_arbeit',
+    angebotspreis: null,
+    created_at: now(),
+    updated_at: now(),
+    deleted_at: null,
+  };
+  state.leads.unshift(newLead);
+
+  const noteContent = '📥 Aus Cold-Engine übernommen — LLM-Score: ' + p.llm_score +
+    (p.sales_pitch_hook ? '\n\n' + p.sales_pitch_hook : '') +
+    (p.scoring_summary ? '\n\n' + p.scoring_summary : '') +
+    (p.pain_points?.length > 0 ? '\n\nPain Points:\n• ' + p.pain_points.join('\n• ') : '');
+  if (!state.notesByLead[newLead.id]) state.notesByLead[newLead.id] = [];
+  state.notesByLead[newLead.id].unshift({
+    id: 'n' + Math.random().toString(36).slice(2),
+    lead_id: newLead.id,
+    content: noteContent,
+    created_at: now(),
+  });
+
+  p.prospect_status = 'promoted';
+  p.updated_at = now();
+
+  toast(`✓ ${p.firma} als Lead übernommen`);
+  closeProspectDetail();
+  switchView('leads');
+  setTimeout(() => selectLead(newLead.id), 200);
+}
+
+// =============================================================
+// FAKE AI AUDIT (visual demo only)
+// =============================================================
+function triggerFakeAudit(prospectId) {
+  const p = state.prospects.find(x => x.id === prospectId);
+  if (!p) return;
+
+  toast(`✓ AI-Audit in Queue für ${p.firma}`);
+
+  // Show status bar
+  const bar = document.getElementById('engine-status-bar');
+  bar.classList.remove('hidden');
+  bar.style.opacity = '1';
+  document.getElementById('esb-title').textContent = 'AI-Audit';
+  document.getElementById('esb-message').textContent = p.firma;
+
+  let processed = 0;
+  const phases = [
+    { msg: 'Phase A: Regelbasiertes Scoring', pct: 25 },
+    { msg: 'Frische Screenshots (Cookies ausblenden)…', pct: 50 },
+    { msg: 'Phase B: Vision-LLM (Claude analysiert)…', pct: 80 },
+    { msg: 'Pain-Points werden generiert…', pct: 95 },
+  ];
+  let phaseIdx = 0;
+  const tick = setInterval(() => {
+    if (phaseIdx >= phases.length) {
+      clearInterval(tick);
+      // Simulate result
+      p.llm_score = 60 + Math.floor(Math.random() * 25);
+      if (!p.sales_pitch_hook) {
+        p.sales_pitch_hook = generateFakeHook(p);
+        p.scoring_summary = `${p.firma} in ${p.stadt} mit starkem Standing, aber Web-Auftritt verschenkt Conversion-Potenzial.`;
+        p.pain_points = generateFakePains(p);
+      }
+      p.prospect_status = 'scored';
+      p.updated_at = now();
+      document.getElementById('esb-title').textContent = 'AI-Audit fertig';
+      document.getElementById('esb-message').textContent = `Score ${p.llm_score} · ${p.firma}`;
+      document.getElementById('esb-progress').style.width = '100%';
+      document.getElementById('esb-icon').innerHTML = `<svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+      document.getElementById('esb-icon').className = 'shrink-0 w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center';
+      renderEngine();
+      if (state.selectedProspectId === p.id) renderProspectDetail();
+      setTimeout(() => {
+        bar.style.opacity = '0';
+        setTimeout(() => bar.classList.add('hidden'), 400);
+      }, 6000);
+      return;
+    }
+    const phase = phases[phaseIdx];
+    document.getElementById('esb-message').textContent = phase.msg + ' · ' + p.firma;
+    document.getElementById('esb-progress').style.width = phase.pct + '%';
+    phaseIdx++;
+  }, 1400);
+}
+
+function generateFakeHook(p) {
+  const hooks = [
+    `Ihr habt ${p.enrichment?.google_review_count || 'viele'} Reviews mit ⭐${p.enrichment?.google_rating || 4.5} — eure Website kennt das aber nicht und verschenkt jeden Tag warme Anfragen.`,
+    `Eure Konkurrenz in ${p.stadt} ist bei Google sichtbarer — fixen wir in 3-4 Wochen ohne Mehraufwand für euch.`,
+    `Ohne Online-Anfrage und mit veralteter Site verliert ihr 30-40% potenzieller Interessenten direkt am Mobile-Screen.`,
+  ];
+  return hooks[Math.floor(Math.random() * hooks.length)];
+}
+
+function generateFakePains(p) {
+  return [
+    `Hero-Bild + Headline kommunizieren euer Premium-Niveau nicht — Stock-Material statt eigener Arbeiten.`,
+    `Keine Online-Anfrage-Funktion — Inhaber verlieren Interessenten die abends/Wochenende suchen.`,
+    `${p.enrichment?.google_review_count || 100}+ Google-Reviews mit ⭐${p.enrichment?.google_rating || 4.5} werden nicht prominent auf der Site gezeigt.`,
+    `Mobile-Ladezeit > 4s — User springt ab bevor er Inhalte sieht.`,
+  ];
+}
+
+// =============================================================
+// MODALS
+// =============================================================
+function openActivityModal() {
+  if (!state.selectedLeadId) return;
+  state.pendingActivityLeadId = state.selectedLeadId;
+  document.getElementById('am-titel').value = '';
+  const t = new Date(Date.now() + 86400_000); t.setSeconds(0);
+  document.getElementById('am-scheduled').value = new Date(t.getTime() - t.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  document.getElementById('am-note').value = '';
+  document.getElementById('activity-modal').classList.remove('hidden');
+}
+function closeActivityModal() {
+  document.getElementById('activity-modal').classList.add('hidden');
+}
+function saveActivity() {
+  const lid = state.pendingActivityLeadId;
+  if (!lid) return;
+  const titel = (document.getElementById('am-titel').value || '').trim();
+  if (!titel) { toast('Titel fehlt'); return; }
+  const scheduledRaw = document.getElementById('am-scheduled').value;
+  const scheduled = scheduledRaw ? new Date(scheduledRaw).toISOString() : null;
+  const note = (document.getElementById('am-note').value || '').trim() || null;
+  state.activities.push({
+    id: 'a' + Math.random().toString(36).slice(2),
+    lead_id: lid, titel, scheduled_at: scheduled, note, done_at: null,
+    owner: 'Markus',
+  });
+  closeActivityModal();
+  renderActivitiesForDetail();
+  render();
+  toast('Aktivität angelegt');
+}
+
+function openAddLead() {
+  document.getElementById('al-firma').value = '';
+  document.getElementById('al-branche').value = '';
+  document.getElementById('al-telefon').value = '';
+  document.getElementById('al-email').value = '';
+  document.getElementById('add-lead-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('al-firma').focus(), 50);
+}
+function closeAddLead() { document.getElementById('add-lead-modal').classList.add('hidden'); }
+function saveNewLead() {
+  const firma = (document.getElementById('al-firma').value || '').trim();
+  if (!firma) { toast('Firma fehlt'); return; }
+  const newLead = {
+    id: 'l' + Math.random().toString(36).slice(2),
+    firma, branche: document.getElementById('al-branche').value.trim() || null,
+    kontaktperson: null,
+    telefon: document.getElementById('al-telefon').value.trim() || null,
+    email: document.getElementById('al-email').value.trim() || null,
+    website_url: null, alte_website: null,
+    status: 'in_arbeit', angebotspreis: null,
+    created_at: now(), updated_at: now(), deleted_at: null,
+  };
+  state.leads.unshift(newLead);
+  closeAddLead();
+  render();
+  setTimeout(() => selectLead(newLead.id), 100);
+  toast(`✓ Lead "${firma}" angelegt`);
+}
+
+function openScrapeModal() { document.getElementById('scrape-modal').classList.remove('hidden'); }
+function closeScrapeModal() { document.getElementById('scrape-modal').classList.add('hidden'); }
+function startFakeScrape() {
+  const stadt = document.getElementById('sc-stadt').value || 'Frankfurt';
+  const branche = document.getElementById('sc-branche').value;
+  closeScrapeModal();
+  toast(`✓ Scrape-Job in Queue: ${stadt} (${branche})`);
+
+  const bar = document.getElementById('engine-status-bar');
+  bar.classList.remove('hidden');
+  bar.style.opacity = '1';
+  document.getElementById('esb-icon').className = 'shrink-0 w-8 h-8 rounded-lg bg-brand-50 border border-brand-200 flex items-center justify-center';
+  document.getElementById('esb-icon').innerHTML = `<svg class="w-4 h-4 text-brand-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>`;
+  document.getElementById('esb-title').textContent = `Scraping ${branche} in ${stadt}`;
+  let n = 0;
+  const target = 47 + Math.floor(Math.random() * 30);
+  const tick = setInterval(() => {
+    n += Math.floor(Math.random() * 6) + 2;
+    if (n >= target) {
+      n = target;
+      clearInterval(tick);
+      document.getElementById('esb-title').textContent = 'Scrape fertig';
+      document.getElementById('esb-message').textContent = `+${n} neue Prospects`;
+      document.getElementById('esb-counter').textContent = `${n}/${n}`;
+      document.getElementById('esb-progress').style.width = '100%';
+      document.getElementById('esb-icon').innerHTML = `<svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+      document.getElementById('esb-icon').className = 'shrink-0 w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center';
+      setTimeout(() => {
+        bar.style.opacity = '0';
+        setTimeout(() => bar.classList.add('hidden'), 400);
+      }, 6000);
+      return;
+    }
+    document.getElementById('esb-message').textContent = `Prospect ${n}/${target}`;
+    document.getElementById('esb-counter').textContent = `${n}/${target}`;
+    document.getElementById('esb-progress').style.width = Math.round(100 * n / target) + '%';
+  }, 250);
+}
+
+// =============================================================
+// LIGHTBOX
+// =============================================================
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.remove('hidden');
+}
+function closeLightbox(e) {
+  if (e && e.target && e.target.tagName === 'IMG') return;
+  document.getElementById('lightbox').classList.add('hidden');
+}
+
+// =============================================================
+// SEARCH
+// =============================================================
+document.getElementById('search-input').addEventListener('input', (e) => {
+  state.search = e.target.value;
+  if (state.view === 'engine') renderEngine();
+  else render();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+    closeActivityModal();
+    closeAddLead();
+    closeScrapeModal();
+  }
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    document.getElementById('search-input').focus();
+  }
+});
+
+// =============================================================
+// BOOT
+// =============================================================
+console.log('[demo] Handwerk CRM gestartet');
+render();
+</script>
+</body>
+</html>
